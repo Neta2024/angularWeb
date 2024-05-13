@@ -1,0 +1,48 @@
+:host {
+   display: flex;
+   justify-content: space-between;
+   line-height: 24px;
+}
+
+.mat-snack-bar-container {
+   &.alert-info .mat-icon {
+      color: #1c96eb;
+   }
+
+   &.alert-success .mat-icon {
+      color: #009e55;
+   }
+
+   &.alert-warn {
+      background-color: #ffb607;
+      color: #404040;
+   }
+
+   &.alert-error {
+      background-color: #cc3a17;
+      color: #fff;
+   }
+}
+
+.alert-icon {
+   margin-right: 10px;
+}
+
+.alert-text {
+   align-self: center;
+}
+
+.alert-action {
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+   cursor: pointer;
+   outline: 0;
+   border: none;
+   -webkit-tap-highlight-color: transparent;
+   background: none;
+   flex-shrink: 0;
+   margin-left: 48px;
+   padding: 4px 10px;
+}

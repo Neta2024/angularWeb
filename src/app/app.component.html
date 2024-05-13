@@ -1,0 +1,26 @@
+<mat-toolbar *ngIf="showToolbar">
+  <div class="title">GinkgoRun</div>
+  <div class="flex-spacer"></div>
+  <div class="username">
+    <div>Name</div>
+    <div class="email">Email</div>
+  </div>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav mode="side" *ngIf="showSideNav">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/main" routerLinkActive="selected">หน้าหลัก</a>
+      <a *ngIf="true" mat-list-item routerLink="/dashboard" routerLinkActive="selected">Dashboard</a>
+      <a mat-list-item (click)="logout()">ออกจากระบบ</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<footer>
+  <div class="left">Version</div>
+  <div class="right"></div>
+</footer>

@@ -1,0 +1,17 @@
+<mat-card [formGroup]="form" class="p-3">
+  <h2>GinkgoRun</h2>
+  <mat-form-field>
+    <mat-label>ชื่อผู้ใช้งาน:</mat-label>
+    <input matInput formControlName="username" (keyup.enter)="login()" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>รหัสผ่าน:</mat-label>
+    <input matInput formControlName="password" type="password" (keyup.enter)="login()" />
+  </mat-form-field>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="login()">เข้าสู่ระบบ</button>
+  <a (click)="forgot()">ลืมรหัสผ่าน</a>
+  <app-loading *ngIf="busy"></app-loading>
+</mat-card>
+<footer>
+  <p style="color: #1c96eb;">แสดงผลได้ดีบนคอมพิวเตอร์หน้าจอ 1280x720 ขึ้นไป</p>
+</footer>

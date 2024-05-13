@@ -1,0 +1,14 @@
+<h1 mat-dialog-title *ngIf="options.title" [class]="titleColor" style="text-align: center;">
+   <mat-icon *ngIf="titleIcon">{{titleIcon}}</mat-icon> {{titleText}}
+</h1>
+
+<mat-dialog-content *ngIf="options.message" [innerHtml]="options.message" [class]="contentClass"></mat-dialog-content>
+
+<mat-dialog-actions align="center">
+   <button *ngIf="options.close" mat-stroked-button mat-dialog-close>{{options.close}}</button>
+   <button *ngIf="options.accept" mat-flat-button #button
+           color="{{acceptColor}}"
+           (click)="accept()">{{acceptLabel}}</button>
+</mat-dialog-actions>
+
+<app-loading *ngIf="busy"></app-loading>
