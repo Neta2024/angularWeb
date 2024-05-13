@@ -1,5 +1,8 @@
+import { Subscription } from 'rxjs';
 import { Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import { RestApi } from './shared/rest-api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +14,16 @@ export class AppComponent {
   showToolbar = true;
   showSideNav = false;
 
-
+  constructor(private rest: RestApi, private router: Router) {
+    
+  }
 
   logout() {
-    throw new Error('Method not implemented.');
+    console.log("Log Out");
+    this.rest.unauthorized.next(true);
+    // this.rest.delete('/auth').subscribe(user => {
+    //   this.router.navigateByUrl('/login');
+    // });
   }
 
 }
