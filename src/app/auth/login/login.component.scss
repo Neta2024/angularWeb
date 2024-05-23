@@ -35,3 +35,17 @@ a {
   position: relative;
   width: 400px;
 }
+
+.box-login {
+  box-shadow: 10px 10px 80px -31px rgba(1, 56, 237, 0.75);
+  -webkit-box-shadow: 10px 10px 80px -31px rgba(1, 56, 237, 0.75);
+  -moz-box-shadow: 10px 10px 80px -31px rgba(1, 56, 237, 0.75);
+  min-width: 500px;
+  max-width: 500px;
+  border-width: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+.btn-2 {
+  background-color: lightgrey !important;
+}

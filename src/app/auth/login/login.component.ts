@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 import { Alert } from 'src/app/shared/alert/alert';
 import { RestApi } from 'src/app/shared/rest-api';
 import { AuthGuard } from '../auth.guard';
-import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 

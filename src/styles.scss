@@ -121,4 +121,13 @@ button.mat-button-base {
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, sans-serif; }
+
+.btn {
+  //text-transform: uppercase;
+  max-height: 40px;
+  transition: 0.4s;
+  //min-height: 40px;
+  min-width: 37px;
+  margin-bottom: 3px;
+}

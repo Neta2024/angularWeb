@@ -1,17 +1,16 @@
-<mat-card [formGroup]="form" class="p-3">
+<mat-card [formGroup]="form" class="p-5 box-login">
   <h2>GinkgoRun</h2>
   <mat-form-field>
-    <mat-label>ชื่อผู้ใช้งาน:</mat-label>
+    <mat-label>Username:</mat-label>
     <input matInput formControlName="username" (keyup.enter)="login()" />
   </mat-form-field>
   <mat-form-field>
-    <mat-label>รหัสผ่าน:</mat-label>
+    <mat-label>Password:</mat-label>
     <input matInput formControlName="password" type="password" (keyup.enter)="login()" />
   </mat-form-field>
-  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="login()">เข้าสู่ระบบ</button>
-  <a (click)="forgot()">ลืมรหัสผ่าน</a>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="login()">Sign In</button>
+  <button mat-flat-button class="mt-3 btn-2" [disabled]="form.invalid" (click)="login()">Sign In With Your IDP</button>
+  <a (click)="forgot()" style="width: 100px;">Forgot password</a>
   <app-loading *ngIf="busy"></app-loading>
 </mat-card>
-<footer>
-  <p style="color: #1c96eb;">แสดงผลได้ดีบนคอมพิวเตอร์หน้าจอ 1280x720 ขึ้นไป</p>
-</footer>
+
