@@ -1,20 +1,50 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './auth/auth.guard';
-import { LoginComponent } from './auth/login/login.component';
-import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { AdminComponent } from './theme/layout/admin/admin.component';
+import { GuestComponent } from './theme/layout/guest/guest.component';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'resetpw', component: ResetPasswordComponent },
-  { path: 'main', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: 'login', pathMatch: 'full'}
-
+  {
+    path: '',
+    component: AdminComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: '/default',
+        pathMatch: 'full'
+      },
+      {
+        path: 'default',
+        loadComponent: () => import('./demo/default/default.component').then((c) => c.DefaultComponent)
+      },
+      {
+        path: 'typography',
+        loadComponent: () => import('./demo/elements/typography/typography.component')
+      },
+      {
+        path: 'color',
+        loadComponent: () => import('./demo/elements/element-color/element-color.component')
+      },
+      {
+        path: 'sample-page',
+        loadComponent: () => import('./demo/sample-page/sample-page.component')
+      }
+    ]
+  },
+  {
+    path: '',
+    component: GuestComponent,
+    children: [
+      {
+        path: 'guest',
+        loadChildren: () => import('./demo/pages/authentication/authentication.module').then((m) => m.AuthenticationModule)
+      }
+    ]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,8 +1,4 @@
-import { Subscription } from 'rxjs';
-import { Component, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
-import { RestApi } from './shared/rest-api';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -10,20 +6,5 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  @ViewChild(MatSidenav) sideNav!: MatSidenav;
-  showToolbar = true;
-  showSideNav = false;
-
-  constructor(private rest: RestApi, private router: Router) {
-    
-  }
-
-  logout() {
-    console.log("Log Out");
-    this.rest.unauthorized.next(true);
-    // this.rest.delete('/auth').subscribe(user => {
-    //   this.router.navigateByUrl('/login');
-    // });
-  }
-
+  title = 'Berry Angular Free Version';
 }
