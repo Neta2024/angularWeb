@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardComponent } from './dashboard.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
+import { CalendarComponent } from './calendar.component';
 
 @NgModule({
   imports: [
@@ -11,18 +11,14 @@ import { RouterModule } from '@angular/router';
     RouterModule.forChild([
       {
           path: '',
-          component: DashboardComponent,
+          component: CalendarComponent,
       },
       {
           path: ':id',
-          component: DashboardComponent,
-      },
-      {
-          path: 'batch-edit/:id',
-          component: DashboardComponent,
+          component: CalendarComponent,
       }
     ])
   ],
-  declarations: [DashboardComponent]
+  declarations: [CalendarComponent]
 })
-export class DashboardModule { }
+export class CalendarModule { }

@@ -1,43 +1,108 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AdminComponent } from './theme/layout/admin/admin.component';
-import { NavigationItem } from './theme/layout/admin/navigation/navigation';
-import { NavBarComponent } from './theme/layout/admin/nav-bar/nav-bar.component';
-import { NavLeftComponent } from './theme/layout/admin/nav-bar/nav-left/nav-left.component';
-import { NavRightComponent } from './theme/layout/admin/nav-bar/nav-right/nav-right.component';
-import { NavigationComponent } from './theme/layout/admin/navigation/navigation.component';
-import { NavLogoComponent } from './theme/layout/admin/nav-bar/nav-logo/nav-logo.component';
-import { NavContentComponent } from './theme/layout/admin/navigation/nav-content/nav-content.component';
-import { NavGroupComponent } from './theme/layout/admin/navigation/nav-content/nav-group/nav-group.component';
-import { NavCollapseComponent } from './theme/layout/admin/navigation/nav-content/nav-collapse/nav-collapse.component';
-import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/nav-item/nav-item.component';
+import { NavigationItem } from './pages/layout/navigation/navigation';
 import { SharedModule } from './shared/shared.module';
-import { ConfigurationComponent } from './theme/layout/admin/configuration/configuration.component';
-import { GuestComponent } from './theme/layout/guest/guest.component';
-import { MaterialModule } from './shared/material.module';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { MsalInterceptorConfiguration, MsalGuardConfiguration, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalInterceptor, MsalBroadcastService, MsalService, MsalModule } from '@azure/msal-angular';
+import { LogLevel, IPublicClientApplication, PublicClientApplication, BrowserCacheLocation, InteractionType } from '@azure/msal-browser';
+import { environment } from 'src/environments/environment';
+import { AuthService } from './pages/authentication/auth.service';
+
+declare const clientId: string;
+declare const authorityId: string;
+
+function appInitializer(authService: AuthService) {
+  return () => {
+    return new Promise((resolve:any) => {
+      authService.getUserByToken().subscribe().add(resolve);
+    });
+  };
+}
+
+
+export function loggerCallback(logLevel: LogLevel, message: string) {
+  //console.log(message);
+}
+
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: clientId,
+      authority: 'https://login.microsoftonline.com/'+ authorityId,
+      redirectUri: '/',
+      postLogoutRedirectUri: '/logout'
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage
+    },
+    system: {
+      allowNativeBroker: false, // Disables WAM Broker
+      loggerOptions: {
+        loggerCallback,
+        logLevel: LogLevel.Info,
+        piiLoggingEnabled: false
+      }
+    }
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set(environment.apiConfig.uri, environment.apiConfig.scopes);
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return { 
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      scopes: [...environment.apiConfig.scopes]
+    },
+    loginFailedRoute: '/login'
+  };
+}
 
 @NgModule({
   declarations: [
-    AppComponent,
-    AdminComponent,
-    NavBarComponent,
-    NavLeftComponent,
-    NavRightComponent,
-    NavigationComponent,
-    NavLogoComponent,
-    NavContentComponent,
-    NavGroupComponent,
-    NavItemComponent,
-    NavCollapseComponent,
-    ConfigurationComponent,
-    GuestComponent
+    AppComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, SharedModule, BrowserAnimationsModule],
-  providers: [NavigationItem],
+  imports: [
+    BrowserModule, 
+    AppRoutingModule, 
+    SharedModule, 
+    BrowserAnimationsModule,
+    MsalModule
+  ],
+  providers: [
+    NavigationItem,
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true
+    },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory
+    },
+    MsalService,
+    MsalBroadcastService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

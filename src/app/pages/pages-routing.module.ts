@@ -1,20 +1,45 @@
-import { DefaultComponent } from './../demo/default/default.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { Error1Component } from './error-1/error-1.component';
+import { LayoutComponent } from './layout/layout/layout.component';
+import { Error1Component } from './error1/error1.component';
+import { LogoutComponent } from './authentication/logout/logout.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: DefaultComponent,
+    component: LayoutComponent,
     children: [
       {
-        path: 'dashboard',
-        loadChildren: () =>
-          import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+        path: '',
+        loadComponent: () => import('./../demo/default/default.component').then((c) => c.DefaultComponent)
       },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+      },
+      {
+        path: 'detail',
+        loadChildren: () => import('./timesheet/timesheet.module').then((m) => m.TimesheetModule),
+      },
+      {
+        path: 'calendar',
+        loadChildren: () => import('./calendar/calendar.module').then((m) => m.CalendarModule),
+      },
+      {
+        path: 'typography',
+        loadComponent: () => import('./../demo/elements/typography/typography.component')
+      },
+      {
+        path: 'color',
+        loadComponent: () => import('./../demo/elements/element-color/element-color.component')
+      },
+      {
+        path: 'sample-page',
+        loadComponent: () => import('./../demo/sample-page/sample-page.component')
+      },
+      { path: 'logout', component: LogoutComponent },
       { path: 'error', component: Error1Component },
-      { path: '', redirectTo: 'batch', pathMatch: 'full'},
+      { path: '**', redirectTo: '', pathMatch: 'full'},
     ],
   },
 ];

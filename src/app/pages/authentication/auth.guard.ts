@@ -14,7 +14,7 @@ export interface User {
 const USER_KEY = 'ginkgorun';
 
 @Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate, CanActivateChild {
+export class AuthGuard {
   private _user: User | null;
 
   constructor(private rest: RestApi, private router: Router) {
@@ -40,8 +40,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     }
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    //return this._user !== null && (!route.data.role || this._user?.role === route.data.role);
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return this.user !== null;
   }
 

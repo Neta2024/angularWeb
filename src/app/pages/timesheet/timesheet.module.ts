@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardComponent } from './dashboard.component';
+import { TimesheetComponent } from './timesheet.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 
@@ -11,18 +11,14 @@ import { RouterModule } from '@angular/router';
     RouterModule.forChild([
       {
           path: '',
-          component: DashboardComponent,
+          component: TimesheetComponent,
       },
       {
           path: ':id',
-          component: DashboardComponent,
-      },
-      {
-          path: 'batch-edit/:id',
-          component: DashboardComponent,
+          component: TimesheetComponent,
       }
     ])
   ],
-  declarations: [DashboardComponent]
+  declarations: [TimesheetComponent]
 })
-export class DashboardModule { }
+export class TimesheetModule { }

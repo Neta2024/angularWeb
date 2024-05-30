@@ -2,7 +2,7 @@
 import { Component, Input } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { NavigationItem } from 'src/app/theme/layout/admin/navigation/navigation';
+import { NavigationItem } from 'src/app/pages/layout/navigation/navigation';
 
 // project import
 
@@ -126,6 +126,6 @@ export class BreadcrumbsComponent {
       }
     });
     this.navigationList = result;
-    this.titleService.setTitle(title + ' | Berry Angular Template');
+    this.titleService.setTitle(title + ' | Ginkgo Run');
   }
 }
