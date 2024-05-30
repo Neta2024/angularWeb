@@ -2,7 +2,7 @@
 import { Component, ViewChild } from '@angular/core';
 
 // project import
-import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 // third party
 import {

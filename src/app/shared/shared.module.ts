@@ -12,6 +12,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 
 // bootstrap import
 import { NgbDropdownModule, NgbNavModule, NgbModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { AlertComponent } from './components/alert/alert.component';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   imports: [
@@ -24,7 +26,8 @@ import { NgbDropdownModule, NgbNavModule, NgbModule, NgbCollapseModule } from '@
     NgbNavModule,
     NgbModule,
     NgbCollapseModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    MaterialModule
   ],
   exports: [
     CommonModule,
@@ -37,8 +40,12 @@ import { NgbDropdownModule, NgbNavModule, NgbModule, NgbCollapseModule } from '@
     NgbDropdownModule,
     NgbNavModule,
     NgbCollapseModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    MaterialModule
   ],
-  declarations: [SpinnerComponent]
+  declarations: [
+    SpinnerComponent, 
+    AlertComponent
+  ]
 })
 export class SharedModule {}

@@ -1,0 +1,5 @@
+<div class="flex">
+  <mat-icon class="alert-icon">{{icon}}</mat-icon>
+  <span class="alert-text" [innerHtml]="data.message"></span>
+</div>
+<button class="alert-action" *ngIf="hasAction" (click)="action()">{{data.action}}</button>

@@ -2,9 +2,9 @@
 import { Component, Input } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { NavigationItem } from 'src/app/theme/layout/admin/navigation/navigation';
 
 // project import
-import { NavigationItem } from '../../../layout/admin/navigation/navigation';
 
 @Component({
   selector: 'app-breadcrumbs',
