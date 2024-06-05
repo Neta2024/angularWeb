@@ -12,6 +12,7 @@ import { NavGroupComponent } from './layout/navigation/nav-content/nav-group/nav
 import { NavItemComponent } from './layout/navigation/nav-content/nav-item/nav-item.component';
 import { NavigationComponent } from './layout/navigation/navigation.component';
 import { NavCollapseComponent } from './layout/navigation/nav-content/nav-collapse/nav-collapse.component';
+import { CalendarModule } from './calendar/calendar.module';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { NavCollapseComponent } from './layout/navigation/nav-content/nav-collap
   imports: [
     CommonModule,
     PagesRoutingModule,
-    SharedModule
+    SharedModule,
+    CalendarModule
   ],
 })
 export class LayoutModule { }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
+import { Chart1Component } from './chart1/chart1.component';
 
 @NgModule({
   imports: [
@@ -23,6 +24,8 @@ import { RouterModule } from '@angular/router';
       }
     ])
   ],
-  declarations: [DashboardComponent]
+  declarations: [
+    DashboardComponent,
+    Chart1Component]
 })
 export class DashboardModule { }

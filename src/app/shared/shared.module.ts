@@ -14,6 +14,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgbDropdownModule, NgbNavModule, NgbModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { AlertComponent } from './components/alert/alert.component';
 import { MaterialModule } from './material.module';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   imports: [
@@ -27,7 +29,9 @@ import { MaterialModule } from './material.module';
     NgbModule,
     NgbCollapseModule,
     NgScrollbarModule,
-    MaterialModule
+    MaterialModule,
+    NgApexchartsModule,
+    FullCalendarModule
   ],
   exports: [
     CommonModule,
@@ -41,7 +45,9 @@ import { MaterialModule } from './material.module';
     NgbNavModule,
     NgbCollapseModule,
     NgScrollbarModule,
-    MaterialModule
+    MaterialModule,
+    NgApexchartsModule,
+    FullCalendarModule
   ],
   declarations: [
     SpinnerComponent, 
