@@ -98,34 +98,18 @@ export class LoginComponent implements OnInit {
     }))
     .subscribe((res) => {
       this.busy = false;
-      console.log(res);
-      if (res.status) {
+      //console.log(res);
+      if (res.message) {
         this.hasError = true;
         this.errorMessage = res.message;
       }
       else {
         this.hasError = false;
-        if(res){
-          this.auth.user = res;
-          this.router.navigateByUrl('/timesheet');
-        }
+        this.auth.user = res;
+        this.router.navigateByUrl('/timesheet');
       }
     })
     .add(() => this.busy = false);
-      // if(user.lastPasswordChange === undefined){
-      //   const dialogRef = this.dialog.open(ChangePasswordComponent, { disableClose: true });
-      //   dialogRef.afterClosed().subscribe((result) => {
-      //     if(result) {
-      //       this.auth.user = user;
-      //       this.router.navigateByUrl('/main');
-      //     } else {
-      //       setTimeout(() => { this.auth.unauthorize()}, 500);
-      //     }
-      //   });
-      // }else{
-      //   this.auth.user = user;
-      //   this.router.navigateByUrl('/main');
-      // }
   }
 
   loginIdp(){
