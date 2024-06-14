@@ -19,7 +19,7 @@ export interface Navigation extends NavigationItem {
 const NavigationItems = [
   {
     id: 'dashboard',
-    title: '',
+    title: 'Ginkgo Run',
     type: 'group',
     icon: 'icon-navigation',
     children: [

@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { RestApi } from 'src/app/shared/rest-api';
+import { AuthModel } from './model/auth.model';
 
-export interface User {
-  token: string;
-  username: string;
-  fullName: string;
-  email: string;
-  role: string;
-}
+// export interface User {
+//   token: string;
+//   username: string;
+//   fullName: string;
+//   email: string;
+//   role: string;
+// }
 
 const USER_KEY = 'ginkgorun';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
-  private _user: User | null;
+  private _user: AuthModel | null;
 
   constructor(private rest: RestApi, private router: Router) {
     this._user = null;
@@ -29,8 +30,8 @@ export class AuthGuard {
     this.rest.unauthorized.subscribe(() => this.unauthorize());
   }
 
-  get user(): User | null { return this._user; }
-  set user(user: User | null) {
+  get user(): AuthModel | null { return this._user; }
+  set user(user: AuthModel | null) {
     this._user = user;
     this.rest.token = this._user?.token;
     if (user) {

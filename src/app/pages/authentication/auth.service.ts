@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { AuthModel } from './model/auth.model';
 import { RestApi } from 'src/app/shared/rest-api';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -41,11 +42,27 @@ export class AuthService implements OnDestroy {
     this.currentUserSubject = new BehaviorSubject<AuthModel>(new AuthModel());
     this.currentUser$ = this.currentUserSubject.asObservable();
     this.isLoading$ = this.isLoadingSubject.asObservable();
-    //const subscr = this.getUserByToken().subscribe();
-    //this.unsubscribe.push(subscr);
+
     this.msalService.initialize();
     this.msalService.instance.enableAccountStorageEvents(); // Optional - This will enable ACCOUNT_ADDED and ACCOUNT_REMOVED events emitted when a user logs in or out of another tab or window
 
+  }
+
+  login(username: string, pwd: string): Observable<AuthModel> {
+    this.isLoadingSubject.next(true);
+    const authorization = btoa(`${encodeURIComponent(username)}:${encodeURIComponent(pwd)}`);
+    const headers = new HttpHeaders().set('Authorization', `Basic ${authorization}`);
+    return this.rest.post('/auth/login', null, { headers }).pipe(
+      map((auth: AuthModel) => {
+        //console.log(auth);
+        this.setAuthToLocalStorage(auth);
+        return auth;
+      }),
+      catchError((err) => {
+        return of(err);
+      }),
+      finalize(() => this.isLoadingSubject.next(false))
+    );
   }
 
   entraIdLogin(data: any): Observable<AuthModel> {
@@ -143,23 +160,6 @@ export class AuthService implements OnDestroy {
     );
   }
 
-  // need create new user then login
-  registration(user: AuthModel): Observable<any> {
-    // this.isLoadingSubject.next(true);
-    // return this.authHttpService.createUser(user).pipe(
-    //   map(() => {
-    //     this.isLoadingSubject.next(false);
-    //   }),
-    //   switchMap(() => this.login(user.email, user.password)),
-    //   catchError((err) => {
-    //     console.error('err', err);
-    //     return of(undefined);
-    //   }),
-    //   finalize(() => this.isLoadingSubject.next(false))
-    // );
-    return of(undefined);
-  }
-
   forgotPassword(email: string): Observable<boolean> {
     this.isLoadingSubject.next(true);
     return this.rest.post('/auth/forgot', email)
@@ -169,8 +169,8 @@ export class AuthService implements OnDestroy {
   // private methods
   public setAuthToLocalStorage(auth: AuthModel): boolean {
     // store auth accessToken/refreshToken/epiresIn in local storage to keep user logged in between page refreshes
-    if (auth && auth.userToken) {
-      //console.log([JSON.stringify(auth)]);
+    if (auth && auth.token) {
+      console.log([JSON.stringify(auth)]);
       //localStorage.setItem(this.authLocalStorageToken, this.AES.encrypt(JSON.stringify(auth)));
 
       return true;

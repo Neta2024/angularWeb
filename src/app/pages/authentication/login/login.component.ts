@@ -1,14 +1,12 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MSAL_GUARD_CONFIG, MsalGuardConfiguration, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { EventMessage, RedirectRequest, EventPayload, EventType } from '@azure/msal-browser';
-import { Subscription, filter } from 'rxjs';
-import { Alert } from 'src/app/shared/components/alert/alert';
+import { Subscription, catchError, filter, of } from 'rxjs';
 import { RestApi } from 'src/app/shared/rest-api';
 import { AuthGuard } from '../auth.guard';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,11 +17,14 @@ export class LoginComponent implements OnInit {
   busy = false;
   form: FormGroup;
   popState?: Subscription;
+  errorMessage: string;
+  hasError: boolean;
 
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private msal: MsalService,
     private msalBroadcastService: MsalBroadcastService,
-    private fb: FormBuilder, private rest: RestApi, private auth: AuthGuard, private router: Router, private dialog: MatDialog, private alert: Alert
+    private fb: FormBuilder, private rest: RestApi, private auth: AuthGuard, private router: Router,
+    private authService: AuthService
   ) {
     //console.log(this.auth.user);
     if (this.auth.user) {
@@ -86,13 +87,31 @@ export class LoginComponent implements OnInit {
     this.busy = true;
     const username = this.form.value.email;
     const pass = this.form.value.password;
-    const authorization = btoa(`${encodeURIComponent(username)}:${encodeURIComponent(pass)}`);
-    const headers = new HttpHeaders().set('Authorization', `Basic ${authorization}`);
-    //console.log(username);
-    this.rest.post('/auth/login', null, { headers }).subscribe(user => {
-      //console.log(user);
-      this.auth.user = user;
-      this.router.navigateByUrl('/timesheet');
+
+    this.authService.login(username, pass)
+    .pipe(catchError(err => {
+      this.errorMessage = err;
+      this.hasError = true;
+      this.busy = false;
+      //return undefined;
+      return of(err);
+    }))
+    .subscribe((res) => {
+      this.busy = false;
+      console.log(res);
+      if (res.status) {
+        this.hasError = true;
+        this.errorMessage = res.message;
+      }
+      else {
+        this.hasError = false;
+        if(res){
+          this.auth.user = res;
+          this.router.navigateByUrl('/timesheet');
+        }
+      }
+    })
+    .add(() => this.busy = false);
       // if(user.lastPasswordChange === undefined){
       //   const dialogRef = this.dialog.open(ChangePasswordComponent, { disableClose: true });
       //   dialogRef.afterClosed().subscribe((result) => {
@@ -107,8 +126,6 @@ export class LoginComponent implements OnInit {
       //   this.auth.user = user;
       //   this.router.navigateByUrl('/main');
       // }
-
-    }).add(() => this.busy = false);
   }
 
   loginIdp(){

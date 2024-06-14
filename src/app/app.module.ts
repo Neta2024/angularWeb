@@ -10,6 +10,7 @@ import { MsalInterceptorConfiguration, MsalGuardConfiguration, MSAL_GUARD_CONFIG
 import { LogLevel, IPublicClientApplication, PublicClientApplication, BrowserCacheLocation, InteractionType } from '@azure/msal-browser';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './pages/authentication/auth.service';
+import { MaterialModule } from './shared/material.module';
 
 declare const clientId: string;
 declare const authorityId: string;
@@ -77,6 +78,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     BrowserModule, 
     AppRoutingModule, 
     SharedModule, 
+    MaterialModule,
     BrowserAnimationsModule,
     MsalModule
   ],

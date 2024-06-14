@@ -27,7 +27,8 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/styles.scss",
-              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css"
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "node_modules/ngx-spinner/animations/ball-clip-rotate-multiple.css"
             ],
             "scripts": []
           },
@@ -36,8 +37,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "2mb"
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",

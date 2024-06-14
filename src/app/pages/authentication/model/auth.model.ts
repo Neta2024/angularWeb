@@ -1,5 +1,5 @@
 export class AuthModel {
-  accessToken: string;
+  token: string;
   refreshToken: string;
   expiresIn: Date;
   userKey: string;
@@ -8,9 +8,13 @@ export class AuthModel {
   accountant: boolean;
   authMethod: string;
   status: string;
+  username: string;
+  fullName: string;
+  email: string;
+  role: string;
 
   setAuth(auth: any) {
-    this.accessToken = auth.accessToken;
+    this.token = auth.token;
     this.refreshToken = auth.refreshToken;
     this.expiresIn = auth.expiresIn;
     this.userKey = auth.userKey;
@@ -19,5 +23,9 @@ export class AuthModel {
     this.accountant = auth.accountant;
     this.authMethod = auth.authMethod;
     this.status = auth.status;
+    this.username = auth.username;
+    this.fullName = auth.fullName;
+    this.email = auth.email;
+    this.role = auth.role;
   }
 }
