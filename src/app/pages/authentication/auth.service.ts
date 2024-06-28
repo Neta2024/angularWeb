@@ -56,6 +56,7 @@ export class AuthService implements OnDestroy {
       map((auth: AuthModel) => {
         //console.log(auth);
         this.setAuthToLocalStorage(auth);
+        this.setAuthString(authorization);
         return auth;
       }),
       catchError((err) => {
@@ -63,6 +64,10 @@ export class AuthService implements OnDestroy {
       }),
       finalize(() => this.isLoadingSubject.next(false))
     );
+  }
+
+  setAuthString(authorization: string) {
+    localStorage.setItem('uid', authorization);
   }
 
   entraIdLogin(data: any): Observable<AuthModel> {
@@ -172,7 +177,8 @@ export class AuthService implements OnDestroy {
     if (auth && auth.token) {
       //console.log([JSON.stringify(auth)]);
       //localStorage.setItem(this.authLocalStorageToken, this.AES.encrypt(JSON.stringify(auth)));
-
+      localStorage.setItem(this.authLocalStorageToken, JSON.stringify(auth));
+      this.rest.token = auth.token;
       return true;
     }
 

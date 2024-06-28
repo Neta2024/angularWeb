@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable, Output } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpXsrfTokenExtractor } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Observable, throwError } from "rxjs";
 import { catchError } from 'rxjs/operators';
 import { Alert } from "./components/alert/alert";
@@ -47,6 +47,8 @@ export class RestApi {
 
   private createHttpOptions(options: any, json = false): any {
     let headers: HttpHeaders = options.headers || new HttpHeaders();
+    headers = headers.set('Access-Control-Allow-Origin', '*');
+    headers = headers.set('Access-Control-Allow-Header', 'Content-Type, Authorization');
     if (json && !headers.has('Content-Type')) {
       headers = headers.append('Content-Type', 'application/json;charset=utf-8');
     }
@@ -56,6 +58,10 @@ export class RestApi {
     const xsrf = this.xsrfToken.getToken();
     if (xsrf) {
       headers = headers.set('X-XSRF-Token', xsrf);
+    }
+    const authorization = localStorage.getItem('uid');
+    if(authorization){
+      headers = headers.set('Authorization', `Basic ${authorization}`);
     }
     options.headers = headers.set('X-Requested-With', 'XMLHttpRequest');
     options.withCredentials = true;
@@ -79,14 +85,14 @@ export class RestApi {
       if (ex.status === 0) {
         ex.message = 'Unable to connect to web service';
       } else if (!ex.message) {
-        ex.message = `HTTP Error ${e.status} ${e.url}`;
+        ex.message = `HTTP Error ${e.status} ${e.message}`;
       }
       if (e.status === 401) {
-        this.unauthorized.emit(null);
+        //this.unauthorized.emit(null);
       }
-      if (!silent) {
+      //if (!silent) {
         this.alert.error(ex.message);
-      }
+      //}
       return throwError(() => ex)
     };
   }
@@ -105,4 +111,5 @@ export class RestApi {
     }
     setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
   }
+
 }
