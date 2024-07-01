@@ -48,58 +48,18 @@ export class Chart1Component implements OnInit {
   public chartOptions: Partial<ChartOptions>;
 
   @Input() selectedYear: string = 'option1'; 
+  workDays: number[] = [];
+  leaveDays: number[] = [];
+  pending: number[] = [];
+  categories: string[] = [];
 
-  constructor(private restApi: RestApi) {
-    this.chartOptions = {
-      series: [],
-      chart: {
-        type: "bar",
-        height: 350,
-        stacked: true,
-        toolbar: {
-          show: true
-        },
-        zoom: {
-          enabled: true
-        }
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: "bottom",
-              offsetX: -10,
-              offsetY: 0
-            }
-          }
-        }
-      ],
-      plotOptions: {
-        bar: {
-          horizontal: false
-        }
-      },
-      xaxis: {
-        type: "category",
-        categories: []
-      },
-      legend: {
-        position: "right",
-        offsetY: 40,
-        markers: {
-          fillColors: ['#62CFFC', '#FFB489', '#DFDFDF']
-      },
-      },
-      fill: {
-        opacity: 1,
-        colors: ['#62CFFC', '#FFB489', '#DFDFDF']
-      },
-    };
+  constructor(private restApi: RestApi, private changeDetectorRef: ChangeDetectorRef) {
+    
   }
 
   ngOnInit() {
-    this.updateChartData(this.selectedYear);
+    // this.updateChartData(this.selectedYear);
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -109,45 +69,35 @@ export class Chart1Component implements OnInit {
   }
 
   updateChartData(selectedYear: string): void {
+    this.chartOptions = {
+      series: [],
+      chart: {
+        type: "bar"
+      }
+    };
+    this.categories = [];
+    this.workDays = [];
+    this.leaveDays = [];
+    this.pending = [];
     this.selectedYear = selectedYear;
     const yearRequest = { year: parseInt(selectedYear, 10) };
 
     this.restApi.post('dashboard/summary-leave', yearRequest).subscribe((response: any) => {
-      console.log('API Response:', response);
-      const workDays: number[] = [];
-      const leaveDays: number[] = [];
-      const pending: number[] = [];
-      const categories: string[] = [];
-
+      console.log(response);
       response.workingByMonth.forEach((monthData: WorkingByMonth) => {
-        categories.push(String(monthData.month));
-        workDays.push(monthData.totalWorkingDays);
-        leaveDays.push(monthData.allLeaves);
-        pending.push(this.calculatePendingDays(monthData));
+        this.categories.push(String(monthData.month));
+        this.workDays.push(monthData.totalWorkingDays);
+        this.leaveDays.push(monthData.allLeaves);
+        this.pending.push(this.calculatePendingDays(monthData));
       });
+      this.setChart();
       
-      this.chartOptions = {
-        ...this.chartOptions, // Preserve existing options
-        series: [
-          { name: "Total Working Days", data: workDays },
-          { name: "All Leaves", data: leaveDays },
-          { name: "Pending", data: pending }
-        ],
-        xaxis: {
-          ...this.chartOptions.xaxis,
-          categories: categories
-        }
-      };
-
-      if (this.chart && this.chart.updateOptions) {
-        this.chart.updateOptions(this.chartOptions);
-      } else {
-        console.error('Chart or updateOptions method not available.');
-      }
     }, error => {
       console.error('API call error:', error);
       // Handle error appropriately here
     });
+
+
 
     // const dataFor2024 = {
     //   "Work Days": [15, 14, 16, 18, 0,0,0,0,0,0,0,0],
@@ -221,6 +171,66 @@ export class Chart1Component implements OnInit {
     //     ];
     //     this.chartOptions.xaxis = { categories: dataFor2020.categories };
     //     break;
+    // }
+  }
+
+  setChart(){
+    this.chartOptions = {
+      series: [
+        { name: "Total Working Days", data: this.workDays },
+        { name: "All Leaves", data: this.leaveDays },
+        { name: "Pending", data: this.pending }
+      ],
+      chart: {
+        type: "bar",
+        height: 350,
+        stacked: true,
+        toolbar: {
+          show: true
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: "bottom",
+              offsetX: -10,
+              offsetY: 0
+            }
+          }
+        }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: false
+        }
+      },
+      xaxis: {
+        type: "category",
+        categories: this.categories
+      },
+      legend: {
+        position: "right",
+        offsetY: 40,
+        markers: {
+          fillColors: ['#62CFFC', '#FFB489', '#DFDFDF']
+      },
+      },
+      fill: {
+        opacity: 1,
+        colors: ['#62CFFC', '#FFB489', '#DFDFDF']
+      },
+    };
+    //console.log(this.categories);
+
+    // if (this.chart && this.chart.updateOptions) {
+    //   this.chart.updateOptions(this.chartOptions);
+    // } else {
+    //   console.error('Chart or updateOptions method not available.');
     // }
   }
 
