@@ -50,7 +50,7 @@
   </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button [mat-dialog-close]="data">Add</button>
+  <button mat-button (click)="modal.dismiss()">Cancel</button>
+  <button mat-button (click)="add()">Add</button>
 
 </div>

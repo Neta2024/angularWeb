@@ -1,33 +1,13 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
-import { MatRadioModule } from '@angular/material/radio';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-add-event-dialog',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    NgIf,
-    MatSelectModule,
-    MatOptionModule,
-    MatRadioModule,
-    CommonModule
-  ],
   templateUrl: './add-event-dialog.component.html',
   styleUrl: './add-event-dialog.component.scss'
 })
 export class AddEventDialogComponent {
+  @Input() date: Date;
   eventDate: Date = new Date();
   selectedProject: string;
   selectedTask: string;
@@ -40,13 +20,10 @@ export class AddEventDialogComponent {
   showProjects: boolean = false;
   showTasks: boolean = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<AddEventDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; date: string }
-  ) {}
+  constructor(public modal: NgbActiveModal) {}
 
   onCancel(): void {
-    this.dialogRef.close();
+    
   }
 
   onAdd(): void {
@@ -63,7 +40,7 @@ export class AddEventDialogComponent {
 
     console.log('Event Date:', this.eventDate); // Add this to check eventDate before assigning to newEvent
 
-    this.dialogRef.close(newEvent);
+    //this.dialogRef.close(newEvent);
   }
 
   // formatDate(date: Date): string {
@@ -105,5 +82,9 @@ export class AddEventDialogComponent {
   selectProject(project: string) {
     this.selectedProject = project;
     this.showProjects = false; // Hide projects list after selection
+  }
+
+  add() {
+    throw new Error('Method not implemented.');
   }
 }
