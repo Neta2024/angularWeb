@@ -1,0 +1,56 @@
+<h1 mat-dialog-title>Add New Event</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onAdd()">
+    <div class="view-dropdown">
+      <mat-label>Date: </mat-label>
+      <mat-form-field>
+        <input matInput placeholder="Event Date" [(ngModel)]="eventDate" name="eventDate" type="date" required>
+      </mat-form-field>
+    </div>
+    <div class="view-dropdown">
+      <mat-label>Project: </mat-label>
+      <mat-form-field appearance="fill">
+        <mat-select [(ngModel)]="selectedProject" name="project">
+          <mat-option value="A">Project A</mat-option>
+          <mat-option value="B">Project B</mat-option>
+          <mat-option value="C">Project C</mat-option>
+          <mat-option value="D">Project D</mat-option>
+          <mat-option value="E">Project E</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="suggestProjects()">Suggest</button>
+      <div *ngIf="suggestedProjects.length > 0">
+        <h3>Suggested Projects:</h3>
+        <ul>
+          <li *ngFor="let project of suggestedProjects">{{ project.name }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="view-dropdown">
+      <mat-label>Task: </mat-label>
+      <mat-form-field appearance="fill">
+        <mat-select [(ngModel)]="selectedTask" name="task">
+          <mat-option value="A">Task A</mat-option>
+          <mat-option value="B">Task B</mat-option>
+          <mat-option value="C">Task C</mat-option>
+          <mat-option value="D">Task D</mat-option>
+          <mat-option value="E">Task E</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary">Suggest</button>
+    </div>
+    <div>
+      <mat-label>Period:</mat-label>
+      <mat-radio-group [(ngModel)]="selectedPeriod" name="period">
+        <mat-radio-button value="1">All</mat-radio-button>
+        <mat-radio-button value="2">Morning</mat-radio-button>
+        <mat-radio-button value="3">Afternoon</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button [mat-dialog-close]="data">Add</button>
+
+</div>
