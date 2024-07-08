@@ -11,33 +11,41 @@
       <mat-label>Project: </mat-label>
       <mat-form-field appearance="fill">
         <mat-select [(ngModel)]="selectedProject" name="project">
-          <mat-option value="A">Project A</mat-option>
-          <mat-option value="B">Project B</mat-option>
-          <mat-option value="C">Project C</mat-option>
-          <mat-option value="D">Project D</mat-option>
-          <mat-option value="E">Project E</mat-option>
+          <mat-option value="Project A">Project A</mat-option>
+          <mat-option value="Project B">Project B</mat-option>
+          <mat-option value="Project C">Project C</mat-option>
+          <mat-option value="Project D">Project D</mat-option>
+          <mat-option value="Project E">Project E</mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="suggestProjects()">Suggest</button>
+      <button mat-raised-button color="primary" type="button" (click)="suggestProjects()">Suggest</button>
       <div *ngIf="suggestedProjects.length > 0">
-        <h3>Suggested Projects:</h3>
-        <ul>
-          <li *ngFor="let project of suggestedProjects">{{ project.name }}</li>
-        </ul>
+        <mat-list>
+          <mat-list-item *ngFor="let project of suggestedProjects"  (click)="selectProject(project.name)">
+            {{ project.name }}
+          </mat-list-item>
+        </mat-list>
       </div>
     </div>
     <div class="view-dropdown">
       <mat-label>Task: </mat-label>
       <mat-form-field appearance="fill">
         <mat-select [(ngModel)]="selectedTask" name="task">
-          <mat-option value="A">Task A</mat-option>
-          <mat-option value="B">Task B</mat-option>
-          <mat-option value="C">Task C</mat-option>
-          <mat-option value="D">Task D</mat-option>
-          <mat-option value="E">Task E</mat-option>
+          <mat-option value="Task A">Task A</mat-option>
+          <mat-option value="Task B">Task B</mat-option>
+          <mat-option value="Task C">Task C</mat-option>
+          <mat-option value="Task D">Task D</mat-option>
+          <mat-option value="Task E">Task E</mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-raised-button color="primary">Suggest</button>
+      <button mat-raised-button color="primary" type="button" (click)="suggestTasks()">Suggest</button>
+      <div *ngIf="suggestedTasks.length > 0">
+        <mat-list>
+          <mat-list-item *ngFor="let task of suggestedTasks"  (click)="selectTask(task.name)">
+            {{ task.name }}
+          </mat-list-item>
+        </mat-list>
+      </div>
     </div>
     <div>
       <mat-label>Period:</mat-label>
@@ -50,7 +58,7 @@
   </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="modal.dismiss()">Cancel</button>
-  <button mat-button (click)="add()">Add</button>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onAdd()">Add</button>
 
 </div>

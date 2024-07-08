@@ -36,18 +36,18 @@ export class DashboardComponent implements OnInit {
     const yearRequest = { year: parseInt(this.selectedYear, 10) };
     this.restApi.get('dashboard/today-leave', yearRequest).subscribe((response: any) => {
 
-      console.log('Today Leaves Response:', response);
+      console.log(response);
 
-      const fullName = response['fullName'];
-      const leaveType = response['leaveType'];
-      const period = response['period'];
+      const fullName = response[0].fullName;
+      const leaveType = response[0].leaveType;
+      const period = response[0].period;
 
       let colorClass = 'icon-color-default';
-      if (leaveType === 'vacation') {
+      if (response.leaveType === 'vacation') {
         colorClass = 'icon-color1';
-      } else if (leaveType === 'Sick Leave') {
+      } else if (response.leaveType === 'Sick Leave') {
         colorClass = 'icon-color2';
-      } else if (leaveType === 'Personal Leave') {
+      } else if (response.leaveType === 'Personal Leave') {
         colorClass = 'icon-color3';
       }
 

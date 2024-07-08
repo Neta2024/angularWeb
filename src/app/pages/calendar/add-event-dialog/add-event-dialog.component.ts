@@ -1,8 +1,22 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatList, MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-add-event-dialog',
+  standalone: true,
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    NgIf,
+    MatSelectModule,
+    MatOptionModule,
+    MatRadioModule,
+    CommonModule,
+    MatListModule
+  ],
   templateUrl: './add-event-dialog.component.html',
   styleUrl: './add-event-dialog.component.scss'
 })
@@ -15,10 +29,7 @@ export class AddEventDialogComponent {
 
   suggestedProjects: { name: string }[] = [];
   // suggestedProjects: string[] = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5'];
-  suggestedTasks: string[] = ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5'];
-
-  showProjects: boolean = false;
-  showTasks: boolean = false;
+  suggestedTasks: { name: string }[] = [];
 
   constructor(public modal: NgbActiveModal) {}
 
@@ -62,29 +73,32 @@ export class AddEventDialogComponent {
         return '';
     }
   }
-  //////////
-
-  // showSuggestedProjects() {
-  //   this.showProjects = !this.showProjects;
-  //   this.showTasks = false; // Hide tasks list if shown
-  // }
 
   suggestProjects(): void {
     this.suggestedProjects = [
-      { name: 'Project 1' },
-      { name: 'Project 2' },
-      { name: 'Project 3' },
-      { name: 'Project 4' },
-      { name: 'Project 5' }
+      { name: 'Project A' },
+      { name: 'Project B' },
+      { name: 'Project C' },
+      { name: 'Project D' },
+      { name: 'Project E' }
     ];
   }
 
-  selectProject(project: string) {
-    this.selectedProject = project;
-    this.showProjects = false; // Hide projects list after selection
+  suggestTasks(): void {
+    this.suggestedTasks = [
+      { name: 'Task A' },
+      { name: 'Task B' },
+      { name: 'Task C' },
+      { name: 'Task D' },
+      { name: 'Task E' }
+    ];
   }
 
-  add() {
-    throw new Error('Method not implemented.');
+  selectProject(projectName: string) {
+    this.selectedProject = projectName;
+  }
+
+  selectTask(taskName: string) {
+    this.selectedTask = taskName;
   }
 }
