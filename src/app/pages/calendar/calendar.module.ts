@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { CalendarComponent } from './calendar.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   imports: [
@@ -17,7 +19,9 @@ import { CalendarComponent } from './calendar.component';
           path: ':id',
           component: CalendarComponent,
       }
-    ])
+    ]),
+    MatDialogModule,
+    MatIconModule
   ],
   declarations: [CalendarComponent]
 })
