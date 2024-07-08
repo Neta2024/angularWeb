@@ -81,14 +81,21 @@ export class Chart1Component implements OnInit {
     this.pending = [];
     this.selectedYear = selectedYear;
     const yearRequest = { year: parseInt(selectedYear, 10) };
+    console.log('yearRequest: ', yearRequest);
+
+    // float workDays = 0.0;
+    // float leaveDays;
+    // float pending;
 
     this.restApi.post('dashboard/summary-leave', yearRequest).subscribe((response: any) => {
       console.log(response);
+
       response.workingByMonth.forEach((monthData: WorkingByMonth) => {
+        // this.workDays = monthData.totalWorkingDays - monthData.allLeaves - monthData.recordedTimeSheet;
         this.categories.push(String(monthData.month));
-        this.workDays.push(monthData.totalWorkingDays);
+        this.pending.push(monthData.totalWorkingDays - monthData.recordedTimeSheet);
         this.leaveDays.push(monthData.allLeaves);
-        this.pending.push(this.calculatePendingDays(monthData));
+        this.workDays.push(monthData.totalWorkingDays - (monthData.allLeaves + (monthData.totalWorkingDays - monthData.recordedTimeSheet)));
       });
       this.setChart();
       
@@ -186,7 +193,7 @@ export class Chart1Component implements OnInit {
         height: 350,
         stacked: true,
         toolbar: {
-          show: true
+          show: false
         },
         zoom: {
           enabled: true

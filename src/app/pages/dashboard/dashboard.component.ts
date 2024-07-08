@@ -1,12 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { RestApi } from 'src/app/shared/rest-api';
 
-// interface remain {
-//   "Vacation Leave Available": number;
-//   "Sick Leave Available": number;
-//   "Personal Leave Available": number;
-// }
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -38,6 +32,7 @@ export class DashboardComponent implements OnInit {
 
       console.log(response);
 
+<<<<<<< Updated upstream
       const fullName = response[0].fullName;
       const leaveType = response[0].leaveType;
       const period = response[0].period;
@@ -49,17 +44,53 @@ export class DashboardComponent implements OnInit {
         colorClass = 'icon-color2';
       } else if (response.leaveType === 'Personal Leave') {
         colorClass = 'icon-color3';
+=======
+      this.todayLeaves = [];
+
+      response.forEach((todayLeave: any) => {
+      const fullName = todayLeave['fullName'];
+      const leaveType = todayLeave['leaveType'];
+      const period = todayLeave['period'];
+
+      let color = 'icon-color-default';
+      if (leaveType === 'vacation') {
+        color = 'icon-color1';
+      } else if (leaveType === 'sick') {
+        color = 'icon-color2';
+      } else if (leaveType === 'personal') {
+        color = 'icon-color3';
+>>>>>>> Stashed changes
       }
 
-      this.todayLeaves = [
-        { name: fullName, type: leaveType, icon: 'beach_access', period: period, colorClass: colorClass }
-      ];
+      let icon = 'beach_access';
+      if (leaveType === 'vacation') {
+        icon = 'beach_access';
+      } else if (leaveType === 'sick') {
+        icon = 'medical_services';
+      } else if (leaveType === 'personal') {
+        icon = 'person';
+      }
+
+      let typeText = ''
+      if (leaveType === 'vacation') {
+        typeText = 'Vacation';
+      } else if (leaveType === 'sick') {
+        typeText = 'Sick Leave';
+      } else if (leaveType === 'personal') {
+        typeText = 'Personal Leave';
+      }
+
+      this.todayLeaves.push({
+        name: fullName,
+        type: typeText,
+        icon: icon,
+        period: period,
+        colorClass: color
+      });
+    });
 
       console.log('this.todayLeaves:', this.todayLeaves);
-    },
-    // (error: any) => {
-    //   console.error('Error fetching today leaves:', error);
-    // }
+    }
   )
     // const mockLeaves = [
     //   { name: 'Will Smith', date: '2024-06-26', type: 'Vacation', icon: 'beach_access', period: 'both', colorClass: 'icon-color1'  },

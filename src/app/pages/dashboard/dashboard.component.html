@@ -39,12 +39,18 @@
             <div class="leave-type">
               <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
               {{ leave.type }}
+              <div class="leave-icons">
+                <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">wb_sunny</mat-icon>
+                <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_3</mat-icon>
+                <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="allday-icon">timelapse</mat-icon>
+              </div>
             </div>
           </div>
-          <div class="leave-icons">
-            <mat-icon *ngIf="leave.period === 'day' || leave.period === 'both'" class="day-icon">wb_sunny</mat-icon>
-            <mat-icon *ngIf="leave.period === 'night' || leave.period === 'both'" class="night-icon">nights_stay</mat-icon>
-          </div>
+          <!-- <div class="leave-icons">
+            <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">wb_sunny</mat-icon>
+            <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_3</mat-icon>
+            <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="night-icon">timelapse</mat-icon>
+          </div> -->
         </li>
       </ul>
     </div>

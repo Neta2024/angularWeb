@@ -125,6 +125,7 @@
   .leave-details {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
   }
   
   .leave-name {
@@ -135,11 +136,17 @@
     display: flex;
     align-items: center;
   }
-  
+
   .leave-type mat-icon {
     margin-right: 5px;
   }
   
+  .leave-icons {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+  }
+
   .leave-icons mat-icon {
     margin-left: 10px;
   }
@@ -182,4 +189,7 @@
   }
   .night-icon {
     color: #FEA501
+  }
+  .allday-icon {
+    color: #B76ABF
   }
