@@ -1,22 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatList, MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-add-event-dialog',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    NgIf,
-    MatSelectModule,
-    MatOptionModule,
-    MatRadioModule,
-    CommonModule,
-    MatListModule
-  ],
   templateUrl: './add-event-dialog.component.html',
   styleUrl: './add-event-dialog.component.scss'
 })

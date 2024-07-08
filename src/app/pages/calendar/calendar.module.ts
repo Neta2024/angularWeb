@@ -4,8 +4,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { CalendarComponent } from './calendar.component';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
+import { MaterialModule } from 'src/app/shared/material.module';
 
 @NgModule({
   imports: [
@@ -21,8 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
           component: CalendarComponent,
       }
     ]),
-    MatDialogModule,
-    MatIconModule
+    MaterialModule
   ],
   declarations: [CalendarComponent, AddEventDialogComponent]
 })

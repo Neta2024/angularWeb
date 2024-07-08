@@ -3,7 +3,8 @@ import { CalendarOptions, EventInput, EventContentArg } from '@fullcalendar/core
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
+import { ez } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-calendar',
@@ -58,13 +59,13 @@ export class CalendarComponent implements OnInit {
 
   loadEvents() {
     this.events = [
-      { title: 'Event 1', date: '2024-07-25', color: 'blue' },
-      { title: 'Event 2', date: '2024-07-28', color: 'green' },
-      { title: 'Event 3', date: '2024-07-20', color: 'red' },
-      { title: 'Event 4', date: '2024-07-26', color: 'orange'},
-      { title: 'Event 5', date: '2024-07-21', color: 'purple'},
-      { title: 'Event 6', date: '2024-07-21', color: 'orange'},
-      { title: 'Event 7', date: '2024-07-21', color: 'green'}
+      { title: 'Event 1', date: '2024-07-25', color: 'blue', id: '1' },
+      { title: 'Event 2', date: '2024-07-28', color: 'green', id: '2' },
+      { title: 'Event 3', date: '2024-07-20', color: 'red', id: '3' },
+      { title: 'Event 4', date: '2024-07-26', color: 'orange', id: '4' },
+      { title: 'Event 5', date: '2024-07-21', color: 'purple', id: '5' },
+      { title: 'Event 6', date: '2024-07-21', color: 'orange', id: '6'},
+      { title: 'Event 7', date: '2024-07-21', color: 'green', id: '7' }
     ];
   
     this.calendarOptions = {
@@ -118,6 +119,7 @@ export class CalendarComponent implements OnInit {
 
     const duplicateButton = document.createElement('button');
     duplicateButton.innerHTML = 'Duplicate';
+    duplicateButton.addEventListener('click', () => this.duplicateEvent(arg.event.id));
 
     const arrayOfDomNodes = [ 
       document.createElement('div'),
@@ -130,14 +132,19 @@ export class CalendarComponent implements OnInit {
     return { domNodes: arrayOfDomNodes };
   }
 
+  duplicateEvent(event: string): any {
+    console.log(event);
+  }
+
   deleteEvent(eventId: string) {
-    this.events = this.events.filter(event => event.id !== eventId);
-    this.calendarOptions = {
-      ...this.calendarOptions,
-      events: [...this.events],
-    };
-    this.updateCalendar();
-    this.cdr.detectChanges();
-    console.log('Event deleted. Updated events:', this.events);
+    console.log(eventId);
+    // this.events = this.events.filter(event => event.id !== eventId);
+    // this.calendarOptions = {
+    //   ...this.calendarOptions,
+    //   events: [...this.events],
+    // };
+    // this.updateCalendar();
+    // this.cdr.detectChanges();
+    //console.log('Event deleted. Updated events:', this.events);
   }
 }
