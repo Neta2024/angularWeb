@@ -31,8 +31,6 @@ export class DashboardComponent implements OnInit {
     this.restApi.get('dashboard/today-leave', yearRequest).subscribe((response: any) => {
 
       console.log(response);
-
-<<<<<<< Updated upstream
       const fullName = response[0].fullName;
       const leaveType = response[0].leaveType;
       const period = response[0].period;
@@ -44,28 +42,10 @@ export class DashboardComponent implements OnInit {
         colorClass = 'icon-color2';
       } else if (response.leaveType === 'Personal Leave') {
         colorClass = 'icon-color3';
-=======
-      this.todayLeaves = [];
-
-      response.forEach((todayLeave: any) => {
-      const fullName = todayLeave['fullName'];
-      const leaveType = todayLeave['leaveType'];
-      const period = todayLeave['period'];
-
-      let color = 'icon-color-default';
-      if (leaveType === 'vacation') {
-        color = 'icon-color1';
-      } else if (leaveType === 'sick') {
-        color = 'icon-color2';
-      } else if (leaveType === 'personal') {
-        color = 'icon-color3';
->>>>>>> Stashed changes
       }
 
       let icon = 'beach_access';
-      if (leaveType === 'vacation') {
-        icon = 'beach_access';
-      } else if (leaveType === 'sick') {
+      if (leaveType === 'sick') {
         icon = 'medical_services';
       } else if (leaveType === 'personal') {
         icon = 'person';
@@ -81,17 +61,17 @@ export class DashboardComponent implements OnInit {
       }
 
       this.todayLeaves.push({
-        name: fullName,
-        type: typeText,
-        icon: icon,
-        period: period,
-        colorClass: color
+          name: fullName,
+          type: typeText,
+          icon: icon,
+          period: period,
+          colorClass: colorClass
+        });
       });
-    });
 
       console.log('this.todayLeaves:', this.todayLeaves);
-    }
-  )
+  }
+  
     // const mockLeaves = [
     //   { name: 'Will Smith', date: '2024-06-26', type: 'Vacation', icon: 'beach_access', period: 'both', colorClass: 'icon-color1'  },
     //   { name: 'Thor Odinson', date: '2024-06-26', type: 'Personal Leave', icon: 'person', period: 'day', colorClass: 'icon-color3' },
@@ -101,11 +81,11 @@ export class DashboardComponent implements OnInit {
 
     // const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
     // this.todayLeaves = mockLeaves.filter(leave => leave.date === today);
-  }
+  //}
 
   getRemainingLeaves(): void {
-    const yearRequest = { year: parseInt(this.selectedYear, 10) };
-    this.restApi.post('dashboard/summary-leave', yearRequest).subscribe((response: any) => {
+      const yearRequest = { year: parseInt(this.selectedYear, 10) };
+      this.restApi.post('dashboard/summary-leave', yearRequest).subscribe((response: any) => {
       
       const usedVacationLeave = response.used['Used Vacation leave'] || 0;
       const usedSickLeave = response.used['Used Sick leave'] || 0;
