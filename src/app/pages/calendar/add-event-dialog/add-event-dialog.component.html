@@ -3,9 +3,14 @@
   <form (ngSubmit)="onAdd()">
     <div class="view-dropdown">
       <mat-label>Date: </mat-label>
-      <mat-form-field>
+      <mat-form-field appearance="fill">
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" name="eventDate" [(ngModel)]="eventDate" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>      
+      <!-- <mat-form-field>
         <input matInput placeholder="Event Date" [(ngModel)]="eventDate" name="eventDate" type="date" required>
-      </mat-form-field>
+      </mat-form-field> -->
     </div>
     <div class="view-dropdown">
       <mat-label>Project: </mat-label>
