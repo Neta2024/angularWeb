@@ -1,10 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CalendarOptions, EventInput, EventContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ez } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-calendar',
@@ -138,13 +136,13 @@ export class CalendarComponent implements OnInit {
 
   deleteEvent(eventId: string) {
     console.log(eventId);
-    // this.events = this.events.filter(event => event.id !== eventId);
-    // this.calendarOptions = {
-    //   ...this.calendarOptions,
-    //   events: [...this.events],
-    // };
-    // this.updateCalendar();
-    // this.cdr.detectChanges();
-    //console.log('Event deleted. Updated events:', this.events);
+    this.events = this.events.filter(event => event.id !== eventId);
+    this.calendarOptions = {
+      ...this.calendarOptions,
+      events: [...this.events],
+    };
+    this.updateCalendar();
+    this.cdr.detectChanges();
+    console.log('Event deleted. Updated events:', this.events);
   }
 }

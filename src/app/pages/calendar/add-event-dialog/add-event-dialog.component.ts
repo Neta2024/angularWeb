@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -17,13 +17,25 @@ export class AddEventDialogComponent {
   // suggestedProjects: string[] = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5'];
   suggestedTasks: { name: string }[] = [];
 
-  constructor(public modal: NgbActiveModal) {}
+  constructor(public modal: NgbActiveModal, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.eventDate = new Date() as Date;
+
+    this.suggestProjects();
+    this.suggestTasks();
+  }
 
   onCancel(): void {
-    
+    this.modal.dismiss();
   }
 
   onAdd(): void {
+    if (!(this.eventDate instanceof Date)) {
+      console.error('Error: eventDate is not a Date object.');
+      return;
+    }
+
     const periodText = this.getPeriodText(this.selectedPeriod);
     const title = `${this.selectedProject} - ${this.selectedTask} - ${periodText}`;
 
@@ -37,15 +49,9 @@ export class AddEventDialogComponent {
 
     console.log('Event Date:', this.eventDate); // Add this to check eventDate before assigning to newEvent
 
-    //this.dialogRef.close(newEvent);
+    this.modal.close(newEvent);
+    this.cdr.detectChanges();
   }
-
-  // formatDate(date: Date): string {
-  //   const year = date.getFullYear();
-  //   const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero based
-  //   const day = ('0' + date.getDate()).slice(-2);
-  //   return `${year}-${month}-${day}`;
-  // }
 
   getPeriodText(period: string): string {
     switch (period) {
