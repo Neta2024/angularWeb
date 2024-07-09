@@ -91,9 +91,13 @@ export class CalendarComponent implements OnInit {
         console.log('Event added:', result);
 
         const newEvent: EventInput = {
+          id: result.id,
           title: result.title,
           date: result.date,
-          color: 'blue' // Default color if not provided
+          color: result.color
+          // title: result.title,
+          // date: result.date,
+          // color: 'blue' // Default color if not provided
         };
 
         this.events = [...this.events, newEvent];
@@ -106,6 +110,7 @@ export class CalendarComponent implements OnInit {
         console.log('Updated events:', this.events);
         console.log('Updated calendar options:', this.calendarOptions);
         this.updateCalendar();
+        this.cdr.detectChanges();
       }
     });
   }

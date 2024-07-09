@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -17,13 +17,10 @@ export class AddEventDialogComponent {
   // suggestedProjects: string[] = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5'];
   suggestedTasks: { name: string }[] = [];
 
-  constructor(public modal: NgbActiveModal, private cdr: ChangeDetectorRef) {}
+  constructor(public modal: NgbActiveModal) {}
 
   ngOnInit(): void {
     this.eventDate = new Date() as Date;
-
-    this.suggestProjects();
-    this.suggestTasks();
   }
 
   onCancel(): void {
@@ -39,18 +36,27 @@ export class AddEventDialogComponent {
     const periodText = this.getPeriodText(this.selectedPeriod);
     const title = `${this.selectedProject} - ${this.selectedTask} - ${periodText}`;
 
+    const eventDateString = this.formatDate(this.eventDate);
+    const id = Math.random().toString(36).substr(2, 10);
+
     const newEvent = {
       title,
-      date: this.eventDate.toISOString().slice(0, 10),
-      project: this.selectedProject,
-      task: this.selectedTask,
-      period: this.selectedPeriod
-    };
+      date: eventDateString,
+      color: 'blue',
+      id
+    }
 
     console.log('Event Date:', this.eventDate); // Add this to check eventDate before assigning to newEvent
+    console.log('New Event:', newEvent);
 
     this.modal.close(newEvent);
-    this.cdr.detectChanges();
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() is zero-based
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
 
   getPeriodText(period: string): string {
