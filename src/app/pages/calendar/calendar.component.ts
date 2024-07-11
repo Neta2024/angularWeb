@@ -3,6 +3,7 @@ import { CalendarOptions, EventInput, EventContentArg } from '@fullcalendar/core
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { RestApi } from 'src/app/shared/rest-api';
 
 @Component({
   selector: 'app-calendar',
@@ -31,7 +32,11 @@ export class CalendarComponent implements OnInit {
   selectedMonth: number;
   events: EventInput[] = [];
   
-  constructor(public dialog: MatDialog, private cdr: ChangeDetectorRef) { 
+  constructor(
+    public dialog: MatDialog,
+    private restApi: RestApi,
+    private cdr: ChangeDetectorRef
+  ) { 
     const currentYear = new Date().getFullYear();
     for (let i = currentYear - 10; i <= currentYear; i++) {
       this.years.push(i);
@@ -51,25 +56,68 @@ export class CalendarComponent implements OnInit {
       plugins: [dayGridPlugin],
       initialDate: new Date(this.selectedYear, this.selectedMonth, 1),
       events: this.events,
+      eventClick: this.handleEventClick.bind(this),
       eventContent: this.renderEventContent.bind(this)
     }
   }
 
-  loadEvents() {
-    this.events = [
-      { title: 'Event 1', date: '2024-07-25', color: 'blue', id: '1' },
-      { title: 'Event 2', date: '2024-07-28', color: 'green', id: '2' },
-      { title: 'Event 3', date: '2024-07-20', color: 'red', id: '3' },
-      { title: 'Event 4', date: '2024-07-26', color: 'orange', id: '4' },
-      { title: 'Event 5', date: '2024-07-21', color: 'purple', id: '5' },
-      { title: 'Event 6', date: '2024-07-21', color: 'orange', id: '6'},
-      { title: 'Event 7', date: '2024-07-21', color: 'green', id: '7' }
-    ];
-  
-    this.calendarOptions = {
-      ...this.calendarOptions,
-      events: this.events
+  getColor(projectName: string): string {
+    const colors: { [key: string]: string } = {
+      'Project Alpha': 'blue',
+      'Project Beta': 'green',
+      'DMS on Cloud-Alfresco': 'orange'
     };
+
+    return colors[projectName] || 'grey';
+  }
+
+  convertDate(dateString: string): string {
+    const [day, month, year] = dateString.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+  loadEvents() {
+    projectName: String;
+
+    const request = {
+
+    }
+
+    this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
+      console.log(response);
+      if (response) {
+        this.events = response.map((timesheet: any) => ({
+          title: `${timesheet.projectName} - ${timesheet.taskName}`,
+          date: this.convertDate(timesheet.date),
+          color: this.getColor(timesheet.projectName),
+          id: timesheet.tsid
+        }));
+      }
+
+      console.log(this.events);
+    
+      this.calendarOptions = {
+        ...this.calendarOptions,
+        events: this.events
+      };
+    },
+    (error) => {
+      console.error('An error occurred:', error);
+    });
+    // this.events = [
+    //   { title: 'Event 1', date: '2024-07-25', color: 'blue', id: '1' },
+    //   { title: 'Event 2', date: '2024-07-28', color: 'green', id: '2' },
+    //   { title: 'Event 3', date: '2024-07-20', color: 'red', id: '3' },
+    //   { title: 'Event 4', date: '2024-07-26', color: 'orange', id: '4' },
+    //   { title: 'Event 5', date: '2024-07-21', color: 'purple', id: '5' },
+    //   { title: 'Event 6', date: '2024-07-21', color: 'orange', id: '6'},
+    //   { title: 'Event 7', date: '2024-07-21', color: 'green', id: '7' }
+    // ];
+  
+    // this.calendarOptions = {
+    //   ...this.calendarOptions,
+    //   events: this.events
+    // };
   }
 
   updateCalendar() {
@@ -91,14 +139,41 @@ export class CalendarComponent implements OnInit {
         console.log('Event added:', result);
 
         const newEvent: EventInput = {
-          id: result.id,
           title: result.title,
           date: result.date,
-          color: result.color
+          color: result.color || 'blue'
           // title: result.title,
           // date: result.date,
           // color: 'blue' // Default color if not provided
         };
+
+        console.log(newEvent);
+
+        const payload = {
+          dateList: [newEvent.date], // 根據需要調整日期列表
+          projectName: result.projectName,
+          taskName: result.taskName,
+          period: result.period
+        };
+
+        console.log(payload.dateList);
+        console.log(payload);
+        this.restApi.post('/timesheets/add', payload).subscribe(response => {
+          console.log('Event added to backend:', response);
+
+          this.events = [...this.events, newEvent];
+          this.calendarOptions = {
+            ...this.calendarOptions,
+            events: [...this.events]
+          };
+
+          console.log('Updated events:', this.events);
+          console.log('Updated calendar options:', this.calendarOptions);
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        }, error => {
+          console.error('Error adding event to backend:', error);
+        });
 
         this.events = [...this.events, newEvent];
         this.calendarOptions = {
@@ -133,6 +208,35 @@ export class CalendarComponent implements OnInit {
     arrayOfDomNodes[0].innerHTML = arg.event.title;
 
     return { domNodes: arrayOfDomNodes };
+  }
+
+  handleEventClick(arg: any): void {
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      data: {
+        event: arg.event
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Event edited:', result);
+
+        const editedEventIndex = this.events.findIndex(event => event.id === result.id);
+        if (editedEventIndex !== -1) {
+          this.events[editedEventIndex] = result;
+        }
+
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: [...this.events]
+        };
+
+        console.log('Updated events:', this.events);
+        console.log('Updated calendar options:', this.calendarOptions);
+        this.updateCalendar();
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   duplicateEvent(event: string): any {
