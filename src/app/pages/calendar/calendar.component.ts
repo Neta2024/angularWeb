@@ -47,6 +47,10 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.initializeCalendarOptions();
+
+    console.log('Initial selected year:', this.selectedYear); // Debugging log
+    console.log('Initial selected month:', this.selectedMonth);
+
     this.loadEvents(this.selectedYear, this.selectedMonth);
   }
 
@@ -84,7 +88,7 @@ export class CalendarComponent implements OnInit {
       taskName: '',
       period: '',
       year: year,
-      month: month
+      month: month + 1
     };
 
     this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
@@ -96,6 +100,8 @@ export class CalendarComponent implements OnInit {
           color: this.getColor(timesheet.projectName),
           id: timesheet.tsid
         }));
+      } else {
+        this.events = [];
       }
 
       console.log(this.events);
