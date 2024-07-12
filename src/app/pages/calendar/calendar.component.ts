@@ -47,7 +47,11 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.initializeCalendarOptions();
-    this.loadEvents();
+
+    console.log('Initial selected year:', this.selectedYear); // Debugging log
+    console.log('Initial selected month:', this.selectedMonth);
+
+    this.loadEvents(this.selectedYear, this.selectedMonth);
   }
 
   initializeCalendarOptions() {
@@ -76,12 +80,16 @@ export class CalendarComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  loadEvents() {
-    projectName: String;
-
+  loadEvents(year: number, month: number) {
     const request = {
-
-    }
+      id: 0,
+      dateList: [{}],
+      projectName: '',
+      taskName: '',
+      period: '',
+      year: year,
+      month: month + 1
+    };
 
     this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
       console.log(response);
@@ -92,6 +100,8 @@ export class CalendarComponent implements OnInit {
           color: this.getColor(timesheet.projectName),
           id: timesheet.tsid
         }));
+      } else {
+        this.events = [];
       }
 
       console.log(this.events);
@@ -104,23 +114,11 @@ export class CalendarComponent implements OnInit {
     (error) => {
       console.error('An error occurred:', error);
     });
-    // this.events = [
-    //   { title: 'Event 1', date: '2024-07-25', color: 'blue', id: '1' },
-    //   { title: 'Event 2', date: '2024-07-28', color: 'green', id: '2' },
-    //   { title: 'Event 3', date: '2024-07-20', color: 'red', id: '3' },
-    //   { title: 'Event 4', date: '2024-07-26', color: 'orange', id: '4' },
-    //   { title: 'Event 5', date: '2024-07-21', color: 'purple', id: '5' },
-    //   { title: 'Event 6', date: '2024-07-21', color: 'orange', id: '6'},
-    //   { title: 'Event 7', date: '2024-07-21', color: 'green', id: '7' }
-    // ];
-  
-    // this.calendarOptions = {
-    //   ...this.calendarOptions,
-    //   events: this.events
-    // };
   }
 
   updateCalendar() {
+    this.loadEvents(this.selectedYear, this.selectedMonth);
+
     this.calendarVisible = false;
     setTimeout(() => {
       this.calendarOptions = {
