@@ -131,6 +131,8 @@ export class CalendarComponent implements OnInit {
   }
 
   updateCalendar() {
+    this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
+
     this.loadEvents(this.selectedYear, this.selectedMonth);
 
     this.calendarVisible = false;
