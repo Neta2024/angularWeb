@@ -10,7 +10,7 @@ import { RestApi } from 'src/app/shared/rest-api';
 })
 export class AddEventDialogComponent {
   @Input() date: Date;
-  eventDate: Date = new Date();
+  eventDate: Date;
   selectedProject: string;
   selectedTask: string;
   selectedPeriod: string;
@@ -24,6 +24,7 @@ export class AddEventDialogComponent {
   constructor(private restApi: RestApi, public dialogRef: MatDialogRef<AddEventDialogComponent>) {}
 
   ngOnInit(): void {
+    console.log('Received date in dialog:', this.date)
     this.eventDate = new Date() as Date;
     this.fetchProjects();
     this.fetchTasks();
