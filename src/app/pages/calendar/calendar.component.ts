@@ -11,6 +11,7 @@ import { RestApi } from 'src/app/shared/rest-api';
   styleUrls: ['./calendar.component.css']
 })
 export class CalendarComponent implements OnInit {
+  clickedDate: string;
   calendarOptions: CalendarOptions;
   calendarVisible = true;
   years: number[] = [];
@@ -51,6 +52,11 @@ export class CalendarComponent implements OnInit {
     console.log('Initial selected year:', this.selectedYear); // Debugging log
     console.log('Initial selected month:', this.selectedMonth);
 
+    this.selectedMonth = new Date().getMonth();
+
+    console.log('Initial selected year:', this.selectedYear); // Debugging log
+    console.log('Initial selected month:', this.selectedMonth);
+
     this.loadEvents(this.selectedYear, this.selectedMonth);
   }
 
@@ -81,6 +87,10 @@ export class CalendarComponent implements OnInit {
   }
 
   loadEvents(year: number, month: number) {
+    console.log('Selected month type:', typeof this.selectedMonth);
+    console.log('Selected month value:', this.selectedMonth);
+
+    const numericMonth = this.selectedMonth + 1;
     const request = {
       id: 0,
       dateList: [{}],
@@ -88,9 +98,13 @@ export class CalendarComponent implements OnInit {
       taskName: '',
       period: '',
       year: year,
-      month: month + 1
+      month: numericMonth
     };
 
+    console.log(typeof month);
+
+    console.log(request);
+    
     this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
       console.log(response);
       if (response) {
@@ -129,7 +143,12 @@ export class CalendarComponent implements OnInit {
     })
   }
 
-  openAddEventDialog(): void {
+  openAddEventDialog(date: string = null): void {
+    if (date) {
+      this.clickedDate = date; // Set clickedDate to the date passed from cell click
+    } else {
+      this.clickedDate = new Date().toISOString().split('T')[0]; // Set clickedDate to today's date
+    }
     const dialogRef = this.dialog.open(AddEventDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -140,15 +159,12 @@ export class CalendarComponent implements OnInit {
           title: result.title,
           date: result.date,
           color: result.color || 'blue'
-          // title: result.title,
-          // date: result.date,
-          // color: 'blue' // Default color if not provided
         };
 
         console.log(newEvent);
 
         const payload = {
-          dateList: [newEvent.date], // 根據需要調整日期列表
+          dateList: [newEvent.date],
           projectName: result.projectName,
           taskName: result.taskName,
           period: result.period
@@ -191,6 +207,7 @@ export class CalendarComponent implements OnInit {
   renderEventContent(arg: EventContentArg) {
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<mat-icon>delete</mat-icon>';
+    deleteButton.classList.add('btn-delete');
     deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
     const duplicateButton = document.createElement('button');
@@ -237,19 +254,51 @@ export class CalendarComponent implements OnInit {
     });
   }
 
+  handleDateClick(arg: any) {
+    const clickedDate = arg.dateStr; // Get the clicked date as a string
+    // Check if the clicked date already has an event
+    const hasEvent = this.events.some(event => event.date === clickedDate);
+    
+    if (!hasEvent) {
+      this.clickedDate = clickedDate;
+      this.openAddEventDialog(this.clickedDate);
+    }
+  }
+
   duplicateEvent(event: string): any {
     console.log(event);
   }
 
   deleteEvent(eventId: string) {
     console.log(eventId);
-    this.events = this.events.filter(event => event.id !== eventId);
-    this.calendarOptions = {
-      ...this.calendarOptions,
-      events: [...this.events],
-    };
-    this.updateCalendar();
-    this.cdr.detectChanges();
-    console.log('Event deleted. Updated events:', this.events);
+
+    this.restApi.delete(`/timesheets/delete/${eventId}`).subscribe(
+      () => {
+        console.log('Event deleted successfully from the backend.');
+  
+        // Remove the event from the local events array
+        this.events = this.events.filter(event => event.id !== eventId);
+
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: [...this.events],
+        };
+
+        this.updateCalendar();
+      },
+      error => {
+        console.error('Error deleting event from the backend:', error);
+      }
+
+  //   this.events = this.events.filter(event => event.id !== eventId);
+  //   this.calendarOptions = {
+  //     ...this.calendarOptions,
+  //     events: [...this.events],
+  //   };
+  //   this.updateCalendar();
+  //   this.cdr.detectChanges();
+  //   console.log('Event deleted. Updated events:', this.events);
+  // }
+    );
   }
 }
