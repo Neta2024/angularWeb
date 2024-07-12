@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RestApi } from 'src/app/shared/rest-api';
+import interactiionPlugin from '@fullcalendar/interaction';
 
 @Component({
   selector: 'app-calendar',
@@ -63,11 +64,12 @@ export class CalendarComponent implements OnInit {
   initializeCalendarOptions() {
     this.calendarOptions = {
       initialView: 'dayGridMonth',
-      plugins: [dayGridPlugin],
+      plugins: [dayGridPlugin, interactiionPlugin],
       initialDate: new Date(this.selectedYear, this.selectedMonth, 1),
       events: this.events,
       eventClick: this.handleEventClick.bind(this),
-      eventContent: this.renderEventContent.bind(this)
+      eventContent: this.renderEventContent.bind(this),
+      dateClick: this.handleDateClick.bind(this) 
     }
   }
 
@@ -146,12 +148,16 @@ export class CalendarComponent implements OnInit {
   }
 
   openAddEventDialog(date: string = null): void {
-    if (date) {
-      this.clickedDate = date; // Set clickedDate to the date passed from cell click
+    if (!date) {
+      this.clickedDate = new Date().toISOString().split('T')[0]; // Set clickedDate to today's date if date is null
     } else {
-      this.clickedDate = new Date().toISOString().split('T')[0]; // Set clickedDate to today's date
+      this.clickedDate = date; // Set clickedDate to the date passed from cell click
     }
-    const dialogRef = this.dialog.open(AddEventDialogComponent);
+    
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      data: { date } // Pass the date as data to the dialog component
+    });
+    // const dialogRef = this.dialog.open(AddEventDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -256,13 +262,18 @@ export class CalendarComponent implements OnInit {
     });
   }
 
+  // handleDateClick(arg: any) {
+  //   alert('date click! ' + arg.dateStr)
+  // }
   handleDateClick(arg: any) {
+    console.log('Clicked date:', arg.dateStr);
     const clickedDate = arg.dateStr; // Get the clicked date as a string
     // Check if the clicked date already has an event
     const hasEvent = this.events.some(event => event.date === clickedDate);
     
     if (!hasEvent) {
       this.clickedDate = clickedDate;
+      console.log('Opening dialog for date:', this.clickedDate);
       this.openAddEventDialog(this.clickedDate);
     }
   }
