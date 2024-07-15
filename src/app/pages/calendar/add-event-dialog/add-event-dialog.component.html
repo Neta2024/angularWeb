@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ isEditMode ? 'Edit Event': 'Add New Event'}}</h1>
 <!-- <h1 mat-dialog-title>Add New Event</h1> -->
 <div mat-dialog-content>
-  <form (ngSubmit)="onAdd()">
+  <form (ngSubmit)="isEditMode ? onSave() : onAdd()">
     <div class="view-dropdown">
       <mat-label>Date: </mat-label>
       <mat-form-field appearance="fill">
@@ -68,7 +68,10 @@
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onAdd()">{{ isEditMode ? 'Save' : 'Add' }}</button>
+  <button mat-button *ngIf="isEditMode; else addMode" (click)="onSave()">Save</button>
+  <ng-template #addMode>
+    <button mat-button (click)="onAdd()">Add</button>
+  </ng-template>
+  <!-- <button mat-button (click)="onAdd()">{{ isEditMode ? 'Save' : 'Add' }}</button> -->
   <!-- <button mat-button (click)="onAdd()">Add</button> -->
-
 </div>

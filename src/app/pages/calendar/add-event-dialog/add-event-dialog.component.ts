@@ -22,13 +22,33 @@ export class AddEventDialogComponent {
   suggestedTasks: { name: string }[] = [];
 
   isEditMode: boolean;
+  event: any;
 
   constructor(private restApi: RestApi,
     public dialogRef: MatDialogRef<AddEventDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    console.log('Data received in dialog:', data);
+
     this.date = data.date;
     this.isEditMode = !!data.event;
+
+    if (this.isEditMode) {
+      console.log('Edit mode data:', data.event);
+      this.eventDate = data.event.startStr;
+      this.selectedProject = data.event.extendedProps['projectName'];
+      this.selectedTask = data.event.extendedProps['taskName'];
+      this.selectedPeriod = data.event.extendedProps['period'];
+    }
+
+    console.log('Processed data in dialog:', {
+      eventDate: this.eventDate,
+      selectedProject: this.selectedProject,
+      selectedTask: this.selectedTask,
+      selectedPeriod: this.selectedPeriod
+    });
+
+    this.event = data.event;
   }
 
   ngOnInit(): void {
@@ -161,5 +181,24 @@ export class AddEventDialogComponent {
 
   selectTask(taskName: string) {
     this.selectedTask = taskName;
+  }
+
+  onSave(): void {
+    console.log('Edit mode save action');
+    this.event.title = `${this.selectedProject} - ${this.selectedTask} - ${this.getPeriodText(this.selectedPeriod)}`;
+    this.event.projectName = this.selectedProject;
+    this.event.taskName = this.selectedTask;
+    this.event.date = this.formatDate(this.eventDate);
+    this.event.period = this.selectedPeriod;
+  
+    this.event.extendedProps = {
+      projectName: this.selectedProject,
+      taskName: this.selectedTask,
+      period: this.selectedPeriod
+    };
+    
+    console.log('Event data to save:', this.event);
+
+    this.dialogRef.close(this.event);
   }
 }
