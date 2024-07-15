@@ -116,7 +116,10 @@ export class CalendarComponent implements OnInit {
           title: `${timesheet.projectName} - ${timesheet.taskName}`,
           date: this.convertDate(timesheet.date),
           color: this.getColor(timesheet.projectName),
-          id: timesheet.tsid
+          id: timesheet.tsid,
+          taskName: timesheet.taskName,
+          projectName: timesheet.projectName,
+          period: timesheet.period
         }));
       } else {
         this.events = [];
@@ -157,7 +160,7 @@ export class CalendarComponent implements OnInit {
     }
     
     const dialogRef = this.dialog.open(AddEventDialogComponent, {
-      data: { date } // Pass the date as data to the dialog component
+      data: { date: this.clickedDate } // Pass the date as data to the dialog component
     });
     // const dialogRef = this.dialog.open(AddEventDialogComponent);
 
@@ -165,9 +168,11 @@ export class CalendarComponent implements OnInit {
       if (result) {
         console.log('Event added:', result);
 
+        const eventDate = result.date instanceof Date ? result.date.toISOString().split('T')[0] : result.date;
+
         const newEvent: EventInput = {
           title: result.title,
-          date: result.date,
+          date: eventDate,
           color: result.color || 'blue'
         };
 
@@ -180,6 +185,7 @@ export class CalendarComponent implements OnInit {
           period: result.period
         };
 
+        console.log('Payload before sending:', payload);
         console.log(payload.dateList);
         console.log(payload);
         this.restApi.post('/timesheets/add', payload).subscribe(response => {
@@ -215,30 +221,164 @@ export class CalendarComponent implements OnInit {
   }
 
   openEditEventDialog(event: EventApi): void {
+    console.log('Event data to edit:', event);
+
+    let periodValue: string;
+    switch (event.extendedProps['period']) {
+      case 'A':
+        periodValue = '1';
+        break;
+      case 'M':
+        periodValue = '2';
+        break;
+      case 'N':
+        periodValue = '3';
+        break;
+      default:
+        periodValue = event.extendedProps['period']; // fallback if no match
+        break;
+    }
+
+    const eventData = {
+      title: event.title,
+      date: event.startStr,
+      extendedProps: {
+        projectName: event.extendedProps['projectName'],
+        taskName: event.extendedProps['taskName'],
+        period: periodValue
+      }
+    };
+  
+    console.log('Data passed to dialog:', eventData);
+
     const dialogRef = this.dialog.open(AddEventDialogComponent, {
-      width: '400px',
-      data: { event: event }
+      data: { event: eventData }
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Update the event in the calendar
-        event.setProp('title', result.title);
-        event.setStart(result.date);
-        event.setEnd(result.date); // Assuming single-day events
+        console.log('Event edited:', result);
+
+        const periodMap: { [key: string]: string } = {
+          '1': 'A', // All
+          '2': 'M', // Morning
+          '3': 'N'  // Afternoon
+        };
+  
+        const updatedEvent: EventInput = {
+          id: event.id, // Ensure to pass the ID of the event being edited
+          title: result.title,
+          date: result.date,
+          color: 'blue' // Keep the color or assign a new value if needed
+        };
+  
+        console.log(updatedEvent);
+  
+        const periodLetter = periodMap[result.period];
+
+        const payload = {
+          id: event.id, // Pass the ID of the event being edited
+          dateList: [updatedEvent.date],
+          projectName: result.projectName,
+          taskName: result.taskName,
+          period: periodLetter
+        };
+  
+        console.log(payload.dateList);
+        console.log(payload);
+  
+        this.restApi.put('/timesheets/update', payload).subscribe(response => {
+          console.log('Event updated in backend:', response);
+  
+          // Optionally update the events array if needed
+          const updatedEvents = this.events.map(e => {
+            if (e.id === event.id) {
+              return updatedEvent;
+            } else {
+              return e;
+            }
+          });
+  
+          this.events = updatedEvents;
+          this.calendarOptions = {
+            ...this.calendarOptions,
+            events: updatedEvents
+          };
+  
+          console.log('Updated events:', this.events);
+          console.log('Updated calendar options:', this.calendarOptions);
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        }, error => {
+          console.error('Error updating event in backend:', error);
+        });
       }
     });
+    // dialogRef.afterClosed().subscribe(updatedEvent => {
+    //   if (updatedEvent) {
+    //     console.log('Updated event data from dialog:', updatedEvent);
+    //     // Update your calendar's event data or trigger API calls here
+    //   }
+    // });
+    // dialogRef.afterClosed().subscribe(result => {
+    //   if (result) {
+    //     event.setProp('title', result.title);
+    //     event.setStart(result.date);
+    //     event.setEnd(result.date);
+  
+    //     event.setExtendedProp('projectName', result.projectName);
+    //     event.setExtendedProp('taskName', result.taskName);
+    //     event.setExtendedProp('period', result.period);
+    //   }
+    // });
   }
 
   renderEventContent(arg: EventContentArg) {
+    const deleteButtonContainer = document.createElement('div');
+    deleteButtonContainer.classList.add('delete-button-container');
+
     const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = '<mat-icon>delete</mat-icon>';
     deleteButton.classList.add('btn-delete');
-    deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
+    const deleteIcon = document.createElement('img');
+    deleteIcon.src = 'assets/icons/trash.png';
+    deleteIcon.alt = 'Delete';
+    deleteIcon.style.width = '16px'; // Adjust width as needed
+    deleteIcon.style.height = '16px'; // Adjust height as needed
+
+    deleteButton.appendChild(deleteIcon);
+    deleteButton.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent event propagation to parent elements
+      this.deleteEvent(arg.event.id);
+    });
+    // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
+
+    deleteButtonContainer.appendChild(deleteButton);
+
+    //////////////////////////////////////////////////////////////////////
+
+    const duplicateButtonContainer = document.createElement('div');
+    duplicateButtonContainer.classList.add('duplicate-button-container');
 
     const duplicateButton = document.createElement('button');
-    duplicateButton.innerHTML = 'Duplicate';
-    duplicateButton.addEventListener('click', () => this.duplicateEvent(arg.event.id));
+    duplicateButton.classList.add('btn-duplicate');
+    const duplicateIcon = document.createElement('img');
+    duplicateIcon.src = 'assets/icons/copy.png';
+    duplicateIcon.alt = 'Duplicate';
+    duplicateIcon.style.width = '16px'; // Adjust width as needed
+    duplicateIcon.style.height = '16px'; // Adjust height as needed
+
+    duplicateButton.appendChild(duplicateIcon);
+    duplicateButton.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent event propagation to parent elements
+      this.duplicateEvent(arg.event.id);
+    });
+    // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
+
+    duplicateButtonContainer.appendChild(duplicateButton);
+
+    // const duplicateButton = document.createElement('button');
+    // duplicateButton.innerHTML = 'Duplicate';
+    // duplicateButton.addEventListener('click', () => this.duplicateEvent(arg.event.id));
 
     const arrayOfDomNodes = [ 
       document.createElement('div'),
@@ -252,7 +392,14 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEventClick(clickInfo: EventClickArg): void {
-    this.openEditEventDialog(clickInfo.event);
+    const clickedElement = clickInfo.jsEvent.target as HTMLElement;
+    
+    // Check if the clicked element is the delete button
+    if (clickedElement.classList.contains('btn-delete')) {
+      this.deleteEvent(clickInfo.event.id);
+    } else {
+      this.openEditEventDialog(clickInfo.event);
+    }
   }
 
   handleDateClick(arg: any) {
@@ -274,31 +421,13 @@ export class CalendarComponent implements OnInit {
 
   deleteEvent(eventId: string) {
     const dialogRef = this.dialog.open(DeleteEventDialogComponent, {
-      
+      data: { eventId: [eventId] }  // Pass eventId here
     });
 
-    console.log('Attempting to delete event with ID:', eventId);
-
-    this.restApi.delete(`/timesheets/delete/${eventId}`).subscribe(
-      () => {
-        console.log('Event deleted successfully from the backend.');
-  
-        // Remove the event from the local events array
-        this.events = this.events.filter(event => event.id !== eventId);
-        console.log('Updated events array after deletion:', this.events);
-
-        this.calendarOptions = {
-          ...this.calendarOptions,
-          events: [...this.events],
-        };
-
-        console.log('Updated calendar options after deletion:', this.calendarOptions);
-
-        this.updateCalendar();
-      },
-      error => {
-        console.error('Error deleting event from the backend:', error);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.updateCalendar(); // Call method to update calendar upon successful deletion
       }
-    );
+    });
   }
 }
