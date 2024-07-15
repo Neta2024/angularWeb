@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 // import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RestApi } from 'src/app/shared/rest-api';
 
 @Component({
@@ -21,11 +21,33 @@ export class AddEventDialogComponent {
   // suggestedProjects: string[] = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5'];
   suggestedTasks: { name: string }[] = [];
 
-  constructor(private restApi: RestApi, public dialogRef: MatDialogRef<AddEventDialogComponent>) {}
+  isEditMode: boolean;
+
+  constructor(private restApi: RestApi,
+    public dialogRef: MatDialogRef<AddEventDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.date = data.date;
+    this.isEditMode = !!data.event;
+  }
 
   ngOnInit(): void {
+    console.log('Data passed to dialog: ', this.data);
+    if (this.data && this.data.date) {
+      this.eventDate = new Date(this.data.date);
+    } else {
+      this.eventDate = new Date() as Date;
+    }
+    if (this.isEditMode) {
+      const event = this.data.event;
+      console.log('Event Data: ', event);
+      this.eventDate = new Date(event.date);
+      this.selectedProject = event.extendedProps.projectName;
+      this.selectedTask = event.extendedProps.taskName;
+      this.selectedPeriod = event.extendedProps.period;
+    }
+    console.log(this.eventDate);
     console.log('Received date in dialog:', this.date)
-    this.eventDate = new Date() as Date;
     this.fetchProjects();
     this.fetchTasks();
   }

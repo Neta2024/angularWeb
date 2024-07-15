@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CalendarOptions, EventInput, EventContentArg } from '@fullcalendar/core';
+import { CalendarOptions, EventInput, EventContentArg, EventClickArg, EventApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
+import { DeleteEventDialogComponent } from './delete-event-dialog/delete-event-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RestApi } from 'src/app/shared/rest-api';
 import interactiionPlugin from '@fullcalendar/interaction';
@@ -69,7 +70,8 @@ export class CalendarComponent implements OnInit {
       events: this.events,
       eventClick: this.handleEventClick.bind(this),
       eventContent: this.renderEventContent.bind(this),
-      dateClick: this.handleDateClick.bind(this) 
+      // dateClick: this.handleDateClick.bind(this) ,
+      dateClick: (arg) => this.handleDateClick(arg)
     }
   }
 
@@ -212,6 +214,22 @@ export class CalendarComponent implements OnInit {
     });
   }
 
+  openEditEventDialog(event: EventApi): void {
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      width: '400px',
+      data: { event: event }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update the event in the calendar
+        event.setProp('title', result.title);
+        event.setStart(result.date);
+        event.setEnd(result.date); // Assuming single-day events
+      }
+    });
+  }
+
   renderEventContent(arg: EventContentArg) {
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<mat-icon>delete</mat-icon>';
@@ -233,38 +251,10 @@ export class CalendarComponent implements OnInit {
     return { domNodes: arrayOfDomNodes };
   }
 
-  handleEventClick(arg: any): void {
-    const dialogRef = this.dialog.open(AddEventDialogComponent, {
-      data: {
-        event: arg.event
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Event edited:', result);
-
-        const editedEventIndex = this.events.findIndex(event => event.id === result.id);
-        if (editedEventIndex !== -1) {
-          this.events[editedEventIndex] = result;
-        }
-
-        this.calendarOptions = {
-          ...this.calendarOptions,
-          events: [...this.events]
-        };
-
-        console.log('Updated events:', this.events);
-        console.log('Updated calendar options:', this.calendarOptions);
-        this.updateCalendar();
-        this.cdr.detectChanges();
-      }
-    });
+  handleEventClick(clickInfo: EventClickArg): void {
+    this.openEditEventDialog(clickInfo.event);
   }
 
-  // handleDateClick(arg: any) {
-  //   alert('date click! ' + arg.dateStr)
-  // }
   handleDateClick(arg: any) {
     console.log('Clicked date:', arg.dateStr);
     const clickedDate = arg.dateStr; // Get the clicked date as a string
@@ -283,7 +273,11 @@ export class CalendarComponent implements OnInit {
   }
 
   deleteEvent(eventId: string) {
-    console.log(eventId);
+    const dialogRef = this.dialog.open(DeleteEventDialogComponent, {
+      
+    });
+
+    console.log('Attempting to delete event with ID:', eventId);
 
     this.restApi.delete(`/timesheets/delete/${eventId}`).subscribe(
       () => {
@@ -291,27 +285,20 @@ export class CalendarComponent implements OnInit {
   
         // Remove the event from the local events array
         this.events = this.events.filter(event => event.id !== eventId);
+        console.log('Updated events array after deletion:', this.events);
 
         this.calendarOptions = {
           ...this.calendarOptions,
           events: [...this.events],
         };
 
+        console.log('Updated calendar options after deletion:', this.calendarOptions);
+
         this.updateCalendar();
       },
       error => {
         console.error('Error deleting event from the backend:', error);
       }
-
-  //   this.events = this.events.filter(event => event.id !== eventId);
-  //   this.calendarOptions = {
-  //     ...this.calendarOptions,
-  //     events: [...this.events],
-  //   };
-  //   this.updateCalendar();
-  //   this.cdr.detectChanges();
-  //   console.log('Event deleted. Updated events:', this.events);
-  // }
     );
   }
 }
