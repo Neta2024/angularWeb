@@ -11,6 +11,7 @@ import { LogLevel, IPublicClientApplication, PublicClientApplication, BrowserCac
 import { environment } from 'src/environments/environment';
 import { AuthService } from './pages/authentication/auth.service';
 import { MaterialModule } from './shared/material.module';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 declare const clientId: string;
 declare const authorityId: string;
@@ -80,7 +81,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     SharedModule, 
     MaterialModule,
     BrowserAnimationsModule,
-    MsalModule
+    MsalModule,
+    NgbModule
   ],
   providers: [
     NavigationItem,
@@ -103,7 +105,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
       useFactory: MSALInterceptorConfigFactory
     },
     MsalService,
-    MsalBroadcastService
+    MsalBroadcastService,
+    NgbActiveModal
   ],
   bootstrap: [AppComponent]
 })
