@@ -32,19 +32,6 @@ export class DashboardComponent implements OnInit {
 
       console.log(response);
 
-<<<<<<< Updated upstream
-      const fullName = response[0].fullName;
-      const leaveType = response[0].leaveType;
-      const period = response[0].period;
-
-      let colorClass = 'icon-color-default';
-      if (response.leaveType === 'vacation') {
-        colorClass = 'icon-color1';
-      } else if (response.leaveType === 'Sick Leave') {
-        colorClass = 'icon-color2';
-      } else if (response.leaveType === 'Personal Leave') {
-        colorClass = 'icon-color3';
-=======
       this.todayLeaves = [];
 
       response.forEach((todayLeave: any) => {
@@ -59,7 +46,6 @@ export class DashboardComponent implements OnInit {
         color = 'icon-color2';
       } else if (leaveType === 'personal') {
         color = 'icon-color3';
->>>>>>> Stashed changes
       }
 
       let icon = 'beach_access';
