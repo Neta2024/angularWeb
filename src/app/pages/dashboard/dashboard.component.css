@@ -184,11 +184,14 @@
   .icon-color3 {
     color: #FFD93D
   }
+  .icon-color4 {
+    color: #9370DB
+  }
   .day-icon {
-    color: #FEA501
+    color: #FDC0C5
   }
   .night-icon {
-    color: #FEA501
+    color: #ABB5FF
   }
   .allday-icon {
     color: #B76ABF

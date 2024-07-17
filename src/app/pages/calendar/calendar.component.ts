@@ -167,6 +167,7 @@ export class CalendarComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('Event added:', result);
+        console.log(typeof result.date);
 
         const eventDate = result.date instanceof Date ? result.date.toISOString().split('T')[0] : result.date;
 
@@ -370,7 +371,7 @@ export class CalendarComponent implements OnInit {
     duplicateButton.appendChild(duplicateIcon);
     duplicateButton.addEventListener('click', (event) => {
       event.stopPropagation(); // Prevent event propagation to parent elements
-      this.duplicateEvent(arg.event.id);
+      this.duplicateEvent(arg.event);
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
@@ -408,15 +409,101 @@ export class CalendarComponent implements OnInit {
     // Check if the clicked date already has an event
     const hasEvent = this.events.some(event => event.date === clickedDate);
     
-    if (!hasEvent) {
+    // if (!hasEvent) {
       this.clickedDate = clickedDate;
       console.log('Opening dialog for date:', this.clickedDate);
       this.openAddEventDialog(this.clickedDate);
-    }
+    // }
   }
 
-  duplicateEvent(event: string): any {
-    console.log(event);
+  duplicateEvent(event: EventApi): void {
+    console.log('Event data to duplicate:', event);
+
+    let periodValue: string;
+    switch (event.extendedProps['period']) {
+      case 'A':
+        periodValue = '1';
+        break;
+      case 'M':
+        periodValue = '2';
+        break;
+      case 'N':
+        periodValue = '3';
+        break;
+      default:
+        periodValue = event.extendedProps['period']; // fallback if no match
+        break;
+    }
+
+    const eventData = {
+      title: event.title,
+      date: event.startStr,
+      extendedProps: {
+        projectName: event.extendedProps['projectName'],
+        taskName: event.extendedProps['taskName'],
+        period: periodValue
+      }
+    };
+
+    console.log('Data passed to dialog for duplication:', eventData);
+
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      data: { isDuplicate: true, event: eventData }
+    });
+    
+    const periodMap: { [key: string]: string } = {
+      '1': 'A', // All
+      '2': 'M', // Morning
+      '3': 'N'  // Afternoon
+    };
+
+    // --- call service for adding event here ---
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Event duplicated:', result);
+
+      const duplicatedEvent: EventInput = {
+        id: '', // New event, no ID yet
+        title: result.title,
+        date: result.date,
+        color: 'green', // Assign a different color if needed,
+        period: result.period
+      };
+
+      console.log(duplicatedEvent);
+
+      const periodLetter = periodMap[result.period];
+
+      const payload = {
+        id: '', // New event, no ID
+        dateList: [duplicatedEvent.date],
+        projectName: result.projectName,
+        taskName: result.taskName,
+        period: result.period
+      };
+
+      console.log(payload.dateList);
+      console.log(payload);
+
+        this.restApi.post('timesheets/add', payload).subscribe(response => {
+          console.log('Event created in backend:', response);
+
+          // Optionally update the events array if needed
+          this.events = [...this.events, duplicatedEvent];
+          this.calendarOptions = {
+            ...this.calendarOptions,
+            events: this.events
+          };
+
+          console.log('Updated events:', this.events);
+          console.log('Updated calendar options:', this.calendarOptions);
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        }, error => {
+          console.error('Error creating event in backend:', error);
+        });
+      }
+    })
   }
 
   deleteEvent(eventId: string) {

@@ -46,6 +46,8 @@ export class DashboardComponent implements OnInit {
         color = 'icon-color2';
       } else if (leaveType === 'personal') {
         color = 'icon-color3';
+      } else if (leaveType === 'Other') {
+        color = 'icon-color4'
       }
 
       let icon = 'beach_access';
@@ -55,6 +57,8 @@ export class DashboardComponent implements OnInit {
         icon = 'medical_services';
       } else if (leaveType === 'personal') {
         icon = 'person';
+      } else if (leaveType === 'Other') {
+        icon = 'event-busy'
       }
 
       let typeText = ''
@@ -64,6 +68,8 @@ export class DashboardComponent implements OnInit {
         typeText = 'Sick Leave';
       } else if (leaveType === 'personal') {
         typeText = 'Personal Leave';
+      } else if (leaveType === 'Other') {
+        typeText = 'Other Leave'
       }
 
       this.todayLeaves.push({
