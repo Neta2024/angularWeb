@@ -1,4 +1,5 @@
-<h1 mat-dialog-title>{{ isEditMode ? 'Edit Event': 'Add New Event'}}</h1>
+<h1 mat-dialog-title>{{isEditMode ? 'Edit Event' : isDuplicateMode ? 'Duplicate Event' : 'Add Event'}}</h1>
+<!-- <h1 mat-dialog-title>{{ isDuplicateMode ? 'Duplicate Event' : (isEditMode ? 'Edit Event' : 'Add New Event')}}</h1> -->
 <!-- <h1 mat-dialog-title>Add New Event</h1> -->
 <div mat-dialog-content>
   <form (ngSubmit)="isEditMode ? onSave() : onAdd()">
@@ -14,14 +15,9 @@
       <mat-label>Project: </mat-label>
       <mat-form-field appearance="fill">
         <mat-select [(ngModel)]="selectedProject" name="project">
-          <mat-option *ngFor="let project of projects" [value]="project.project_name">
-            {{ project.project_name }}
+          <mat-option *ngFor="let project of projects" [value]="project.names">
+            {{ project.names }}
           </mat-option>
-          <!-- <mat-option value="Project A">Project A</mat-option>
-          <mat-option value="Project B">Project B</mat-option>
-          <mat-option value="Project C">Project C</mat-option>
-          <mat-option value="Project D">Project D</mat-option>
-          <mat-option value="Project E">Project E</mat-option> -->
         </mat-select>
       </mat-form-field>
       <button mat-raised-button color="primary" type="button" (click)="suggestProjects()">Suggest</button>
@@ -40,11 +36,6 @@
           <mat-option *ngFor="let task of tasks" [value]="task.t_name">
             {{ task.t_name }}
           </mat-option>
-          <!-- <mat-option value="Task A">Task A</mat-option>
-          <mat-option value="Task B">Task B</mat-option>
-          <mat-option value="Task C">Task C</mat-option>
-          <mat-option value="Task D">Task D</mat-option>
-          <mat-option value="Task E">Task E</mat-option> -->
         </mat-select>
       </mat-form-field>
       <button mat-raised-button color="primary" type="button" (click)="suggestTasks()">Suggest</button>

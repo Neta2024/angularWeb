@@ -24,6 +24,7 @@ export class DeleteEventDialogComponent {
 
     console.log(eventId);
     // Call your REST API service to delete the event
+    // ให้ tola ลองเช็คให้ว่าทำไมถึงลบสองอัน
     this.restApi.delete('/timesheets/delete', { body: eventId }).subscribe(
       () => {
         console.log('Event deleted successfully.');

@@ -22,6 +22,7 @@ export class AddEventDialogComponent {
   suggestedTasks: { name: string }[] = [];
 
   isEditMode: boolean;
+  isDuplicateMode: boolean;
   event: any;
 
   constructor(private restApi: RestApi,
@@ -31,10 +32,19 @@ export class AddEventDialogComponent {
     console.log('Data received in dialog:', data);
 
     this.date = data.date;
-    this.isEditMode = !!data.event;
+    this.isDuplicateMode = data.isDuplicate === true;
+    this.isEditMode = data.event && !data.isDuplicate;
 
     if (this.isEditMode) {
       console.log('Edit mode data:', data.event);
+      this.eventDate = data.event.startStr;
+      this.selectedProject = data.event.extendedProps['projectName'];
+      this.selectedTask = data.event.extendedProps['taskName'];
+      this.selectedPeriod = data.event.extendedProps['period'];
+    }
+
+    if (this.isDuplicateMode) {
+      console.log('Duplicate mode data:', data);
       this.eventDate = data.event.startStr;
       this.selectedProject = data.event.extendedProps['projectName'];
       this.selectedTask = data.event.extendedProps['taskName'];
@@ -58,7 +68,7 @@ export class AddEventDialogComponent {
     } else {
       this.eventDate = new Date() as Date;
     }
-    if (this.isEditMode) {
+    if (this.isEditMode || this.isDuplicateMode) {
       const event = this.data.event;
       console.log('Event Data: ', event);
       this.eventDate = new Date(event.date);
@@ -128,8 +138,16 @@ export class AddEventDialogComponent {
   }
 
   fetchProjects(): void {
-    this.restApi.get('timesheets/project-suggestion').subscribe((response: any) => {
-      this.projects = response;
+    const payload = {
+    
+    };
+
+    this.restApi.post('/master/projects', payload).subscribe((response: any) => {
+      console.log(response);
+      this.projects = response.map((project: any) => ({
+        names: project.project_name
+      }));
+      console.log(this.projects)
     })
   }
 
@@ -142,19 +160,17 @@ export class AddEventDialogComponent {
         name: project.project_name
       }));
     });
-    // this.suggestedProjects = [
-    //   { name: 'Project A' },
-    //   { name: 'Project B' },
-    //   { name: 'Project C' },
-    //   { name: 'Project D' },
-    //   { name: 'Project E' }
-    // ];
   }
 
   fetchTasks(): void {
-    this.restApi.get('timesheets/task-suggestion').subscribe((response: any) => {
+    this.restApi.get('/tasks/get_all_tasks').subscribe((response: any) => {
+      console.log(response);
       this.tasks = response;
+
     })
+    // this.restApi.get('timesheets/task-suggestion').subscribe((response: any) => {
+    //   this.tasks = response;
+    // })
   }
 
   suggestTasks(): void {

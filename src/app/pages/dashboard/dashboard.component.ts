@@ -31,17 +31,23 @@ export class DashboardComponent implements OnInit {
     this.restApi.get('dashboard/today-leave', yearRequest).subscribe((response: any) => {
 
       console.log(response);
-      const fullName = response[0].fullName;
-      const leaveType = response[0].leaveType;
-      const period = response[0].period;
 
-      let colorClass = 'icon-color-default';
-      if (response.leaveType === 'vacation') {
-        colorClass = 'icon-color1';
-      } else if (response.leaveType === 'Sick Leave') {
-        colorClass = 'icon-color2';
-      } else if (response.leaveType === 'Personal Leave') {
-        colorClass = 'icon-color3';
+      this.todayLeaves = [];
+
+      response.forEach((todayLeave: any) => {
+      const fullName = todayLeave['fullName'];
+      const leaveType = todayLeave['leaveType'];
+      const period = todayLeave['period'];
+
+      let color = 'icon-color-default';
+      if (leaveType === 'vacation') {
+        color = 'icon-color1';
+      } else if (leaveType === 'sick') {
+        color = 'icon-color2';
+      } else if (leaveType === 'personal') {
+        color = 'icon-color3';
+      } else if (leaveType === 'Other') {
+        color = 'icon-color4'
       }
 
       let icon = 'beach_access';
@@ -49,6 +55,8 @@ export class DashboardComponent implements OnInit {
         icon = 'medical_services';
       } else if (leaveType === 'personal') {
         icon = 'person';
+      } else if (leaveType === 'Other') {
+        icon = 'event-busy'
       }
 
       let typeText = ''
@@ -58,6 +66,8 @@ export class DashboardComponent implements OnInit {
         typeText = 'Sick Leave';
       } else if (leaveType === 'personal') {
         typeText = 'Personal Leave';
+      } else if (leaveType === 'Other') {
+        typeText = 'Other Leave'
       }
 
       this.todayLeaves.push({
