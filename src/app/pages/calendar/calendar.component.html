@@ -9,9 +9,9 @@
         <select id="monthSelect" [(ngModel)]="selectedMonth" (change)="updateCalendar()">
           <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
         </select>
-      
+<!--       
         <button type="button" class="btn btn-add" style="background-color: green; color: white;" (click)="openAddEventDialog()">Add</button>
-        <button type="button" class="btn btn-del" style="background-color: red; color: white;">Delete</button>
+        <button type="button" class="btn btn-del" style="background-color: red; color: white;">Delete</button> -->
 
         <select id="viewSelect">
           <option value="calendar">Calendar View</option>
