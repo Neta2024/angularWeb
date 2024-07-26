@@ -12,6 +12,7 @@ export type ChartOptions = {
   xaxis: ApexXAxis;
   legend: ApexLegend;
   fill: ApexFill;
+  tooltip: ApexTooltip;
 };
 
 interface WorkingByMonth {
@@ -87,12 +88,14 @@ export class Chart1Component implements OnInit {
     // float leaveDays;
     // float pending;
 
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
     this.restApi.post('dashboard/summary-leave', yearRequest).subscribe((response: any) => {
       console.log(response);
 
       response.workingByMonth.forEach((monthData: WorkingByMonth) => {
         // this.workDays = monthData.totalWorkingDays - monthData.allLeaves - monthData.recordedTimeSheet;
-        this.categories.push(String(monthData.month));
+        this.categories.push(monthNames[monthData.month - 1]);
         this.pending.push(monthData.totalWorkingDays - monthData.recordedTimeSheet);
         this.leaveDays.push(monthData.allLeaves);
         this.workDays.push(monthData.totalWorkingDays - (monthData.allLeaves + (monthData.totalWorkingDays - monthData.recordedTimeSheet)));
@@ -184,8 +187,8 @@ export class Chart1Component implements OnInit {
   setChart(){
     this.chartOptions = {
       series: [
-        { name: "Total Working Days", data: this.workDays },
-        { name: "All Leaves", data: this.leaveDays },
+        { name: "Work Days", data: this.workDays },
+        { name: "Leaves", data: this.leaveDays },
         { name: "Pending", data: this.pending }
       ],
       chart: {
@@ -231,6 +234,9 @@ export class Chart1Component implements OnInit {
         opacity: 1,
         colors: ['#62CFFC', '#FFB489', '#DFDFDF']
       },
+      tooltip: {
+        shared: true
+      }
     };
     //console.log(this.categories);
 
