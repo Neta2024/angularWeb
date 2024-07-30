@@ -1,0 +1,68 @@
+<mat-sidenav-container class="example-container">
+    <mat-sidenav #sidenav mode="side" opened>
+      <h2>Add Events</h2>
+      <form>
+        <mat-form-field appearance="fill">
+          <mat-label>Event Title</mat-label>
+          <input matInput formControlName="title" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="startDate" required>
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="endDate" required>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+  
+        <div class="view-dropdown">
+          <mat-label>Project: </mat-label>
+          <mat-form-field appearance="fill">
+            <mat-select [(ngModel)]="selectedProject" name="project">
+              <mat-option *ngFor="let project of projects" [value]="project.names">
+                {{ project.names }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="button" (click)="suggestProjects()">Suggest</button>
+          <div *ngIf="suggestedProjects.length > 0">
+            <mat-list>
+              <mat-list-item *ngFor="let project of suggestedProjects"  (click)="selectProject(project.name)">
+                {{ project.name }}
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+        <div class="view-dropdown">
+          <mat-label>Task: </mat-label>
+          <mat-form-field appearance="fill">
+            <mat-select [(ngModel)]="selectedTask" name="task">
+              <mat-option *ngFor="let task of tasks" [value]="task.t_name">
+                {{ task.t_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="button" (click)="suggestTasks()">Suggest</button>
+          <div *ngIf="suggestedTasks.length > 0">
+            <mat-list>
+              <mat-list-item *ngFor="let task of suggestedTasks"  (click)="selectTask(task.name)">
+                {{ task.name }}
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+        
+        <button mat-raised-button color="primary" type="submit">Add Event</button>
+      </form>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <!-- Main content goes here -->
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  

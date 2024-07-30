@@ -7,6 +7,8 @@ import { RestApi } from 'src/app/shared/rest-api';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  group: { value: { period: string, colorClass: string, icon: string }[] }[] = [];
+
   selectedYear: string = '2024';
   todayLeaves: { name: string, type: string, icon: string, period: string, colorClass: string }[] = [];
   remainingLeaves: { type: string, used: number, total: number, icon: string, colorClass: string }[] = [];
@@ -25,6 +27,66 @@ export class DashboardComponent implements OnInit {
     this.getRemainingLeaves();
     console.log('selectedValue: ', selectedValue);
   }
+
+  // getTodayLeaves(): void {
+  //   const yearRequest = { year: parseInt(this.selectedYear, 10) };
+  //   this.restApi.get('dashboard/today-leave', yearRequest).subscribe((response: any) => {
+  //     console.log(response);
+  //     this.todayLeaves = response.map((todayLeave: any) => ({
+  //       name: todayLeave['fullName'],
+  //       type: this.getLeaveTypeText(todayLeave['leaveType']),
+  //       icon: this.getLeaveIcon(todayLeave['leaveType']),
+  //       period: todayLeave['period'],
+  //       colorClass: this.getLeaveColorClass(todayLeave['leaveType'])
+  //     }));
+  //     console.log('this.todayLeaves:', this.todayLeaves);
+  //   });
+  // }
+
+  // getLeaveTypeText(leaveType: string): string {
+  //   switch (leaveType) {
+  //     case 'vacation':
+  //       return 'Vacation';
+  //     case 'sick':
+  //       return 'Sick Leave';
+  //     case 'personal':
+  //       return 'Personal Leave';
+  //     case 'Other':
+  //       return 'Other Leave';
+  //     default:
+  //       return '';
+  //   }
+  // }
+
+  // getLeaveIcon(leaveType: string): string {
+  //   switch (leaveType) {
+  //     case 'vacation':
+  //       return 'beach_access';
+  //     case 'sick':
+  //       return 'medical_services';
+  //     case 'personal':
+  //       return 'person';
+  //     case 'Other':
+  //       return 'event-busy';
+  //     default:
+  //       return '';
+  //   }
+  // }
+
+  // getLeaveColorClass(leaveType: string): string {
+  //   switch (leaveType) {
+  //     case 'vacation':
+  //       return 'icon-color1';
+  //     case 'sick':
+  //       return 'icon-color2';
+  //     case 'personal':
+  //       return 'icon-color3';
+  //     case 'Other':
+  //       return 'icon-color4';
+  //     default:
+  //       return 'icon-color-default';
+  //   }
+  // }
 
   getTodayLeaves(): void {
     const yearRequest = { year: parseInt(this.selectedYear, 10) };
@@ -93,6 +155,22 @@ export class DashboardComponent implements OnInit {
     // this.todayLeaves = mockLeaves.filter(leave => leave.date === today);
   //}
 
+  getUniqueNames(): any {
+    const grouped: { [key: string]: any[] } = {};
+    this.todayLeaves.forEach(leave => {
+      if (!grouped[leave.name]) {
+        grouped[leave.name] = [];
+      }
+      grouped[leave.name].push(leave);
+    });
+    return grouped;
+  }
+
+  getUniqueNamesCount(): number {
+    const uniqueNames = new Set(this.todayLeaves.map(leave => leave.name));
+    return uniqueNames.size;
+  }
+
   getRemainingLeaves(): void {
       const yearRequest = { year: parseInt(this.selectedYear, 10) };
       this.restApi.post('dashboard/summary-leave', yearRequest).subscribe((response: any) => {
@@ -105,10 +183,14 @@ export class DashboardComponent implements OnInit {
       const sickLeaveAvailable = response.remain['Sick Leave Available'] || 0;
       const personalLeaveAvailable = response.remain['Personal Leave Available'] || 0;
 
+      const totalVacationLeave = usedVacationLeave + vacationLeaveAvailable;
+      const totalSickLeave = usedSickLeave + sickLeaveAvailable;
+      const totalPersonalLeave = usedPersonalLeave + personalLeaveAvailable;
+
       this.remainingLeaves = [
-        { type: 'Vacation', used: usedVacationLeave, total: vacationLeaveAvailable, icon: 'beach_access', colorClass: 'icon-color1' },
-        { type: 'Sick Leave', used: usedSickLeave, total: sickLeaveAvailable, icon: 'medical_services', colorClass: 'icon-color2' },
-        { type: 'Personal Leave', used: usedPersonalLeave, total: personalLeaveAvailable, icon: 'person', colorClass: 'icon-color3' }
+        { type: 'Vacation', used: usedVacationLeave, total: totalVacationLeave, icon: 'beach_access', colorClass: 'icon-color1' },
+        { type: 'Sick Leave', used: usedSickLeave, total: totalSickLeave, icon: 'medical_services', colorClass: 'icon-color2' },
+        { type: 'Personal Leave', used: usedPersonalLeave, total: totalPersonalLeave, icon: 'person', colorClass: 'icon-color3' }
       ];
 
       this.changeDetectorRef.detectChanges();

@@ -1,5 +1,6 @@
+<div class="container">
 <div class="row">
-  <div class="col-sm-12">
+  <div [ngClass]="{'col-sm-12': !showDetails, 'col-lg-8': showDetails}" class="col-lg-8">
     <app-card cardTitle="Ginkgo Calendar">
 
       <div class="dropdown">
@@ -9,9 +10,9 @@
         <select id="monthSelect" [(ngModel)]="selectedMonth" (change)="updateCalendar()">
           <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
         </select>
-      
+<!--       
         <button type="button" class="btn btn-add" style="background-color: green; color: white;" (click)="openAddEventDialog()">Add</button>
-        <button type="button" class="btn btn-del" style="background-color: red; color: white;">Delete</button>
+        <button type="button" class="btn btn-del" style="background-color: red; color: white;">Delete</button> -->
 
         <select id="viewSelect">
           <option value="calendar">Calendar View</option>
@@ -23,4 +24,70 @@
     
     </app-card>
   </div>
+  <div *ngIf="showDetails" class="col-lg-4">
+    <app-card cardTitle="Details">
+      <p>{{ isEditMode ? 'Edit Event' : isDuplicateMode ? 'Duplicate Event' : 'Add New Event' }}</p>
+      <p>Selected dates:</p>
+      <mat-list class="datelist">
+        <mat-list-item *ngFor="let date of selectedDates; let i = index">
+          {{ date.date | date: 'dd-MM-yyyy' }}
+          <mat-icon (click)="removeDate(i)">close</mat-icon>
+        </mat-list-item>
+      </mat-list>
+      <!-- <mat-checkbox>XX-XX-XXXX</mat-checkbox> -->
+      <div class="view-dropdown">
+        <mat-label>Project: </mat-label>
+        <mat-form-field appearance="fill">
+          <mat-select [(ngModel)]="selectedProject" name="project">
+            <mat-option *ngFor="let project of projects" [value]="project.names">
+              {{ project.names }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="suggestProjects()">Suggest</button>
+        <div *ngIf="suggestedProjects.length > 0">
+          <mat-list>
+            <mat-list-item *ngFor="let project of suggestedProjects"  (click)="selectProject(project.name)">
+              {{ project.name }}
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+      <div class="view-dropdown">
+        <mat-label>Task: </mat-label>
+        <mat-form-field appearance="fill">
+          <mat-select [(ngModel)]="selectedTask" name="task">
+            <mat-option *ngFor="let task of tasks" [value]="task.t_name">
+              {{ task.t_name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="suggestTasks()">Suggest</button>
+        <div *ngIf="suggestedTasks.length > 0">
+          <mat-list>
+            <mat-list-item *ngFor="let task of suggestedTasks"  (click)="selectTask(task.name)">
+              {{ task.name }}
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+      <div>
+        <mat-label>Period:</mat-label>
+        <mat-radio-group [(ngModel)]="selectedPeriod" name="period">
+          <mat-radio-button value="1">All</mat-radio-button>
+          <mat-radio-button value="2">Morning</mat-radio-button>
+          <mat-radio-button value="3">Afternoon</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-button *ngIf="isEditMode; else addMode" (click)="editEvent()">Save</button>
+        <ng-template #addMode>
+          <button mat-button (click)="addEvent()">Add</button>
+        </ng-template>
+        <!-- <button mat-button (click)="addEvent()">Add</button> -->
+        <button mat-button (click)="closeDetailsPane()">Cancel</button>
+      </div>
+    </app-card>
+  </div>
+</div>
 </div>

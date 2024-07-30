@@ -132,7 +132,7 @@ export class LoginComponent implements OnInit {
 
   checkWithEntraId(payload: EventPayload) {
     console.log(payload);
-    this.rest.post('/auth/login/entra', payload).subscribe(user => {
+    this.rest.post('/auth/login', payload).subscribe(user => {
       console.log(user);
       this.auth.user = user;
       this.router.navigateByUrl('/timesheet');
