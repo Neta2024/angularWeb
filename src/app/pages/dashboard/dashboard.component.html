@@ -33,12 +33,12 @@
     <div class="leaves">
       <h4>Leaves Today: {{ getUniqueNamesCount() }}</h4>
       <ul class="leave-list">
-        <li *ngFor="let leave of todayLeaves" class="leave-item">
+        <li *ngFor="let group of getGroupedLeaves() | keyvalue" class="leave-item">
         <!-- <li *ngFor="let group of getUniqueNames() | keyvalue" class="leave-item"> -->
           <div class="leave-details">
             <!-- <div class="leave-name">{{ group.key }}</div> -->
-            <div class="leave-name">{{ leave.name }}</div>
-            <div class="leave-type">
+            <div class="leave-name">{{ group.key }}</div>
+            <div *ngFor="let leave of group.value" class="leave-type">
               <!-- <mat-icon [ngClass]="group.value[0].colorClass">{{ group.value[0].icon }}</mat-icon> -->
               <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
               <!-- {{ group[0].type }} -->

@@ -954,6 +954,7 @@ export class CalendarComponent implements OnInit {
         const updatedEvent = response; // Adjust if necessary based on actual response structure
 
         this.events = this.events.map(e => e.id === this.eventData.id ? updatedEvent : e);
+        
         this.calendarOptions = {
           ...this.calendarOptions,
           events: this.events
@@ -962,11 +963,75 @@ export class CalendarComponent implements OnInit {
         console.log('Updated events:', this.events);
         console.log('Updated calendar options:', this.calendarOptions);
 
-        // Refresh the calendar view
-        this.updateCalendar();
+        const existingDates = new Set(this.eventData.dateList);
+        const newDates = formattedDates.filter(date => !existingDates.has(date));
 
-        // Manually trigger change detection
-        this.cdr.detectChanges();
+        if (newDates.length > 0) {
+          // Call addEvent() for new dates
+          // this.addEvent(newDates);
+          console.log("There's more than 1 date");
+          console.log(newDates);
+
+          if (newDates.length > 0) {
+            // Prepare the payload for adding new dates
+            const addEventPayload = {
+              dateList: newDates,
+              projectName,
+              taskName,
+              period
+            };
+    
+            // Call addEvent() for new dates
+            this.restApi.post('/timesheets/add', addEventPayload).subscribe(
+              addResponse => {
+                console.log('New dates added to backend:', addResponse);
+    
+                // Add new events to the calendar
+                const newEvents = newDates.map(date => ({
+                  title: `${this.selectedProject} - ${this.selectedTask} - ${this.getPeriodText(this.selectedPeriod)}`,
+                  date,
+                  color: 'blue',
+                  id: Math.random().toString(36).substr(2, 10),
+                  period: this.getPeriodText(this.selectedPeriod),
+                  projectName: this.selectedProject,
+                  taskName: this.selectedTask
+                }));
+    
+                this.events = [...this.events, ...newEvents];
+                this.calendarOptions = {
+                  ...this.calendarOptions,
+                  events: this.events
+                };
+    
+                console.log('Updated events with new dates:', this.events);
+                console.log('Updated calendar options with new dates:', this.calendarOptions);
+    
+                // Refresh the calendar view
+                this.updateCalendar();
+                this.cdr.detectChanges();
+              },
+              addError => {
+                console.error('Error adding new dates to backend:', addError);
+              }
+            );
+          } else {
+            // Refresh the calendar view if no new dates to add
+            this.updateCalendar();
+            this.cdr.detectChanges();
+          }
+
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        } else {
+          // Refresh the calendar view if no new dates to add
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        }
+        // // Refresh the calendar view
+        // this.updateCalendar();
+
+        // // Manually trigger change detection
+        // this.cdr.detectChanges();
       },
       error => {
         console.error('Error Response:', error);
