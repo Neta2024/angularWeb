@@ -39,6 +39,7 @@ export class CalendarComponent implements OnInit {
   selectedYear: number;
   selectedMonth: number;
   events: EventInput[] = [];
+  holidays: any[] = [];
   
   showDetails = false;
   
@@ -59,6 +60,8 @@ export class CalendarComponent implements OnInit {
   isDuplicateMode: boolean;
 
   eventData: any;
+
+  private holidayDates: Set<string> = new Set();
 
   constructor(
     public dialog: MatDialog,
@@ -85,6 +88,7 @@ export class CalendarComponent implements OnInit {
     console.log('Initial selected month:', this.selectedMonth);
 
     this.loadEvents(this.selectedYear, this.selectedMonth);
+    this.loadHolidays(this.selectedYear);
 
     this.fetchProjects();
     this.fetchTasks();
@@ -157,12 +161,64 @@ export class CalendarComponent implements OnInit {
     
       this.calendarOptions = {
         ...this.calendarOptions,
-        events: this.events
+        events: [...this.events, ...this.holidays]
       };
     },
     (error) => {
       console.error('An error occurred:', error);
     });
+  }
+
+  loadHolidays(year: number): void {
+    console.log('Selected year:', year);
+  
+    // Make the API call
+    this.restApi.get(`/master/get-holidays`, { params: { year: year.toString() } }).subscribe(
+      response => {
+        console.log('Holidays response:', response);
+  
+        if (response) {
+          this.holidays = response.map((holiday: any) => ({
+            title: holiday.holidayName,
+            date: this.convertDate(holiday.holiday),
+            color: 'red', // You can use a different color or logic if needed
+            id: this.generateUniqueId(holiday),
+            holidayName: holiday.holidayName
+          }));
+        } else {
+          this.holidays = [];
+        }
+  
+        console.log('Holidays:', this.holidays);
+  
+        this.holidayDates.clear();
+        response.forEach((holiday: any) => {
+          this.holidayDates.add(this.convertDate(holiday.holiday));
+        });
+
+        // Combine events and holidays if needed
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: [...this.events, ...this.holidays]
+        };
+  
+        console.log(this.calendarOptions.events);
+
+        this.updateCalendar();
+        this.cdr.detectChanges();
+      },
+      error => {
+        console.error('An error occurred while loading holidays:', error);
+      }
+    );
+  }
+
+  isHoliday(date: string): boolean {
+    return this.holidayDates.has(date);
+  }
+
+  generateUniqueId(holiday: any): string {
+    return `${holiday.holiday}-${holiday.holidayName}-${Date.now()}`;
   }
 
   updateCalendar() {
@@ -363,7 +419,24 @@ export class CalendarComponent implements OnInit {
     // });
   }
 
+
+  private formatDateforHoliday(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() is zero-based
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
   renderEventContent(arg: EventContentArg) {
+    console.log(arg.event.start);
+    const eventDate = this.formatDateforHoliday(arg.event.start);
+    console.log('Event Date:', eventDate);
+    console.log('Is Holiday:', this.isHoliday(eventDate));
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('button-container');
+
+    if (!this.isHoliday(eventDate)) {
     const deleteButtonContainer = document.createElement('div');
     deleteButtonContainer.classList.add('delete-button-container');
 
@@ -382,7 +455,7 @@ export class CalendarComponent implements OnInit {
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
-    deleteButtonContainer.appendChild(deleteButton);
+    buttonContainer.appendChild(deleteButton);
 
     //////////////////////////////////////////////////////////////////////
 
@@ -440,7 +513,8 @@ export class CalendarComponent implements OnInit {
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
-    duplicateButtonContainer.appendChild(duplicateButton);
+    buttonContainer.appendChild(duplicateButton);
+  }
 
     // const duplicateButton = document.createElement('button');
     // duplicateButton.innerHTML = 'Duplicate';
@@ -448,8 +522,7 @@ export class CalendarComponent implements OnInit {
 
     const arrayOfDomNodes = [ 
       document.createElement('div'),
-      deleteButton,
-      duplicateButton
+      buttonContainer
     ];
 
     arrayOfDomNodes[0].innerHTML = arg.event.title;
@@ -699,6 +772,8 @@ export class CalendarComponent implements OnInit {
     this.selectedProject = '';
     this.selectedTask = '';
     this.selectedPeriod = '';
+    this.isDuplicateMode = false;
+    this.isEditMode = false;
   }
 
   removeDate(index: number): void {
@@ -827,9 +902,13 @@ export class CalendarComponent implements OnInit {
     // this.selectedDates = [{ date: new Date(event.date) }];
     this.selectedPeriod = periodToNumber;
     // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
-    this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
-    this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
+    // this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
+    // this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
     
+    this.selectedPeriod = this.selectedPeriod !== undefined ? this.selectedPeriod : periodToNumber;
+    this.selectedProject = this.selectedProject || event.projectName;
+    this.selectedTask = this.selectedTask || event.taskName;
+
     console.log('Selected Period:', this.selectedPeriod);
     console.log(this.selectedDates);
 
