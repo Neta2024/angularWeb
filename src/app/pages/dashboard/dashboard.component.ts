@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit {
       } else if (leaveType === 'personal') {
         color = 'icon-color3';
       } else if (leaveType === 'Other') {
-        color = 'icon-color4'
+        color = 'icon-color4';
       }
 
       let icon = 'beach_access';
@@ -118,7 +118,7 @@ export class DashboardComponent implements OnInit {
       } else if (leaveType === 'personal') {
         icon = 'person';
       } else if (leaveType === 'Other') {
-        icon = 'event-busy'
+        icon = 'event-busy';
       }
 
       let typeText = ''
@@ -129,7 +129,7 @@ export class DashboardComponent implements OnInit {
       } else if (leaveType === 'personal') {
         typeText = 'Personal Leave';
       } else if (leaveType === 'Other') {
-        typeText = 'Other Leave'
+        typeText = 'Other Leave';
       }
 
       this.todayLeaves.push({
@@ -137,11 +137,12 @@ export class DashboardComponent implements OnInit {
           type: typeText,
           icon: icon,
           period: period,
-          colorClass: colorClass
+          colorClass: color
         });
       });
 
       console.log('this.todayLeaves:', this.todayLeaves);
+    });
   }
   
     // const mockLeaves = [
