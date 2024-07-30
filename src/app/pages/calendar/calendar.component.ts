@@ -695,6 +695,10 @@ export class CalendarComponent implements OnInit {
   closeDetailsPane() {
     this.showDetails = false; // Hide details pane
     this.updateCalendar();
+    this.selectedDates = [];
+    this.selectedProject = '';
+    this.selectedTask = '';
+    this.selectedPeriod = '';
   }
 
   removeDate(index: number): void {
@@ -774,6 +778,13 @@ export class CalendarComponent implements OnInit {
     }, error => {
       console.error('Error adding event to backend:', error);
     });
+
+    this.showDetails = false;
+    this.selectedDates = [];
+    this.selectedProject = '';
+    this.selectedTask = '';
+    this.selectedPeriod = '';
+    this.isDuplicateMode = false;
   }
 
   convertPeriodToNumber(period: string): string {
@@ -882,6 +893,13 @@ export class CalendarComponent implements OnInit {
         console.error('Error Response:', error);
       }
     );
+
+    this.showDetails = false;
+    this.selectedDates = [];
+    this.selectedProject = '';
+    this.selectedTask = '';
+    this.selectedPeriod = '';
+    this.isEditMode = false;
   }
 
   // showEditPane(event: any): void {
