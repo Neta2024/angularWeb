@@ -401,30 +401,37 @@ export class CalendarComponent implements OnInit {
     duplicateButton.addEventListener('click', (event) => {
       event.stopPropagation(); // Prevent event propagation to parent elements
 
-      const { title, publicId } = arg.event._def; 
+      console.log('Event Object:', arg.event);
+
+      const eventDef = arg.event._def; // Contains general event definitions
+      const extendedProps = arg.event.extendedProps; 
+      
+      const { title, publicId } = eventDef; 
       const { range } = arg.event._instance;
       const startDate = range?.start; // Example, adjust if necessary
       const endDate = range?.end; // Example, adjust if necessary
       
-      const formattedDates = this.selectedDates.map(d => this.formatDate(startDate));
+      const formattedDates = this.selectedDates.length > 0 ? 
+        this.selectedDates.map(d => this.formatDate(startDate)) :
+        [this.formatDate(startDate)];
+      // const formattedDates = this.selectedDates.map(d => this.formatDate(startDate));
       console.log(formattedDates);
 
+      const period = extendedProps?.['period'] || ''; // Set default value if period is not available
+      const projectName = extendedProps?.['projectName'] || '';
+      const taskName = extendedProps?.['taskName'] || '';
+      // const taskName = extendedProps?.taskName || '';
+
       const eventData = {
-        date: formattedDates || '', // Ensure default value if undefined
-        period: '', // If period is not available, set a default or compute it
-        projectName: title || '', // Ensure default value if undefined
-        taskName: '', // If taskName is not available, set a default or compute it
+        date: startDate || '', // Ensure default value if undefined
+        period: period || '', // If period is not available, set a default or compute it
+        projectName: projectName || '', // Ensure default value if undefined
+        taskName: taskName || '', // If taskName is not available, set a default or compute it
         id: publicId || 0 // Ensure default value if undefined
       };
     
       console.log('Event Data to be Sent:', eventData);
-      // this.showDuplicatePane({
-      //   date: startDate, // Use appropriate properties
-      //   period: '', // If period is not available, set a default or compute it
-      //   projectName: title, // Adjust as necessary
-      //   taskName: '', // If taskName is not available, set a default or compute it
-      //   id: publicId
-      // });
+      this.showDuplicatePane(eventData);
 
       // console.log(title);
       // this.duplicateEvent(arg.event);
@@ -790,15 +797,29 @@ export class CalendarComponent implements OnInit {
 
     const periodToNumber = this.convertPeriodToNumber(event.period);
 
+    const newDate = new Date(event.date);
+  
+    // Add the new date to selectedDates if it doesn't already exist
+    const dateExists = this.selectedDates.some(d =>
+      d.date.getFullYear() === newDate.getFullYear() &&
+      d.date.getMonth() === newDate.getMonth() &&
+      d.date.getDate() === newDate.getDate()
+    );
+
+    if (!dateExists) {
+      this.selectedDates.push({ date: newDate });
+    } else {
+      console.log('Date already selected:', newDate);
+    }
+    
     // Set up selected dates and other fields from the event parameter
-    this.selectedDates = [{ date: new Date(event.date) }];
+    // this.selectedDates = [{ date: new Date(event.date) }];
     this.selectedPeriod = periodToNumber;
     // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
     this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
     this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
     
     console.log('Selected Period:', this.selectedPeriod);
-
     console.log(this.selectedDates);
 
     const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
@@ -816,7 +837,6 @@ export class CalendarComponent implements OnInit {
     console.log("Edit action");
 
     console.log("eventData:", this.eventData);
-
     console.log(this.selectedDates);
 
     const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
@@ -864,14 +884,42 @@ export class CalendarComponent implements OnInit {
     );
   }
 
+  // showEditPane(event: any): void {
+  //   if (!event || !event.date) {
+  //     console.error('Error: No event or date provided.');
+  //     return;
+  //   }
+
+  //   const periodToNumber = this.convertPeriodToNumber(event.period);
+
+  //   // Set up selected dates and other fields from the event parameter
+  //   this.selectedDates = [{ date: new Date(event.date) }];
+  //   this.selectedPeriod = periodToNumber;
+  //   // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
+  //   this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
+  //   this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
+    
+  //   console.log('Selected Period:', this.selectedPeriod);
+
+  //   console.log(this.selectedDates);
+
+  //   const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
+  //   console.log(formattedDates);
+
+  //   this.eventData = event;
+  // }
+
   showDuplicatePane(event: any): void {
     if (!event || !event.date) {
       console.error('Error: No event or date provided.');
       return;
     }
 
+    console.log(event);
+
     this.isDuplicateMode = true;
     this.showDetails = true;
+    
     this.updateCalendar();
 
     const periodToNumber = this.convertPeriodToNumber(event.period);
