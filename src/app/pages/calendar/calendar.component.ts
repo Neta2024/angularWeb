@@ -119,10 +119,14 @@ export class CalendarComponent implements OnInit {
     this.selectedYear = calendarDate.getFullYear();
     console.log('this.selectedYear = ',this.selectedYear)
     console.log('type: ',typeof this.selectedYear)
-    this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
+    this.selectedMonth = calendarDate.getMonth();
+    // this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
     console.log('this.selectedMonth = ',this.selectedMonth)
     console.log('type: ',typeof this.selectedMonth)
-    this.cdr.detectChanges();
+    // this.cdr.detectChanges();
+    this.loadEvents(this.selectedYear, this.selectedMonth);
+    // this.loadHolidays(this.selectedYear);
+    // this.cdr.detectChanges();
   }
 
   getColor(projectName: string): string {
