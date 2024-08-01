@@ -103,8 +103,26 @@ export class CalendarComponent implements OnInit {
       eventClick: this.handleEventClick.bind(this),
       eventContent: this.renderEventContent.bind(this),
       // dateClick: this.handleDateClick.bind(this) ,
-      dateClick: (arg) => this.handleDateClick(arg)
+      dateClick: (arg) => this.handleDateClick(arg),
+      datesSet: this.onDatesSet.bind(this),
+      headerToolbar: {
+        start: 'title',
+        center: '',
+        end: 'today prev,next'
+      }
     }
+  }
+
+  onDatesSet(arg: any) {
+    const calendarDate = arg.view.currentStart;
+    console.log('calendarDate: ',calendarDate);
+    this.selectedYear = calendarDate.getFullYear();
+    console.log('this.selectedYear = ',this.selectedYear)
+    console.log('type: ',typeof this.selectedYear)
+    this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
+    console.log('this.selectedMonth = ',this.selectedMonth)
+    console.log('type: ',typeof this.selectedMonth)
+    this.cdr.detectChanges();
   }
 
   getColor(projectName: string): string {
