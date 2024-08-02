@@ -6,6 +6,9 @@ import { DeleteEventDialogComponent } from './delete-event-dialog/delete-event-d
 import { MatDialog } from '@angular/material/dialog';
 import { RestApi } from 'src/app/shared/rest-api';
 import interactiionPlugin from '@fullcalendar/interaction';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { EventEmitter } from '@angular/core';
+import { start } from '@popperjs/core';
 
 @Component({
   selector: 'app-calendar',
@@ -13,6 +16,8 @@ import interactiionPlugin from '@fullcalendar/interaction';
   styleUrls: ['./calendar.component.css']
 })
 export class CalendarComponent implements OnInit {
+  public eventCreated = new EventEmitter<any>();
+
   clickedDate: string;
   calendarOptions: CalendarOptions;
   calendarVisible = true;
@@ -34,7 +39,30 @@ export class CalendarComponent implements OnInit {
   selectedYear: number;
   selectedMonth: number;
   events: EventInput[] = [];
+  holidays: any[] = [];
   
+  showDetails = false;
+  
+  selectedProject: string;
+  selectedTask: string;
+  selectedPeriod: string;
+
+  projects: any[] = [];
+  tasks: any[] = [];
+  suggestedProjects: { name: string }[] = [];
+  // suggestedProjects: string[] = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5'];
+  suggestedTasks: { name: string }[] = [];
+
+  selectedDates: { date: Date }[] = [];
+  eventDate: { date: Date }[] = [];
+
+  isEditMode: boolean;
+  isDuplicateMode: boolean;
+
+  eventData: any;
+
+  private holidayDates: Set<string> = new Set();
+
   constructor(
     public dialog: MatDialog,
     private restApi: RestApi,
@@ -60,6 +88,29 @@ export class CalendarComponent implements OnInit {
     console.log('Initial selected month:', this.selectedMonth);
 
     this.loadEvents(this.selectedYear, this.selectedMonth);
+    this.loadHolidays(this.selectedYear);
+
+    this.fetchProjects();
+    this.fetchTasks();
+  }
+
+
+  ngOnDestroy() {
+    this.saveState();
+  }
+
+  saveState() {
+    localStorage.setItem('calendarDate', JSON.stringify({ year: this.selectedYear, month: this.selectedMonth }));
+  }
+
+  restoreState() {
+    const savedDate = localStorage.getItem('calendarDate');
+
+    if (savedDate) {
+      const { year, month } = JSON.parse(savedDate);
+      this.selectedYear = year;
+      this.selectedMonth = month;
+    }
   }
 
   initializeCalendarOptions() {
@@ -71,8 +122,30 @@ export class CalendarComponent implements OnInit {
       eventClick: this.handleEventClick.bind(this),
       eventContent: this.renderEventContent.bind(this),
       // dateClick: this.handleDateClick.bind(this) ,
-      dateClick: (arg) => this.handleDateClick(arg)
+      dateClick: (arg) => this.handleDateClick(arg),
+      datesSet: this.onDatesSet.bind(this),
+      headerToolbar: {
+        start: 'title',
+        center: '',
+        end: 'today prev,next'
+      }
     }
+  }
+
+  onDatesSet(arg: any) {
+    const calendarDate = arg.view.currentStart;
+    console.log('calendarDate: ',calendarDate);
+    this.selectedYear = calendarDate.getFullYear();
+    console.log('this.selectedYear = ',this.selectedYear)
+    console.log('type: ',typeof this.selectedYear)
+    this.selectedMonth = calendarDate.getMonth();
+    // this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
+    console.log('this.selectedMonth = ',this.selectedMonth)
+    console.log('type: ',typeof this.selectedMonth)
+    // this.cdr.detectChanges();
+    this.loadEvents(this.selectedYear, this.selectedMonth);
+    // this.loadHolidays(this.selectedYear);
+    // this.cdr.detectChanges();
   }
 
   getColor(projectName: string): string {
@@ -129,7 +202,7 @@ export class CalendarComponent implements OnInit {
     
       this.calendarOptions = {
         ...this.calendarOptions,
-        events: this.events
+        events: [...this.events, ...this.holidays]
       };
     },
     (error) => {
@@ -137,8 +210,61 @@ export class CalendarComponent implements OnInit {
     });
   }
 
+  loadHolidays(year: number): void {
+    console.log('Selected year:', year);
+  
+    // Make the API call
+    this.restApi.get(`/master/get-holidays`, { params: { year: year.toString() } }).subscribe(
+      response => {
+        console.log('Holidays response:', response);
+  
+        if (response) {
+          this.holidays = response.map((holiday: any) => ({
+            title: holiday.holidayName,
+            date: this.convertDate(holiday.holiday),
+            color: 'red', // You can use a different color or logic if needed
+            id: this.generateUniqueId(holiday),
+            holidayName: holiday.holidayName
+          }));
+        } else {
+          this.holidays = [];
+        }
+  
+        console.log('Holidays:', this.holidays);
+  
+        this.holidayDates.clear();
+        response.forEach((holiday: any) => {
+          this.holidayDates.add(this.convertDate(holiday.holiday));
+        });
+
+        // Combine events and holidays if needed
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: [...this.events, ...this.holidays]
+        };
+  
+        console.log(this.calendarOptions.events);
+
+        this.updateCalendar();
+        this.cdr.detectChanges();
+      },
+      error => {
+        console.error('An error occurred while loading holidays:', error);
+      }
+    );
+  }
+
+  isHoliday(date: string): boolean {
+    return this.holidayDates.has(date);
+  }
+
+  generateUniqueId(holiday: any): string {
+    return `${holiday.holiday}-${holiday.holidayName}-${Date.now()}`;
+  }
+
   updateCalendar() {
     this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
+    console.log(typeof this.selectedMonth);
 
     this.loadEvents(this.selectedYear, this.selectedMonth);
 
@@ -312,6 +438,7 @@ export class CalendarComponent implements OnInit {
           this.cdr.detectChanges();
         }, error => {
           console.error('Error updating event in backend:', error);
+          console.log('Full error response: ', error);
         });
       }
     });
@@ -334,7 +461,24 @@ export class CalendarComponent implements OnInit {
     // });
   }
 
+
+  private formatDateforHoliday(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() is zero-based
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
   renderEventContent(arg: EventContentArg) {
+    console.log(arg.event.start);
+    const eventDate = this.formatDateforHoliday(arg.event.start);
+    console.log('Event Date:', eventDate);
+    console.log('Is Holiday:', this.isHoliday(eventDate));
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('button-container');
+
+    if (!this.isHoliday(eventDate)) {
     const deleteButtonContainer = document.createElement('div');
     deleteButtonContainer.classList.add('delete-button-container');
 
@@ -353,7 +497,7 @@ export class CalendarComponent implements OnInit {
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
-    deleteButtonContainer.appendChild(deleteButton);
+    buttonContainer.appendChild(deleteButton);
 
     //////////////////////////////////////////////////////////////////////
 
@@ -371,11 +515,48 @@ export class CalendarComponent implements OnInit {
     duplicateButton.appendChild(duplicateIcon);
     duplicateButton.addEventListener('click', (event) => {
       event.stopPropagation(); // Prevent event propagation to parent elements
-      this.duplicateEvent(arg.event);
+
+      console.log('Event Object:', arg.event);
+
+      const eventDef = arg.event._def; // Contains general event definitions
+      const extendedProps = arg.event.extendedProps; 
+      
+      const { title, publicId } = eventDef; 
+      const { range } = arg.event._instance;
+      const startDate = range?.start; // Example, adjust if necessary
+      const endDate = range?.end; // Example, adjust if necessary
+      
+      const formattedDates = this.selectedDates.length > 0 ? 
+        this.selectedDates.map(d => this.formatDate(startDate)) :
+        [this.formatDate(startDate)];
+      // const formattedDates = this.selectedDates.map(d => this.formatDate(startDate));
+      console.log(formattedDates);
+
+      const period = extendedProps?.['period'] || ''; // Set default value if period is not available
+      const projectName = extendedProps?.['projectName'] || '';
+      const taskName = extendedProps?.['taskName'] || '';
+      // const taskName = extendedProps?.taskName || '';
+
+      const eventData = {
+        date: startDate || '', // Ensure default value if undefined
+        period: period || '', // If period is not available, set a default or compute it
+        projectName: projectName || '', // Ensure default value if undefined
+        taskName: taskName || '', // If taskName is not available, set a default or compute it
+        id: publicId || 0 // Ensure default value if undefined
+      };
+    
+      console.log('Event Data to be Sent:', eventData);
+      this.showDuplicatePane(eventData);
+
+      // console.log(title);
+      // this.duplicateEvent(arg.event);
+      // console.log(arg.event);
+      // this.showDuplicatePane(arg.event);
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
-    duplicateButtonContainer.appendChild(duplicateButton);
+    buttonContainer.appendChild(duplicateButton);
+  }
 
     // const duplicateButton = document.createElement('button');
     // duplicateButton.innerHTML = 'Duplicate';
@@ -383,8 +564,7 @@ export class CalendarComponent implements OnInit {
 
     const arrayOfDomNodes = [ 
       document.createElement('div'),
-      deleteButton,
-      duplicateButton
+      buttonContainer
     ];
 
     arrayOfDomNodes[0].innerHTML = arg.event.title;
@@ -399,21 +579,65 @@ export class CalendarComponent implements OnInit {
     if (clickedElement.classList.contains('btn-delete')) {
       this.deleteEvent(clickInfo.event.id);
     } else {
-      this.openEditEventDialog(clickInfo.event);
+      const eventDef = clickInfo.event._def;
+      const eventInstance = clickInfo.event._instance;
+
+      console.log('Extended Props:', eventDef.extendedProps);
+      
+      // Extract details from the event
+      const date = eventInstance.range.start.toISOString().split('T')[0]; // Format date
+      const period = eventDef.extendedProps['period'] || ''; // Adjust based on actual structure
+      const projectName = eventDef.title.split(' - ')[0] || ''; // Extract project name from title
+      const taskName = eventDef.title.split(' - ')[1] || ''; // Extract task name from title
+      const id = eventDef.publicId || ''; // Use publicId or another unique identifier
+
+      // Log extracted details for debugging
+      console.log('Extracted details:', { date, period, projectName, taskName, id });
+      this.isEditMode = true;
+      this.showDetails = true;
+      // Call editEvent with the extracted details
+      // this.editEvent({ date, period, projectName, taskName, id });
+      // this.editEvent(clickInfo.event);
+      // console.log('clickInfo:', clickInfo);
+      // console.log('EventImpl details:', clickInfo.event);
+      this.updateCalendar();
+
+      this.showEditPane({ date, period, projectName, taskName, id });
     }
   }
 
   handleDateClick(arg: any) {
     console.log('Clicked date:', arg.dateStr);
-    const clickedDate = arg.dateStr; // Get the clicked date as a string
-    // Check if the clicked date already has an event
-    const hasEvent = this.events.some(event => event.date === clickedDate);
+
+    const date = new Date(arg.dateStr);
+
+    const dateExists = this.selectedDates.some(d => 
+      d.date.getFullYear() === date.getFullYear() &&
+      d.date.getMonth() === date.getMonth() &&
+      d.date.getDate() === date.getDate()
+    );
+    // const dateExists = this.selectedDates.some(d => d.date === date);
+
+    if (!dateExists) {
+      this.selectedDates.push({ date: date });
+    } else {
+      console.log('Date already selected:', date);
+    }
+
+    console.log(this.eventDate);
+
+    console.log(this.selectedDates);
+    this.showDetails = true;
+    // const clickedDate = arg.dateStr; // Get the clicked date as a string
+    // // Check if the clicked date already has an event
+    // const hasEvent = this.events.some(event => event.date === clickedDate);
     
-    // if (!hasEvent) {
-      this.clickedDate = clickedDate;
-      console.log('Opening dialog for date:', this.clickedDate);
-      this.openAddEventDialog(this.clickedDate);
-    // }
+    // // if (!hasEvent) {
+    //   this.clickedDate = clickedDate;
+    //   console.log('Opening dialog for date:', this.clickedDate);
+    //   this.openAddEventDialog(this.clickedDate);
+    // // }
+    this.updateCalendar();
   }
 
   duplicateEvent(event: EventApi): void {
@@ -516,5 +740,408 @@ export class CalendarComponent implements OnInit {
         this.updateCalendar(); // Call method to update calendar upon successful deletion
       }
     });
+  }
+
+  /////// ========================
+
+
+  fetchProjects(): void {
+    const payload = {
+    
+    };
+
+    this.restApi.post('/master/projects', payload).subscribe((response: any) => {
+      console.log(response);
+      this.projects = response.map((project: any) => ({
+        names: project.project_name
+      }));
+      console.log(this.projects)
+    })
+  }
+
+  suggestProjects(): void {
+    this.restApi.get('timesheets/project-suggestion').subscribe((response: any) => {
+
+      console.log(response);
+
+      this.suggestedProjects = response.map((project: any) => ({
+        name: project.project_name
+      }));
+    });
+  }
+
+  fetchTasks(): void {
+    this.restApi.get('/tasks/get_all_tasks').subscribe((response: any) => {
+      console.log(response);
+      this.tasks = response;
+
+    })
+    // this.restApi.get('timesheets/task-suggestion').subscribe((response: any) => {
+    //   this.tasks = response;
+    // })
+  }
+
+  suggestTasks(): void {
+    this.restApi.get('timesheets/task-suggestion').subscribe((response: any) => {
+      
+      console.log(response); 
+
+      this.suggestedTasks = response.map((task: any) => ({
+        name: task.t_name
+      }))
+    });
+    // this.suggestedTasks = [
+    //   { name: 'Task A' },
+    //   { name: 'Task B' },
+    //   { name: 'Task C' },
+    //   { name: 'Task D' },
+    //   { name: 'Task E' }
+    // ];
+  }
+
+  selectProject(projectName: string) {
+    this.selectedProject = projectName;
+  }
+
+  selectTask(taskName: string) {
+    this.selectedTask = taskName;
+  }
+
+  closeDetailsPane() {
+    this.showDetails = false; // Hide details pane
+    this.updateCalendar();
+    this.selectedDates = [];
+    this.selectedProject = '';
+    this.selectedTask = '';
+    this.selectedPeriod = '';
+    this.isDuplicateMode = false;
+    this.isEditMode = false;
+  }
+
+  removeDate(index: number): void {
+    this.selectedDates.splice(index, 1);
+  }
+  ///////// =========================-
+
+  /////////////////////
+  getPeriodText(period: string): string {
+    switch (period) {
+      case '1':
+        return 'A';
+      case '2':
+        return 'M';
+      case '3':
+        return 'N';
+      default:
+        return '';
+    }
+  }
+  
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() is zero-based
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${day}-${month}-${year}`;
+  }
+  
+  addEvent(): void {
+    if (this.selectedDates.length === 0) {
+      console.error('Error: No dates selected.');
+      return;
+    }
+
+    console.log(this.selectedDates);
+
+    const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
+    console.log(formattedDates);
+
+    const period = this.getPeriodText(this.selectedPeriod);
+    const title = `${this.selectedProject} - ${this.selectedTask} - ${period}`;
+    const projectName = this.selectedProject;
+    const taskName = this.selectedTask;
+    const id = Math.random().toString(36).substr(2, 10);
+
+    const payload = {
+      dateList: formattedDates,
+      projectName,
+      taskName,
+      period
+    };
+
+    console.log(payload);
+    this.restApi.post('/timesheets/add', payload).subscribe(response => {
+      console.log('Event added to backend:', response);
+
+      const newEvents = formattedDates.map(date => ({
+        title: `${this.selectedProject} - ${this.selectedTask} - ${this.getPeriodText(this.selectedPeriod)}`,
+        date,
+        color: 'blue',
+        id,
+        period: this.getPeriodText(this.selectedPeriod),
+        projectName: this.selectedProject,
+        taskName: this.selectedTask
+      }));
+
+      this.events = [...this.events, newEvents];
+      this.calendarOptions = {
+        ...this.calendarOptions,
+        events: [...this.events]
+      };
+
+      console.log('Updated events:', this.events);
+      console.log('Updated calendar options:', this.calendarOptions);
+      this.updateCalendar();
+      this.cdr.detectChanges();
+    }, error => {
+      console.error('Error adding event to backend:', error);
+    });
+
+    this.showDetails = false;
+    this.selectedDates = [];
+    this.selectedProject = '';
+    this.selectedTask = '';
+    this.selectedPeriod = '';
+    this.isDuplicateMode = false;
+  }
+
+  convertPeriodToNumber(period: string): string {
+    switch (period) {
+      case 'A':
+        return '1';
+      case 'M':
+        return '2';
+      case 'N':
+        return '3';
+      default:
+        return '';
+    }
+  }
+  
+  showEditPane(event: any): void {
+    if (!event || !event.date) {
+      console.error('Error: No event or date provided.');
+      return;
+    }
+
+    const periodToNumber = this.convertPeriodToNumber(event.period);
+
+    const newDate = new Date(event.date);
+  
+    // Add the new date to selectedDates if it doesn't already exist
+    const dateExists = this.selectedDates.some(d =>
+      d.date.getFullYear() === newDate.getFullYear() &&
+      d.date.getMonth() === newDate.getMonth() &&
+      d.date.getDate() === newDate.getDate()
+    );
+
+    if (!dateExists) {
+      this.selectedDates.push({ date: newDate });
+    } else {
+      console.log('Date already selected:', newDate);
+    }
+    
+    // Set up selected dates and other fields from the event parameter
+    // this.selectedDates = [{ date: new Date(event.date) }];
+    this.selectedPeriod = periodToNumber;
+    // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
+    // this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
+    // this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
+    
+    this.selectedPeriod = this.selectedPeriod !== undefined ? this.selectedPeriod : periodToNumber;
+    this.selectedProject = this.selectedProject || event.projectName;
+    this.selectedTask = this.selectedTask || event.taskName;
+
+    console.log('Selected Period:', this.selectedPeriod);
+    console.log(this.selectedDates);
+
+    const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
+    console.log(formattedDates);
+
+    this.eventData = event;
+  }
+
+  editEvent(): void {
+    if (!this.eventData) {
+      console.error('Error: No event data available.');
+      return;
+    }
+
+    console.log("Edit action");
+
+    console.log("eventData:", this.eventData);
+    console.log(this.selectedDates);
+
+    const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
+    console.log(formattedDates);
+
+    const period = this.getPeriodText(this.selectedPeriod);
+    const title = `${this.selectedProject} - ${this.selectedTask} - ${period}`;
+    const projectName = this.selectedProject;
+    const taskName = this.selectedTask;
+    const id = this.eventData.id;
+
+    const payload = {
+      id,
+      dateList: formattedDates,
+      projectName,
+      taskName,
+      period
+    };
+    console.log(payload);
+
+    this.restApi.put('/timesheets/update', payload).subscribe(
+      response => {
+        console.log('Event updated to backend:', response);
+
+        const updatedEvent = response; // Adjust if necessary based on actual response structure
+
+        this.events = this.events.map(e => e.id === this.eventData.id ? updatedEvent : e);
+        
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: this.events
+        };
+
+        console.log('Updated events:', this.events);
+        console.log('Updated calendar options:', this.calendarOptions);
+
+        const existingDates = new Set(this.eventData.dateList);
+        const newDates = formattedDates.filter(date => !existingDates.has(date));
+
+        if (newDates.length > 0) {
+          // Call addEvent() for new dates
+          // this.addEvent(newDates);
+          console.log("There's more than 1 date");
+          console.log(newDates);
+
+          if (newDates.length > 0) {
+            // Prepare the payload for adding new dates
+            const addEventPayload = {
+              dateList: newDates,
+              projectName,
+              taskName,
+              period
+            };
+    
+            // Call addEvent() for new dates
+            this.restApi.post('/timesheets/add', addEventPayload).subscribe(
+              addResponse => {
+                console.log('New dates added to backend:', addResponse);
+    
+                // Add new events to the calendar
+                const newEvents = newDates.map(date => ({
+                  title: `${this.selectedProject} - ${this.selectedTask} - ${this.getPeriodText(this.selectedPeriod)}`,
+                  date,
+                  color: 'blue',
+                  id: Math.random().toString(36).substr(2, 10),
+                  period: this.getPeriodText(this.selectedPeriod),
+                  projectName: this.selectedProject,
+                  taskName: this.selectedTask
+                }));
+    
+                this.events = [...this.events, ...newEvents];
+                this.calendarOptions = {
+                  ...this.calendarOptions,
+                  events: this.events
+                };
+    
+                console.log('Updated events with new dates:', this.events);
+                console.log('Updated calendar options with new dates:', this.calendarOptions);
+    
+                // Refresh the calendar view
+                this.updateCalendar();
+                this.cdr.detectChanges();
+              },
+              addError => {
+                console.error('Error adding new dates to backend:', addError);
+              }
+            );
+          } else {
+            // Refresh the calendar view if no new dates to add
+            this.updateCalendar();
+            this.cdr.detectChanges();
+          }
+
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        } else {
+          // Refresh the calendar view if no new dates to add
+          this.updateCalendar();
+          this.cdr.detectChanges();
+        }
+        // // Refresh the calendar view
+        // this.updateCalendar();
+
+        // // Manually trigger change detection
+        // this.cdr.detectChanges();
+      },
+      error => {
+        console.error('Error Response:', error);
+      }
+    );
+
+    this.showDetails = false;
+    this.selectedDates = [];
+    this.selectedProject = '';
+    this.selectedTask = '';
+    this.selectedPeriod = '';
+    this.isEditMode = false;
+  }
+
+  // showEditPane(event: any): void {
+  //   if (!event || !event.date) {
+  //     console.error('Error: No event or date provided.');
+  //     return;
+  //   }
+
+  //   const periodToNumber = this.convertPeriodToNumber(event.period);
+
+  //   // Set up selected dates and other fields from the event parameter
+  //   this.selectedDates = [{ date: new Date(event.date) }];
+  //   this.selectedPeriod = periodToNumber;
+  //   // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
+  //   this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
+  //   this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
+    
+  //   console.log('Selected Period:', this.selectedPeriod);
+
+  //   console.log(this.selectedDates);
+
+  //   const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
+  //   console.log(formattedDates);
+
+  //   this.eventData = event;
+  // }
+
+  showDuplicatePane(event: any): void {
+    if (!event || !event.date) {
+      console.error('Error: No event or date provided.');
+      return;
+    }
+
+    console.log(event);
+
+    this.isDuplicateMode = true;
+    this.showDetails = true;
+    
+    this.updateCalendar();
+
+    const periodToNumber = this.convertPeriodToNumber(event.period);
+
+    // Set up selected dates and other fields from the event parameter
+    this.selectedDates = [{ date: new Date(event.date) }];
+    this.selectedPeriod = periodToNumber;
+    // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
+    this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
+    this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
+    
+    console.log('Selected Period:', this.selectedPeriod);
+
+    console.log(this.selectedDates);
+
+    const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
+    console.log(formattedDates);
+
+    this.eventData = event;
   }
 }

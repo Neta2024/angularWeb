@@ -14,7 +14,7 @@
   <app-chart1 [selectedYear]="selectedYear"></app-chart1>
   <div class="dashboard-sections">
     <div class="remaining-leaves">
-      <h2>Leaves</h2>
+      <h4>Leaves</h4>
       <div class="leave-card-list">
       <div *ngFor="let leave of remainingLeaves" class="leave-card">
         <div class="leave-icon">
@@ -31,27 +31,35 @@
     </div>
   
     <div class="leaves">
-      <h2>Today's Leaves</h2>
+      <h4>Leaves Today: {{ getUniqueNamesCount() }}</h4>
       <ul class="leave-list">
-        <li *ngFor="let leave of todayLeaves" class="leave-item">
+        <li *ngFor="let group of getGroupedLeaves() | keyvalue" class="leave-item">
+        <!-- <li *ngFor="let group of getUniqueNames() | keyvalue" class="leave-item"> -->
           <div class="leave-details">
-            <div class="leave-name">{{ leave.name }}</div>
-            <div class="leave-type">
+            <!-- <div class="leave-name">{{ group.key }}</div> -->
+            <div class="leave-name">{{ group.key }}</div>
+            <div *ngFor="let leave of group.value" class="leave-type">
+              <!-- <mat-icon [ngClass]="group.value[0].colorClass">{{ group.value[0].icon }}</mat-icon> -->
               <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
+              <!-- {{ group[0].type }} -->
               {{ leave.type }}
               <div class="leave-icons">
+                <!-- <mat-icon *ngIf="group.value && group.value.some(leave => leave.period === 'M' || leave.period === 'both')" class="day-icon">brightness_7</mat-icon>
+                <mat-icon *ngIf="group.value && group.value.some(leave => leave.period === 'N' || leave.period === 'both')" class="night-icon">brightness_4</mat-icon>
+                <mat-icon *ngIf="group.value && group.value.some(leave => leave.period === 'A' || leave.period === 'both')" class="allday-icon">timelapse</mat-icon> -->
                 <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">brightness_7</mat-icon>
                 <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_4</mat-icon>
                 <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="allday-icon">timelapse</mat-icon>
               </div>
             </div>
           </div>
+        </li>
           <!-- <div class="leave-icons">
             <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">wb_sunny</mat-icon>
             <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_3</mat-icon>
             <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="night-icon">timelapse</mat-icon>
           </div> -->
-        </li>
+        <!-- </li> -->
       </ul>
     </div>
   </div>

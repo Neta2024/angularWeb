@@ -4,7 +4,7 @@
   }
   
   .leave-list {
-    max-height: 270px;
+    max-height: 200px;
     overflow-y: auto;
     list-style-type: none;
     padding: 0;
