@@ -94,6 +94,25 @@ export class CalendarComponent implements OnInit {
     this.fetchTasks();
   }
 
+
+  ngOnDestroy() {
+    this.saveState();
+  }
+
+  saveState() {
+    localStorage.setItem('calendarDate', JSON.stringify({ year: this.selectedYear, month: this.selectedMonth }));
+  }
+
+  restoreState() {
+    const savedDate = localStorage.getItem('calendarDate');
+
+    if (savedDate) {
+      const { year, month } = JSON.parse(savedDate);
+      this.selectedYear = year;
+      this.selectedMonth = month;
+    }
+  }
+
   initializeCalendarOptions() {
     this.calendarOptions = {
       initialView: 'dayGridMonth',
