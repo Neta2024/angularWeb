@@ -101,7 +101,7 @@ export class Chart1Component implements OnInit {
         this.workDays.push(monthData.totalWorkingDays - (monthData.allLeaves + (monthData.totalWorkingDays - monthData.recordedTimeSheet)));
       });
       this.setChart();
-      
+      this.changeDetectorRef.detectChanges();
     }, error => {
       console.error('API call error:', error);
       // Handle error appropriately here
