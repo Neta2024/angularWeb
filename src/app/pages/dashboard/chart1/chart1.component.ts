@@ -48,7 +48,7 @@ export class Chart1Component implements OnInit {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
-  @Input() selectedYear: string = 'option1'; 
+  @Input() selectedYear: string = 'option1';
   workDays: number[] = [];
   leaveDays: number[] = [];
   pending: number[] = [];
@@ -59,6 +59,7 @@ export class Chart1Component implements OnInit {
   }
 
   ngOnInit() {
+    console.log('ngOnInit called');
     // this.updateChartData(this.selectedYear);
 
   }
@@ -70,12 +71,16 @@ export class Chart1Component implements OnInit {
   }
 
   updateChartData(selectedYear: string): void {
-    this.chartOptions = {
-      series: [],
-      chart: {
-        type: "bar"
-      }
-    };
+    console.log('updateChartData called with year:', selectedYear);
+
+    // Reset chartOptions to force chart refresh
+    this.chartOptions = null;
+    // this.chartOptions = {
+    //   series: [],
+    //   chart: {
+    //     type: "bar"
+    //   }
+    // };
     this.categories = [];
     this.workDays = [];
     this.leaveDays = [];
@@ -83,7 +88,6 @@ export class Chart1Component implements OnInit {
     this.selectedYear = selectedYear;
     const yearRequest = { year: parseInt(selectedYear, 10) };
     console.log('yearRequest: ', yearRequest);
-
     // float workDays = 0.0;
     // float leaveDays;
     // float pending;
@@ -185,6 +189,7 @@ export class Chart1Component implements OnInit {
   }
 
   setChart(){
+    console.log('setChart called');
     this.chartOptions = {
       series: [
         { name: "Work Days", data: this.workDays },
@@ -238,6 +243,7 @@ export class Chart1Component implements OnInit {
         shared: true
       }
     };
+    this.changeDetectorRef.detectChanges();
     //console.log(this.categories);
 
     // if (this.chart && this.chart.updateOptions) {
