@@ -31,6 +31,7 @@ export class Alert {
       } else if (duration > 10000) {
          duration = 10000;
       }
+
       const config: MatSnackBarConfig = {
          data: { type, message },
          duration,
