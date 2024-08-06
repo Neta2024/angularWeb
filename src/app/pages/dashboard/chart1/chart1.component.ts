@@ -60,7 +60,6 @@ export class Chart1Component implements OnInit {
 
   ngOnInit() {
     // this.updateChartData(this.selectedYear);
-    this.setChart();
 
   }
 
@@ -71,6 +70,12 @@ export class Chart1Component implements OnInit {
   }
 
   updateChartData(selectedYear: string): void {
+    this.chartOptions = {
+      series: [],
+      chart: {
+        type: "bar"
+      }
+    };
     this.categories = [];
     this.workDays = [];
     this.leaveDays = [];
@@ -95,11 +100,7 @@ export class Chart1Component implements OnInit {
         this.leaveDays.push(monthData.allLeaves);
         this.workDays.push(monthData.totalWorkingDays - (monthData.allLeaves + (monthData.totalWorkingDays - monthData.recordedTimeSheet)));
       });
-      //this.setChart();
-      // { name: "Work Days", data: this.workDays },
-      // { name: "Leaves", data: this.leaveDays },
-      // { name: "Pending", data: this.pending }
-      this.chartOptions.series.push({name: "Work Days", type: "bar", data: this.workDays});
+      this.setChart();
       this.changeDetectorRef.detectChanges();
     }, error => {
       console.error('API call error:', error);
@@ -185,7 +186,11 @@ export class Chart1Component implements OnInit {
 
   setChart(){
     this.chartOptions = {
-      series: [],
+      series: [
+        { name: "Work Days", data: this.workDays },
+        { name: "Leaves", data: this.leaveDays },
+        { name: "Pending", data: this.pending }
+      ],
       chart: {
         type: "bar",
         height: 350,
