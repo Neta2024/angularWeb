@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Alert } from 'src/app/shared/components/alert/alert';
 import { RestApi } from 'src/app/shared/rest-api';
 
 @Component({
@@ -8,7 +9,7 @@ import { RestApi } from 'src/app/shared/rest-api';
 })
 export class TimesheetComponent implements OnInit {
 
-  constructor(private rest: RestApi) { }
+  constructor(private rest: RestApi, private alert: Alert) { }
 
   ngOnInit() {
     // let data = { yearRequest: 2024 };
@@ -21,4 +22,7 @@ export class TimesheetComponent implements OnInit {
     });
   }
 
+  test() {
+    this.alert.info("Test message", 10000);
+  }
 }
