@@ -125,7 +125,7 @@ export class CalendarComponent implements OnInit {
       dateClick: (arg) => this.handleDateClick(arg),
       datesSet: this.onDatesSet.bind(this),
       headerToolbar: {
-        start: 'title',
+        start: '',
         center: '',
         end: 'today prev,next'
       }
