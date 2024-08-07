@@ -8,3 +8,8 @@
   flex-direction: row;
   flex-wrap: nowrap;
 }
+
+.dropdown {
+  display: flex;
+  justify-content: space-between;
+}

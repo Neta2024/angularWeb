@@ -46,19 +46,19 @@ const NavigationItems = [
         title: 'Timesheet',
         type: 'item',
         classes: 'nav-item',
-        url: '/timesheet/detail',
+        url: '/timesheet/calendar',
         icon: 'ti ti-alarm',
         breadcrumbs: true
       },
-      {
-        id: 'calendar',
-        title: 'Calendar',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/timesheet/calendar',
-        icon: 'ti ti-calendar',
-        breadcrumbs: true
-      },
+      // {
+      //   id: 'calendar',
+      //   title: 'Calendar',
+      //   type: 'item',
+      //   classes: 'nav-item',
+      //   url: '/timesheet/calendar',
+      //   icon: 'ti ti-calendar',
+      //   breadcrumbs: true
+      // },
       {
         id: 'signout',
         title: 'Sign Out',

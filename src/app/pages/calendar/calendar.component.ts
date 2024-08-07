@@ -125,7 +125,7 @@ export class CalendarComponent implements OnInit {
       dateClick: (arg) => this.handleDateClick(arg),
       datesSet: this.onDatesSet.bind(this),
       headerToolbar: {
-        start: 'title',
+        start: '',
         center: '',
         end: 'today prev,next'
       }
@@ -894,6 +894,8 @@ export class CalendarComponent implements OnInit {
       this.cdr.detectChanges();
     }, error => {
       console.error('Error adding event to backend:', error);
+      this.showDetails = false; // Hide details pane
+      this.updateCalendar();
     });
 
     this.showDetails = false;
@@ -1077,6 +1079,8 @@ export class CalendarComponent implements OnInit {
       },
       error => {
         console.error('Error Response:', error);
+        this.showDetails = false; // Hide details pane
+        this.updateCalendar();
       }
     );
 
