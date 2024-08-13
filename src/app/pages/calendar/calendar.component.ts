@@ -63,6 +63,8 @@ export class CalendarComponent implements OnInit {
 
   private holidayDates: Set<string> = new Set();
 
+  selectedView: string = 'calendar';
+
   constructor(
     public dialog: MatDialog,
     private restApi: RestApi,
@@ -113,6 +115,15 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  updateView() {
+    // Logic to handle view change
+    if (this.selectedView === 'calendar') {
+      // Switch to calendar view
+    } else if (this.selectedView === 'list') {
+      // Switch to list view
+    }
+  }
+  
   initializeCalendarOptions() {
     this.calendarOptions = {
       initialView: 'dayGridMonth',
@@ -148,14 +159,20 @@ export class CalendarComponent implements OnInit {
     // this.cdr.detectChanges();
   }
 
-  getColor(projectName: string): string {
+  getColor(period: string, taskName: string): string {
     const colors: { [key: string]: string } = {
-      'Project Alpha': 'blue',
-      'Project Beta': 'green',
-      'DMS on Cloud-Alfresco': 'orange'
+      'A': 'skyblue',
+      'M': 'green',
+      'N': 'orange'
     };
 
-    return colors[projectName] || 'grey';
+    const isLeave = taskName.toLowerCase().includes('leave');
+  
+    if (isLeave) {
+      return 'purple';
+    }
+    
+    return colors[period] || 'grey';
   }
 
   convertDate(dateString: string): string {
@@ -188,7 +205,7 @@ export class CalendarComponent implements OnInit {
         this.events = response.map((timesheet: any) => ({
           title: `${timesheet.projectName} - ${timesheet.taskName}`,
           date: this.convertDate(timesheet.date),
-          color: this.getColor(timesheet.projectName),
+          color: this.getColor(timesheet.period, timesheet.taskName),
           id: timesheet.tsid,
           taskName: timesheet.taskName,
           projectName: timesheet.projectName,
@@ -484,6 +501,8 @@ export class CalendarComponent implements OnInit {
 
     const deleteButton = document.createElement('button');
     deleteButton.classList.add('btn-delete');
+    deleteButton.style.border = 'none';
+    deleteButton.style.background = 'none';
     const deleteIcon = document.createElement('img');
     deleteIcon.src = 'assets/icons/trash.png';
     deleteIcon.alt = 'Delete';
@@ -506,6 +525,8 @@ export class CalendarComponent implements OnInit {
 
     const duplicateButton = document.createElement('button');
     duplicateButton.classList.add('btn-duplicate');
+    duplicateButton.style.border = 'none';
+    duplicateButton.style.background = 'none';
     const duplicateIcon = document.createElement('img');
     duplicateIcon.src = 'assets/icons/copy.png';
     duplicateIcon.alt = 'Duplicate';
