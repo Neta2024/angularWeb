@@ -5,22 +5,45 @@
 
       <div class="dropdown">
         <div class="yearmonth">
+          <mat-form-field appearance="fill">
+            <mat-label>Year</mat-label>
+            <mat-select [(value)]="selectedYear" (selectionChange)="updateCalendar()">
+              <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        
+          <mat-form-field appearance="fill">
+            <mat-label>Month</mat-label>
+            <mat-select [(value)]="selectedMonth" (selectionChange)="updateCalendar()">
+              <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        
+        <!-- <div class="yearmonth">
           <select id="yearSelect" [(ngModel)]="selectedYear" (change)="updateCalendar()">
             <option *ngFor="let year of years" [value]="year">{{ year }}</option>
           </select>
           <select id="monthSelect" [(ngModel)]="selectedMonth" (change)="updateCalendar()">
             <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
           </select>
-        </div>
+        </div> -->
 <!--       
         <button type="button" class="btn btn-add" style="background-color: green; color: white;" (click)="openAddEventDialog()">Add</button>
         <button type="button" class="btn btn-del" style="background-color: red; color: white;">Delete</button> -->
 
         <div class="modeSelect">
-          <select id="viewSelect">
+          <mat-form-field appearance="fill">
+            <mat-label>View</mat-label>
+            <mat-select id="viewSelect">
+              <mat-option value="calendar">Calendar View</mat-option>
+              <mat-option value="list">List View</mat-option>
+            </mat-select>
+          </mat-form-field>          
+          <!-- <select id="viewSelect">
             <option value="calendar">Calendar View</option>
             <option value="list">List View</option>
-          </select>
+          </select> -->
         </div>
       </div>
 
