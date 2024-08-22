@@ -1,0 +1,63 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrap {
+    flex: 1;
+}
+
+.btn-custom {
+    background-color: #5db936;
+    border-color: #5db936;
+    color: white;
+    /* Optional: set text color for better contrast */
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.btn-icon i {
+    font-size: 1rem;
+    color: #172c24;
+}
+
+footer {
+    text-align: center;
+    /* Center text horizontally */
+    padding: 10px 0;
+    /* Add padding to space out content */
+    background-color: #f8f9fa;
+    /* Optional: Set a background color */
+    border-top: 1px solid #dee2e6;
+    /* Optional: Add a top border */
+}
+
+footer p {
+    margin: 0;
+    /* Remove default margin */
+}
+
+footer a {
+    color: #007bff;
+    /* Optional: Set link color */
+    text-decoration: none;
+    /* Optional: Remove underline from link */
+}
+
+footer a:hover {
+    text-decoration: underline;
+    /* Optional: Underline on hover */
+}

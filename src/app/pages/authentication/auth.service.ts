@@ -57,6 +57,7 @@ export class AuthService implements OnDestroy {
         //console.log(auth);
         this.setAuthToLocalStorage(auth);
         this.setAuthString(authorization);
+        this.currentUserSubject.next(auth); // Notify subscribers of the new user
         return auth;
       }),
       catchError((err) => {
