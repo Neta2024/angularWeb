@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   popState?: Subscription;
   errorMessage: string;
   hasError: boolean;
+  showPassword = false;
 
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private msal: MsalService,
@@ -28,7 +29,7 @@ export class LoginComponent implements OnInit {
   ) {
     //console.log(this.auth.user);
     if (this.auth.user) {
-      this.router.navigateByUrl('/timesheet');
+      this.router.navigateByUrl('/timesheet/dashboard');
     }
 
     this.awarenessPopState();
@@ -106,7 +107,7 @@ export class LoginComponent implements OnInit {
       else {
         this.hasError = false;
         this.auth.user = res;
-        this.router.navigateByUrl('/timesheet');
+        this.router.navigateByUrl('/timesheet/dashboard');
       }
     })
     .add(() => this.busy = false);
@@ -137,5 +138,9 @@ export class LoginComponent implements OnInit {
       this.auth.user = user;
       this.router.navigateByUrl('/timesheet');
     }).add(() => this.busy = false);
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }

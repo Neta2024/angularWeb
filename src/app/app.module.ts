@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from './pages/authentication/auth.service';
 import { MaterialModule } from './shared/material.module';
 import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 declare const clientId: string;
 declare const authorityId: string;
@@ -82,7 +83,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MaterialModule,
     BrowserAnimationsModule,
     MsalModule,
-    NgbModule
+    NgbModule,
+    FontAwesomeModule,
   ],
   providers: [
     NavigationItem,

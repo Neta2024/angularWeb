@@ -12,6 +12,8 @@ export class AuthModel {
   fullName: string;
   email: string;
   role: string;
+  firstName: string;
+  lastName: string;
 
   setAuth(auth: any) {
     this.token = auth.token;
@@ -25,6 +27,8 @@ export class AuthModel {
     this.status = auth.status;
     this.username = auth.username;
     this.fullName = auth.fullName;
+    this.firstName = auth.firstName;
+    this.lastName = auth.lastName;
     this.email = auth.email;
     this.role = auth.role;
   }

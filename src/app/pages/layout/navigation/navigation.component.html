@@ -1,15 +1,15 @@
 <!-- [ Sidebar Menu ] start -->
 <nav>
-  <div class="navbar-wrapper">
-    <div class="m-header">
-      <!-- [ Header Topbar ] start -->
-      <a [routerLink]="['/']">
-        <!-- ========   change your logo hear   ============ -->
-        <!-- <img src="assets/images/logo-dark.svg" class="logo logo-lg" /> -->
-        <h1>GinkgoRun</h1>
-      </a>
+    <div class="navbar-wrapper">
+        <div class="m-header">
+            <!-- [ Header Topbar ] start -->
+            <a [routerLink]="['/']">
+                <!-- ========   change your logo hear   ============ -->
+                <!-- <img src="assets/images/logo-dark.svg" class="logo logo-lg" /> -->
+                <h1>GinkgoRun</h1>
+            </a>
+        </div>
+        <app-nav-content (NavCollapsedMob)="navCollapseMob()" class="scroll-div w-100"></app-nav-content>
     </div>
-    <app-nav-content (NavCollapsedMob)="navCollapseMob()" class="scroll-div w-100"></app-nav-content>
-  </div>
 </nav>
 <!-- [ Sidebar Menu ] end -->
