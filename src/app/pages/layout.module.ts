@@ -32,7 +32,7 @@ import { CalendarModule } from './calendar/calendar.module';
     CommonModule,
     PagesRoutingModule,
     SharedModule,
-    CalendarModule
+    CalendarModule,
   ],
 })
 export class LayoutModule { }
