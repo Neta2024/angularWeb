@@ -1,0 +1,136 @@
+/* Container for year and month selectors */
+
+.selectors-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+/* Styling for month selector */
+
+.month-selector {
+    flex: 1;
+    margin-right: 10px;
+    /* Space between month and year selectors */
+}
+
+
+/* Hover effect for dropdowns */
+
+.month-selector :hover,
+.year-selector :hover {
+    border-color: #007bff;
+}
+
+
+/* Styling for year selector */
+
+.year-selector {
+    flex: 1;
+}
+
+
+/* Styling for month and year labels */
+
+.selectors-container label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+
+/* Styling for the dropdowns */
+
+.month-dropdown,
+.year-dropdown {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+
+/* Style for no holidays message */
+
+.no-holiday {
+    font-size: 16px;
+    color: #ff0000;
+    margin: 20px 0;
+}
+
+
+/* Style for each month's section */
+
+.month-section {
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+}
+
+
+/* Styling for month headers */
+
+.month-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+
+/* Style each month section */
+
+div {
+    margin-bottom: 40px;
+}
+
+
+/* Style section headers */
+
+h4 {
+    font-size: 20px;
+}
+
+
+/* Style the table */
+
+table {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+
+/* Style table body cells */
+
+tbody {
+    background-color: #fff;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.holiday-date {
+    width: 30%;
+    text-align: left;
+}
+
+.holiday-name {
+    width: 70%;
+    text-align: left;
+    // border-radius: 0px, 10px, 10px, 0px;
+}
+
+
+/* Add a hover effect for rows */
+
+tbody tr:hover {
+    background-color: #ee67678d;
+    font-weight: bold;
+    color: white;
+}
