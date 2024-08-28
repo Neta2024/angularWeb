@@ -29,20 +29,16 @@
     <p>No holidays found for the selected year and month.</p>
 </div>
 
-<!-- Display holidays for each month -->
+<!-- Display holidays for each month that has holidays -->
 <div *ngFor="let month of monthsWithNumbers" class="month-section">
-    <!-- Only display if the month matches the selected month or if no month is selected -->
-    <ng-container *ngIf="selectedMonth === '' || selectedMonth === month.number">
+    <!-- Only display the month if there are holidays -->
+    <ng-container *ngIf="holidaysByMonth[month.name]?.length > 0 && (selectedMonth === '' || selectedMonth === month.number)">
         <h4 class="month-header">{{ month.name }}</h4>
         <table class="holiday-table">
             <tbody>
-                <!-- Show "No holiday" message if there are no holidays for this month -->
-                <tr *ngIf="holidaysByMonth[month.name]?.length === 0">
-                    <td colspan="2" class="no-holiday">No holiday</td>
-                </tr>
                 <!-- Show holidays if there are any -->
                 <tr *ngFor="let holiday of holidaysByMonth[month.name]">
-                    <td class="holiday-date">{{ holiday.date | date: 'EEEE, d' }}{{ getDaySuffix(holiday.date | date: 'd') }}</td>
+                    <td class="holiday-date">{{ holiday.date | date: 'EEE, d' }}</td>
                     <td class="holiday-name">{{ holiday.name }}</td>
                 </tr>
             </tbody>

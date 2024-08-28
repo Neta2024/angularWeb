@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+        <div [ngClass]="{'col-sm-12': !showDetails, 'col-lg-8': showDetails}" class="col-lg-8">
+            <app-card cardTitle="Leave Calendar">
+                <div class="dropdown">
+                    <div class="yearmonth">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Year</mat-label>
+                            <mat-select [(value)]="selectedYear" (selectionChange)="updateCalendar()">
+                                <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill">
+                            <mat-label>Month</mat-label>
+                            <mat-select [(value)]="selectedMonth" (selectionChange)="updateCalendar()">
+                                <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <full-calendar [options]="calendarOptions"></full-calendar>
+            </app-card>
+        </div>
+    </div>
+</div>

@@ -26,6 +26,10 @@ const routes: Routes = [
         loadChildren: () => import('./calendar/calendar.module').then((m) => m.CalendarModule),
       },
       {
+        path: 'leaveCalendar',
+        loadChildren: () => import('./leave-calendar/leave-calendar.module').then((m) => m.LeaveCalendarModule),
+      },
+      {
         path: 'holidays',
         loadChildren: () => import('./holiday/holiday.module').then((m) => m.HolidayModule),
       },

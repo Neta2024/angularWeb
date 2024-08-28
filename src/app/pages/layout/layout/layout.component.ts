@@ -1,6 +1,7 @@
 import { Location, LocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { BerryConfig } from 'src/app/app-config';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-layout',
@@ -13,6 +14,9 @@ export class LayoutComponent implements OnInit {
   navCollapsed: boolean;
   navCollapsedMob = false;
   windowWidth: number;
+
+   // version
+   currentApplicationVersion = environment.appVersion;
 
   // Constructor
   constructor(

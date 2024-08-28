@@ -1,0 +1,15 @@
+.container {
+    max-width: 100%;
+}
+
+.row {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.dropdown {
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,18 +1,12 @@
 <div class="m-header">
-  <a [routerLink]="['/']" class="b-brand">
-    <img src="assets/images/ginkgo-run.png" alt="" style="width: 200px; margin-right: 10px;"/>
-    <!-- <h1>GinkgoRun</h1> -->
-  </a>
-  <div class="pc-h-item">
-    <a
-      href="javascript:"
-      class="pc-head-link head-link-secondary m-0 mobile-menu"
-      [ngClass]="{ on: navCollapsed }"
-      id="sidebar-hide mobile-collapse"
-      (click)="navCollapse()"
-    >
-      <i class="ti ti-menu-2"></i>
+    <a [routerLink]="['/']" class="b-brand">
+        <img src="assets/images/ginkgo-run.png" alt="" style="width: 200px; margin-right: 10px;" />
+        <!-- <h1>GinkgoRun</h1> -->
     </a>
-  </div>
+    <div class="pc-h-item">
+        <a href="javascript:" class="pc-head-link head-link-secondary m-0 mobile-menu" [ngClass]="{ on: navCollapsed }" id="sidebar-hide mobile-collapse" (click)="navCollapse()">
+            <i class="ti ti-menu-2"></i>
+        </a>
+    </div>
 </div>
 <!-- [ Header ] end -->

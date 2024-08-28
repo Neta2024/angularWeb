@@ -51,6 +51,15 @@ const NavigationItems = [
         breadcrumbs: true
       },
       {
+        id: 'leavecalendar',
+        title: 'Leave Calendar',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/timesheet/leaveCalendar',
+        icon: 'ti ti-clipboard',
+        breadcrumbs: true
+      },
+      {
         id: 'holidays',
         title: 'Holidays',
         type: 'item',
