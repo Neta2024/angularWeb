@@ -1,68 +1,52 @@
 <div class="view-dropdown">
     <mat-label>View: </mat-label>
     <mat-form-field appearance="fill">
-      <mat-select matNativeControl [(value)]="selectedYear" (selectionChange)="onChange($event.value)" required>
-        <mat-option value="2024">2024</mat-option>
-        <mat-option value="2023">2023</mat-option>
-        <mat-option value="2022">2022</mat-option>
-        <mat-option value="2021">2021</mat-option>
-        <mat-option value="2020">2020</mat-option>
-      </mat-select>
+        <mat-select matNativeControl [(value)]="selectedYear" (selectionChange)="onChange($event.value)" required>
+            <mat-option value="2024">2024</mat-option>
+            <mat-option value="2023">2023</mat-option>
+            <mat-option value="2022">2022</mat-option>
+            <mat-option value="2021">2021</mat-option>
+            <mat-option value="2020">2020</mat-option>
+        </mat-select>
     </mat-form-field>
-  </div>
-  
-  <app-chart1 [selectedYear]="selectedYear"></app-chart1>
-  <div class="dashboard-sections">
+</div>
+
+<app-chart1 [selectedYear]="selectedYear"></app-chart1>
+<div class="dashboard-sections">
     <div class="remaining-leaves">
-      <h4>Leaves</h4>
-      <div class="leave-card-list">
-      <div *ngFor="let leave of remainingLeaves" class="leave-card">
-        <div class="leave-icon">
-          <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
-        </div>
-        <div class="leave-info">
-          <div class="leave-count">
-            <span class="used-days">{{ leave.used }}</span> / <span class="total-days">{{ leave.total }}</span>
-          </div>
-          <div class="leave-type">{{ leave.type }}</div>
-        </div>
-      </div>
-    </div>
-    </div>
-  
-    <div class="leaves">
-      <h4>Leaves Today: {{ getUniqueNamesCount() }}</h4>
-      <ul class="leave-list">
-        <li *ngFor="let group of getGroupedLeaves() | keyvalue" class="leave-item">
-        <!-- <li *ngFor="let group of getUniqueNames() | keyvalue" class="leave-item"> -->
-          <div class="leave-details">
-            <!-- <div class="leave-name">{{ group.key }}</div> -->
-            <div class="leave-name">{{ group.key }}</div>
-            <div *ngFor="let leave of group.value" class="leave-type">
-              <!-- <mat-icon [ngClass]="group.value[0].colorClass">{{ group.value[0].icon }}</mat-icon> -->
-              <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
-              <!-- {{ group[0].type }} -->
-              {{ leave.type }}
-              <div class="leave-icons">
-                <!-- <mat-icon *ngIf="group.value && group.value.some(leave => leave.period === 'M' || leave.period === 'both')" class="day-icon">brightness_7</mat-icon>
-                <mat-icon *ngIf="group.value && group.value.some(leave => leave.period === 'N' || leave.period === 'both')" class="night-icon">brightness_4</mat-icon>
-                <mat-icon *ngIf="group.value && group.value.some(leave => leave.period === 'A' || leave.period === 'both')" class="allday-icon">timelapse</mat-icon> -->
-                <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">brightness_7</mat-icon>
-                <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_4</mat-icon>
-                <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="allday-icon">timelapse</mat-icon>
-              </div>
+        <h4>Leaves</h4>
+        <div class="leave-card-list">
+            <div *ngFor="let leave of remainingLeaves" class="leave-card">
+                <div class="leave-icon">
+                    <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
+                </div>
+                <div class="leave-info">
+                    <div class="leave-count">
+                        <span class="used-days">{{ leave.used }}</span> / <span class="total-days">{{ leave.total }}</span>
+                    </div>
+                    <div class="leave-type">{{ leave.type }}</div>
+                </div>
             </div>
-          </div>
-        </li>
-          <!-- <div class="leave-icons">
-            <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">wb_sunny</mat-icon>
-            <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_3</mat-icon>
-            <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="night-icon">timelapse</mat-icon>
-          </div> -->
-        <!-- </li> -->
-      </ul>
+        </div>
     </div>
-  </div>
-  
-      
-      
+
+    <div class="leaves">
+        <h4>Leaves Today: {{ getUniqueNamesCount() }}</h4>
+        <ul class="leave-list">
+            <li *ngFor="let group of getGroupedLeaves() | keyvalue" class="leave-item">
+                <div class="leave-details">
+                    <div class="leave-name">{{ group.key }}</div>
+                    <div *ngFor="let leave of group.value" class="leave-type">
+                        <mat-icon [ngClass]="leave.colorClass">{{ leave.icon }}</mat-icon>
+                        {{ leave.type }}
+                        <div class="leave-icons">
+                            <mat-icon *ngIf="leave.period === 'M' || leave.period === 'both'" class="day-icon">brightness_7</mat-icon>
+                            <mat-icon *ngIf="leave.period === 'N' || leave.period === 'both'" class="night-icon">brightness_4</mat-icon>
+                            <mat-icon *ngIf="leave.period === 'A' || leave.period === 'both'" class="allday-icon">timelapse</mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

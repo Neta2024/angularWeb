@@ -75,6 +75,7 @@ export class LeaveCalendarComponent implements OnInit{
 
   ngOnInit() {
     this.initializeCalendarOptions();
+    this.selectedMonth = new Date().getMonth();
     // console.log('Initial selected year:', this.selectedYear);
     // console.log('Initial selected month:', this.selectedMonth);
     this.loadLeaveCalendar(this.selectedYear, this.selectedMonth);  // Updated call
@@ -121,21 +122,18 @@ export class LeaveCalendarComponent implements OnInit{
 
   onDatesSet(arg: any) {
     const calendarDate = arg.view.currentStart;
-    // console.log('calendarDate: ',calendarDate);
     this.selectedYear = calendarDate.getFullYear();
-    // console.log('this.selectedYear = ',this.selectedYear)
-    // console.log('type: ',typeof this.selectedYear)
     this.selectedMonth = calendarDate.getMonth();
-    // console.log('this.selectedMonth = ',this.selectedMonth)
-    // console.log('type: ',typeof this.selectedMonth)
     this.loadLeaveCalendar(this.selectedYear, this.selectedMonth);
+
   }
+
 
   getColor(period: string, taskName: string): string {
     const colors: { [key: string]: string } = {
-      'A': '#b3e0ff',
-      'M': '#98e698',
-      'N': 'orange'
+      'A': '#ccebff',
+      'M': '#d6f5d6',
+      'N': '#ffebcc'
     };
 
     const isLeave = taskName.toLowerCase().includes('leave');
@@ -147,27 +145,33 @@ export class LeaveCalendarComponent implements OnInit{
     return colors[period] || 'grey';
   }
 
+  getTextColor(period: string): string {
+    const colors: { [key: string]: string } = {
+      'A': '#005c99',
+      'M': '#1e7b1e',
+      'N': '#995c00'
+    };
+    return colors[period] || 'grey';
+  }
+
   convertDate(dateString: string): string {
     const [day, month, year] = dateString.split('-');
     return `${year}-${month}-${day}`;
   }
   
-  loadLeaveCalendar(year: number, month: number): void {
+  loadLeaveCalendar(year: number, month: number){
     const numericMonth = this.selectedMonth + 1;
-    // console.log('Selected year and month:', year, numericMonth);
+    console.log('Selected year and month:', year, numericMonth);
 
     // Make the API call with year and month
     this.restApi.get(`/leave-calendar/get`, { 
         params: { 
-            year: year.toString(), 
-            month: numericMonth  // Adjust month to be 1-based if required by the API
+            year: year, 
+            month: numericMonth  
         } 
     }).subscribe(
         (response: any) => {
-            // console.log('API Response:', response); // Log the entire response
             const leaveData: LeaveEntry[] = response as LeaveEntry[];
-
-            // console.log('Leave details response:', leaveData);
 
             // Clear previous leave calendar
             this.leaveCalendar = [];
@@ -185,6 +189,7 @@ export class LeaveCalendarComponent implements OnInit{
                                 title: `${employeeName}: ${leave.leaveType}`,
                                 date: date,
                                 color: this.getColor(leave.period, leave.leaveType), // Use getColor method here
+                                // textColor: this.getTextColor(leave.period), // Use getTextColor method here
                                 id: this.generateUniqueId({ date, employeeName, leaveType: leave.leaveType }),
                                 extendedProps: {
                                     employeeName: employeeName,
@@ -199,22 +204,20 @@ export class LeaveCalendarComponent implements OnInit{
                 console.warn('Expected array but received:', leaveData);
             }
 
-            // Combine events and holidays
             this.calendarOptions = {
                 ...this.calendarOptions,
                 events: [...this.leaveCalendar]
             };
 
-            // console.log('Updated Calendar Events:', this.calendarOptions.events);
-
-            this.updateCalendar();
             this.cdr.detectChanges();
 
         },
         error => {
             console.error('An error occurred while loading holidays:', error);
         }
+        
     );
+    
 }
 
   isLeaveDay(date: string): boolean {
@@ -227,42 +230,99 @@ export class LeaveCalendarComponent implements OnInit{
 
   updateCalendar() {
     this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
-    // console.log('Updated selectedMonth:', this.selectedMonth);
+    console.log(typeof this.selectedMonth);
 
-    // this.loadLeaveCalendar(this.selectedYear, this.selectedMonth);
-    // this.loadEvents(this.selectedYear, this.selectedMonth);
+    this.loadLeaveCalendar(this.selectedYear, this.selectedMonth);
 
     this.calendarVisible = false;
     setTimeout(() => {
-        this.calendarOptions = {
-            ...this.calendarOptions,
-            initialDate: new Date(this.selectedYear, this.selectedMonth, 1)
-        };
-        this.calendarVisible = true;
+      this.calendarOptions = {
+        ...this.calendarOptions,
+        initialDate: new Date(this.selectedYear, this.selectedMonth, 1)
+      };
+      this.calendarVisible = true;
     });
   }
+
+  // renderEventContent(arg: EventContentArg) {
+  //   const employeeName = arg.event.extendedProps['employeeName'];
+  //   const leaveType = arg.event.extendedProps['leaveType'];
+  //   const period = arg.event.extendedProps['period'];
+
+  //   // Use getTextColor to set the text color
+  //   const textColor = this.getTextColor(period);
+
+  //   // Create the container and title elements
+  //   const container = document.createElement('div');
+  //   container.style.padding = '5px';
+
+  //   const titleDiv = document.createElement('div');
+  //   titleDiv.innerHTML = `${employeeName} <br> ${leaveType}`;
+  //   titleDiv.style.color = textColor;
+  //   titleDiv.style.fontWeight = 'bold';
+
+  //   container.appendChild(titleDiv);
+
+  //   return { domNodes: [container] };
+  // }
 
   renderEventContent(arg: EventContentArg) {
     const employeeName = arg.event.extendedProps['employeeName'];
     const leaveType = arg.event.extendedProps['leaveType'];
+    const period = arg.event.extendedProps['period'];
+
+    // Use getTextColor to set the text color
+    const textColor = this.getTextColor(period);
+
+    // Use getColor to set the container background color
+    const bgColor = this.getColor(period, leaveType);
+
+    // Create the container element
     const container = document.createElement('div');
     container.style.padding = '5px';
+    container.style.backgroundColor = bgColor;
+    container.style.display = 'flex'; // Set container to flexbox
+    container.style.justifyContent = 'space-between';
+
+
+    // Create the icon element
+    const iconDiv = document.createElement('div');
+    const icon = document.createElement('img');
+    if(period == 'M'){
+      icon.src = 'assets/icons/am.png';
+    } else if(period == 'N'){
+      icon.src = 'assets/icons/pm.png';
+    } else {
+      icon.src = 'assets/icons/am-pm.png';
+    }
+    icon.style.width = '20px'; // Adjust the size as needed
+    icon.style.height = '20px';
+    iconDiv.appendChild(icon);
+
+    // Create the titleDiv element
     const titleDiv = document.createElement('div');
-    titleDiv.innerHTML = `<strong>${employeeName}</strong> <br> <strong>${leaveType}</strong>`;
-    titleDiv.style.color = 'black';
+    titleDiv.innerHTML = `<strong>${employeeName}</strong><br><strong>${leaveType}</strong>`;
+    titleDiv.style.color = textColor;
+
+    // Append the iconDiv and titleDiv to the container
     container.appendChild(titleDiv);
+    container.appendChild(iconDiv);
+
     return { domNodes: [container] };
-  }
+}
 
 
   handleDateClick(arg: any) {
-    // console.log('Clicked date:', arg.dateStr);
+    console.log('Clicked date:', arg.dateStr);
+
     const date = new Date(arg.dateStr);
+
     const dateExists = this.selectedDates.some(d => 
       d.date.getFullYear() === date.getFullYear() &&
       d.date.getMonth() === date.getMonth() &&
       d.date.getDate() === date.getDate()
     );
+    // const dateExists = this.selectedDates.some(d => d.date === date);
 
     if (!dateExists) {
       this.selectedDates.push({ date: date });
@@ -270,6 +330,9 @@ export class LeaveCalendarComponent implements OnInit{
       console.log('Date already selected:', date);
     }
 
+    console.log(this.eventDate);
+
+    console.log(this.selectedDates);
     this.showDetails = true;
     this.updateCalendar();
   }

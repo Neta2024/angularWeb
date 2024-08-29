@@ -19,7 +19,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <full-calendar [options]="calendarOptions"></full-calendar>
+                <full-calendar ull-calendar *ngIf="calendarVisible" [options]="calendarOptions" (dateClick)="handleDateClick($event)"></full-calendar>
             </app-card>
         </div>
     </div>
