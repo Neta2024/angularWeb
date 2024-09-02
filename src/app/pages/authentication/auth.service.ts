@@ -11,6 +11,14 @@ import { HttpHeaders } from '@angular/common/http';
   providedIn: 'root',
 })
 export class AuthService implements OnDestroy {
+  userObservable() {
+    throw new Error('Method not implemented.');
+  }
+
+  // Properly implemented userObservable
+  // userObservable(): Observable<AuthModel | null> {
+  //   return this.currentUser$;
+  // }
 
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/

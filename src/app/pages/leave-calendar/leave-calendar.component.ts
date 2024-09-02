@@ -10,6 +10,7 @@ import { start } from '@popperjs/core';
 import { LeaveEntry, LeaveDetail } from './model/leave-calendar.model'; // Adjust the path based on your file structure
 
 
+
 @Component({
   selector: 'app-leave-calendar',
   templateUrl: './leave-calendar.component.html',
@@ -117,6 +118,8 @@ export class LeaveCalendarComponent implements OnInit{
             center: '',
             end: 'today prev,next'
         }
+
+        
     };
   }
 
@@ -139,7 +142,7 @@ export class LeaveCalendarComponent implements OnInit{
     const isLeave = taskName.toLowerCase().includes('leave');
   
     if (isLeave) {
-      return 'purple';
+      return '#ffccff';
     }
     
     return colors[period] || 'grey';
@@ -244,28 +247,6 @@ export class LeaveCalendarComponent implements OnInit{
     });
   }
 
-  // renderEventContent(arg: EventContentArg) {
-  //   const employeeName = arg.event.extendedProps['employeeName'];
-  //   const leaveType = arg.event.extendedProps['leaveType'];
-  //   const period = arg.event.extendedProps['period'];
-
-  //   // Use getTextColor to set the text color
-  //   const textColor = this.getTextColor(period);
-
-  //   // Create the container and title elements
-  //   const container = document.createElement('div');
-  //   container.style.padding = '5px';
-
-  //   const titleDiv = document.createElement('div');
-  //   titleDiv.innerHTML = `${employeeName} <br> ${leaveType}`;
-  //   titleDiv.style.color = textColor;
-  //   titleDiv.style.fontWeight = 'bold';
-
-  //   container.appendChild(titleDiv);
-
-  //   return { domNodes: [container] };
-  // }
-
   renderEventContent(arg: EventContentArg) {
     const employeeName = arg.event.extendedProps['employeeName'];
     const leaveType = arg.event.extendedProps['leaveType'];
@@ -303,6 +284,11 @@ export class LeaveCalendarComponent implements OnInit{
     const titleDiv = document.createElement('div');
     titleDiv.innerHTML = `<strong>${employeeName}</strong><br><strong>${leaveType}</strong>`;
     titleDiv.style.color = textColor;
+    titleDiv.style.fontWeight = 'bold';
+    titleDiv.style.whiteSpace = 'normal'; // Allow text to wrap
+    titleDiv.style.overflow = 'hidden'; // Prevent overflow
+    titleDiv.style.maxWidth = '150px'; // Set maximum width (adjust as needed)
+    titleDiv.style.wordWrap = 'break-word'; // Break long words if needed
 
     // Append the iconDiv and titleDiv to the container
     container.appendChild(titleDiv);

@@ -71,9 +71,7 @@ export class CalendarComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) { 
     const currentYear = new Date().getFullYear();
-    for (let i = currentYear - 10; i <= currentYear; i++) {
-      this.years.push(i);
-    }
+    this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
     this.selectedYear = currentYear;
     this.selectedMonth = new Date().getMonth();
   }
@@ -161,18 +159,27 @@ export class CalendarComponent implements OnInit {
 
   getColor(period: string, taskName: string): string {
     const colors: { [key: string]: string } = {
-      'A': 'skyblue',
-      'M': 'green',
-      'N': 'orange'
+      'A': '#ccebff',
+      'M': '#d6f5d6',
+      'N': '#ffebcc'
     };
 
     const isLeave = taskName.toLowerCase().includes('leave');
   
     if (isLeave) {
-      return 'purple';
+      return '#ffccff';
     }
     
     return colors[period] || 'grey';
+  }
+
+  getTextColor(period: string): string {
+    const colors: { [key: string]: string } = {
+      'A': '#005c99',
+      'M': '#1e7b1e',
+      'N': '#995c00'
+    };
+    return colors[period] || '#e60000';
   }
 
   convertDate(dateString: string): string {
@@ -239,7 +246,7 @@ export class CalendarComponent implements OnInit {
           this.holidays = response.map((holiday: any) => ({
             title: holiday.holidayName,
             date: this.convertDate(holiday.holiday),
-            color: 'red', // You can use a different color or logic if needed
+            color: '#ffe6e6', // You can use a different color or logic if needed
             id: this.generateUniqueId(holiday),
             holidayName: holiday.holidayName
           }));
@@ -487,12 +494,19 @@ export class CalendarComponent implements OnInit {
   }
 
   renderEventContent(arg: EventContentArg) {
-    console.log(arg.event.start);
     const eventDate = this.formatDateforHoliday(arg.event.start);
-    console.log('Event Date:', eventDate);
-    console.log('Is Holiday:', this.isHoliday(eventDate));
+    const timesheetDetial = document.createElement('div');
+    // const leaveType = arg.event.extendedProps['leaveType'];
+    const period = arg.event.extendedProps['period'];
+
+    // Use getTextColor to set the text color
+    const textColor = this.getTextColor(period);
+
+    // Use getColor to set the container background color
+    // const bgColor = this.getColor(period, leaveType);
 
     const buttonContainer = document.createElement('div');
+    buttonContainer.style.paddingBottom = '5px';
     buttonContainer.classList.add('button-container');
 
     if (!this.isHoliday(eventDate)) {
@@ -569,26 +583,29 @@ export class CalendarComponent implements OnInit {
       console.log('Event Data to be Sent:', eventData);
       this.showDuplicatePane(eventData);
 
-      // console.log(title);
-      // this.duplicateEvent(arg.event);
-      // console.log(arg.event);
-      // this.showDuplicatePane(arg.event);
+      
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
     buttonContainer.appendChild(duplicateButton);
   }
 
-    // const duplicateButton = document.createElement('button');
-    // duplicateButton.innerHTML = 'Duplicate';
-    // duplicateButton.addEventListener('click', () => this.duplicateEvent(arg.event.id));
-
+    
+    // Style the timesheetDetial element
+    timesheetDetial.style.padding = '3px';
+    timesheetDetial.style.color = textColor;
+    timesheetDetial.style.fontWeight = 'bold';
+    timesheetDetial.style.whiteSpace = 'normal'; // Allow text to wrap
+    timesheetDetial.style.overflow = 'hidden'; // Prevent overflow
+    timesheetDetial.style.maxWidth = '150px'; // Set maximum width (adjust as needed)
+    timesheetDetial.style.wordWrap = 'break-word'; // Break long words if needed
     const arrayOfDomNodes = [ 
-      document.createElement('div'),
+      timesheetDetial,
       buttonContainer
     ];
 
     arrayOfDomNodes[0].innerHTML = arg.event.title;
+
 
     return { domNodes: arrayOfDomNodes };
   }

@@ -1,5 +1,5 @@
 // Angular import
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit} from '@angular/core';
 import { AuthService } from 'src/app/pages/authentication/auth.service';  // Update the path as needed
 import { AuthModel } from 'src/app/pages/authentication/model/auth.model'; // Update the path as needed
 import { Subscription } from 'rxjs';
@@ -10,8 +10,10 @@ import { Subscription } from 'rxjs';
   templateUrl: './nav-right.component.html',
   styleUrls: ['./nav-right.component.scss']
 })
-export class NavRightComponent implements OnInit{
+export class NavRightComponent implements OnInit, OnDestroy{
   userFullName: string = '';
+  userEmail: string = '';
+  department: string = ''
   userRole: string = '';
 
   private userSubscription: Subscription;
@@ -22,6 +24,7 @@ export class NavRightComponent implements OnInit{
     const currentUser = this.authService.getAuthFromLocalStorage(); // Fetch the current user from local storage
     if (currentUser) {
       this.userFullName = currentUser.firstName + ' ' + currentUser.lastName;
+      this.userEmail = currentUser.email;
       this.userRole = currentUser.role.toUpperCase();
     } else {
       this.userFullName = 'Guest';
@@ -34,6 +37,7 @@ export class NavRightComponent implements OnInit{
   }
 
   ngOnDestroy(): void {
+    // Unsubscribe to avoid memory leaks
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }

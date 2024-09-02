@@ -104,6 +104,36 @@
             </div>
         </li>
         <li>
+            <div class="dropdown pc-h-item" ngbDropdown>
+                <a class="pc-head-link head-link-secondary dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="javascript:" ngbDropdownToggle>
+                    <img src="assets/icons/bento-menu.png" alt="getInvoice" style="width: 20px; height: auto;">
+                </a>
+                <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
+                    <div class="d-flex justify-content-around p-3">
+                        <!-- getInvoice Button -->
+                        <div class="text-center m-2">
+                            <a href="https://etaxapp.getinvoice.net/" target="_blank" class="btn">
+                                <img src="assets/logos/getInvoice_Logo.png" alt="getInvoice" class="img-fluid" style="width: 80px; height: auto; border-radius: 10px;">
+                            </a>
+                        </div>
+                        <!-- zDox Button -->
+                        <div class="text-center m-2">
+                            <a href="https://app.zdox.net/" target="_blank" class="btn">
+                                <img src="assets/logos/zDOX_Logo.png" alt="zDox" class="img-fluid" style="width: 80px; height: auto; border-radius: 10px;">
+                            </a>
+                        </div>
+                        <!-- GetStamp Button-->
+                        <div class="text-center m-2">
+                            <a href="https://app.gestampduty.com/" target="_blank" class="btn">
+                                <img src="assets/logos/gestampduty_Logo.png" alt="GetStamp" class="img-fluid" style="width: 80px; height: auto; border-radius: 10px;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li>
             <div class="dropdown pc-h-item header-user-profile" ngbDropdown>
                 <a class="pc-head-link head-link-primary dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="javascript:" ngbDropdownToggle>
                     <img src="assets/images/user/profile.png" alt="user-image" class="user-avtar" />
@@ -118,7 +148,8 @@
                     <div class="dropdown-header">
                         <h4> Good Morning, <br>
                             <h3 class="text-dark-emphasis">{{ userFullName }}
-                            </h3>
+                            </h3> <br>
+                            <h4>{{ userEmail }}</h4>
                         </h4>
                         <p class="text-muted">Role: {{ userRole }}</p>
                         <ng-scrollbar style="height: calc(55vh - 280px)" visibility="hover">

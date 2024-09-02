@@ -1,15 +1,59 @@
-.container {
-  max-width: 100%;
+app-card {
+    /* Adjust padding or margins */
+    padding: 0px;
+    /* Adjust as needed */
+    margin: 0px;
+    /* Adjust as needed */
 }
 
-.row {
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+.card-title {
+    /* Adjust the title styling */
+    font-size: 16px;
+    /* Smaller font size */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+    overflow: hidden;
+    /* Hide overflow */
+    text-overflow: ellipsis;
+    /* Add ellipsis (...) for overflow text */
+}
+
+
+/* Adjust the size of the form fields */
+
+mat-form-field {
+    font-size: 14px;
+    /* Smaller font size */
+    width: 150px;
+    /* Adjust width as needed */
+}
+
+
+/* Adjust the size of the select dropdown */
+
+mat-select {
+    font-size: 14px;
+    /* Smaller font size */
+}
+
+
+/* Adjust the label size */
+
+mat-form-field .mat-form-field-label {
+    font-size: 14px;
+    /* Smaller font size */
+}
+
+
+/* Adjust padding and margin of the form fields */
+
+.yearmonth {
+    display: flex;
+    gap: 10px;
+    /* Adjust spacing between form fields */
 }
 
 .dropdown {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
