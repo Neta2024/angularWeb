@@ -57,3 +57,58 @@ mat-form-field .mat-form-field-label {
     display: flex;
     justify-content: space-between;
 }
+
+.mat-column-total {
+    text-align: right;
+}
+
+.period-container {
+    display: flex;
+    align-items: flex-end;
+}
+
+.period-text {
+    margin-left: 10px;
+    /* Adjust space between text and images if needed */
+    line-height: 16px;
+    /* Adjust this value if needed to align with the images */
+}
+
+.icon-image {
+    width: 20px;
+    /* Ensure consistent size */
+    height: 20px;
+}
+
+.mat-paginator {
+    margin-top: 50px;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table .mat-header-cell,
+.custom-table .mat-cell {
+    padding: 8px;
+    text-align: left;
+}
+
+.custom-table .mat-row-hover:hover {
+    background-color: #d6f5d6;
+    color: black
+    /* Change this to your desired hover color */
+}
+
+
+/* Optional: Add a border to the rows */
+
+.custom-table .mat-row {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+
+/* .userProfile-col {
+    width: 20%;
+} */

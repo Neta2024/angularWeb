@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { CalendarOptions, EventInput, EventContentArg, EventClickArg, EventApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
@@ -9,14 +9,54 @@ import interactiionPlugin from '@fullcalendar/interaction';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { EventEmitter } from '@angular/core';
 import { start } from '@popperjs/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/pages/authentication/auth.service'; 
+import { NgIfContext } from '@angular/common';
+
+
+export interface TableData {
+  userProfile: string;
+  projectName: string;
+  task: string;
+  period: string;
+  date: string;
+}
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
+
 export class CalendarComponent implements OnInit {
   public eventCreated = new EventEmitter<any>();
+
+  tableData: any[] = []; // Declare tableData
+  displayedColumns: string[] = [];
+  selectedFilterColumn: string = this.displayedColumns[0];
+  dataSource: MatTableDataSource<TableData>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
+  projects: any[] = [];
+  tasks: any[] = [];
+
+  filters = {
+    userProfile: '',
+    projectName: '',
+    taskName: '',
+    period: '',
+    date: ''
+  };
+  userProfiles: string; // Populate this with your user profiles
+  projectName: string[] = []; // Populate this with your project name
+  taskName: string[] =   []; // Populate this with your task name
+  periods: string[] = ['Morning', 'Afternoon', 'All Days'];
+  dates: string[] = []; // Populate this with available dates
+
 
   clickedDate: string;
   calendarOptions: CalendarOptions;
@@ -47,10 +87,7 @@ export class CalendarComponent implements OnInit {
   selectedTask: string;
   selectedPeriod: string;
 
-  projects: any[] = [];
-  tasks: any[] = [];
   suggestedProjects: { name: string }[] = [];
-  // suggestedProjects: string[] = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5'];
   suggestedTasks: { name: string }[] = [];
 
   selectedDates: { date: Date }[] = [];
@@ -63,12 +100,18 @@ export class CalendarComponent implements OnInit {
 
   private holidayDates: Set<string> = new Set();
 
-  selectedView: string = 'calendar';
+  selectedView: string = 'list';
+
+  userRole: string = '';
+
+  private userSubscription: Subscription;
+tableContent: TemplateRef<NgIfContext<boolean>>;
 
   constructor(
     public dialog: MatDialog,
     private restApi: RestApi,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) { 
     const currentYear = new Date().getFullYear();
     this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
@@ -77,6 +120,26 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
+    // check role
+    const currentUser = this.authService.getAuthFromLocalStorage(); // Fetch the current user from local storage
+    if (currentUser) {
+      this.userRole = currentUser.role.toUpperCase();
+    } else {
+      this.userRole = 'No Role';
+    }
+
+    // Set displayedColumns based on the userRole
+    if (this.userRole === 'USER') {
+      this.displayedColumns = ['projectName', 'task', 'period', 'date'];
+    } else {
+      this.displayedColumns = ['userProfile', 'projectName', 'task', 'period', 'date'];
+    }
+
+    // Initialize the dataSource
+    this.dataSource = new MatTableDataSource([]);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
     this.initializeCalendarOptions();
 
     console.log('Initial selected year:', this.selectedYear); // Debugging log
@@ -88,6 +151,7 @@ export class CalendarComponent implements OnInit {
     console.log('Initial selected month:', this.selectedMonth);
 
     this.loadEvents(this.selectedYear, this.selectedMonth);
+    this.loadTimesheets(this.selectedYear, this.selectedMonth);
     this.loadHolidays(this.selectedYear);
 
     this.fetchProjects();
@@ -151,10 +215,9 @@ export class CalendarComponent implements OnInit {
     // this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
     console.log('this.selectedMonth = ',this.selectedMonth)
     console.log('type: ',typeof this.selectedMonth)
-    // this.cdr.detectChanges();
+    this.cdr.detectChanges();
     this.loadEvents(this.selectedYear, this.selectedMonth);
-    // this.loadHolidays(this.selectedYear);
-    // this.cdr.detectChanges();
+    this.loadTimesheets(this.selectedYear, this.selectedMonth);
   }
 
   getColor(period: string, taskName: string): string {
@@ -167,7 +230,7 @@ export class CalendarComponent implements OnInit {
     const isLeave = taskName.toLowerCase().includes('leave');
   
     if (isLeave) {
-      return '#ffccff';
+      return '#f0e6ff';
     }
     
     return colors[period] || 'grey';
@@ -188,9 +251,6 @@ export class CalendarComponent implements OnInit {
   }
 
   loadEvents(year: number, month: number) {
-    console.log('Selected month type:', typeof this.selectedMonth);
-    console.log('Selected month value:', this.selectedMonth);
-
     const numericMonth = this.selectedMonth + 1;
     const request = {
       id: 0,
@@ -202,8 +262,8 @@ export class CalendarComponent implements OnInit {
       month: numericMonth
     };
 
-    console.log(typeof month);
-
+    console.log('Selected year value:', year);
+    console.log('Selected month value:', numericMonth);
     console.log(request);
     
     this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
@@ -233,6 +293,57 @@ export class CalendarComponent implements OnInit {
       console.error('An error occurred:', error);
     });
   }
+
+  loadTimesheets(year: number, month: number) {
+    const numericMonth = month + 1;
+    const request = {
+      // dateList: this.filters.date ? [this.filters.date] : [{}],
+      projectName: this.selectedProject || '',
+      taskName: this.selectedTask || '',
+      period: this.filters.period || '',
+      year: year,
+      month: numericMonth
+    };
+console.log('loadtimesheets', request);
+    this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
+      if (response) {
+        this.tableData = response.map((timesheet: any) => ({
+          userProfile: timesheet.fullName || 'Personal Profile',
+          projectName: timesheet.projectName || '',
+          task: timesheet.taskName ? timesheet.taskName.replace('Leave :', '').trim() : '',
+          period: this.mapPeriod(timesheet.period),
+          date: this.convertDate(timesheet.date),
+        }));
+
+        // Ensure that dataSource is updated properly
+        this.dataSource.data = this.tableData;
+        console.log('Timesheets', response)
+        this.cdr.detectChanges(); // Trigger change detection if needed
+      } else {
+        this.tableData = [];
+        this.dataSource.data = [];
+      }
+    }, (error) => {
+      this.tableData = [];
+      this.dataSource.data = [];
+      console.error('An error occurred:', error);
+    });
+  }
+  
+  // Helper function to map period codes
+  mapPeriod(period: string): string {
+    switch (period) {
+      case 'M':
+        return 'Morning';
+      case 'N':
+        return 'Afternoon';
+      case 'A':
+        return 'All Days';
+      default:
+        return 'Unknown';
+    }
+  }
+  
 
   loadHolidays(year: number): void {
     console.log('Selected year:', year);
@@ -288,7 +399,6 @@ export class CalendarComponent implements OnInit {
 
   updateCalendar() {
     this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
-    console.log(typeof this.selectedMonth);
 
     this.loadEvents(this.selectedYear, this.selectedMonth);
 
@@ -300,6 +410,13 @@ export class CalendarComponent implements OnInit {
       };
       this.calendarVisible = true;
     })
+  }
+
+  updateListView() {
+    this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
+    this.loadTimesheets(this.selectedYear, this.selectedMonth);
+    this.fetchProjects();
+    this.fetchTasks();
   }
 
   openAddEventDialog(date: string = null): void {
@@ -793,7 +910,7 @@ export class CalendarComponent implements OnInit {
       this.projects = response.map((project: any) => ({
         names: project.project_name
       }));
-      console.log(this.projects)
+      console.log('Projects', this.projects)
     })
   }
 
@@ -839,6 +956,7 @@ export class CalendarComponent implements OnInit {
 
   selectProject(projectName: string) {
     this.selectedProject = projectName;
+    this.filters.projectName = projectName;
   }
 
   selectTask(taskName: string) {
@@ -1186,4 +1304,31 @@ export class CalendarComponent implements OnInit {
 
     this.eventData = event;
   }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  onYearMonthChange() {
+    if (this.selectedView === 'list') {
+      this.updateListView();
+    } else {
+      this.updateCalendar();
+    }
+  }
+  
+  onViewChange() {
+    if (this.selectedView === 'list') {
+      this.updateListView();
+    } else {
+      // Handle other view change logic here if needed
+      this.updateCalendar();
+    }
+  }
+  
 }
