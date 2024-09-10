@@ -70,6 +70,8 @@ export class AuthService implements OnDestroy {
       }),
       catchError((err) => {
         return of(err);
+         // Don't return of(err); let the error propagate to the component
+        // throw err;
       }),
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -105,10 +107,12 @@ export class AuthService implements OnDestroy {
       .subscribe(data => {
         //console.log(data);
         localStorage.removeItem(this.authLocalStorageToken);
+        localStorage.removeItem(this.authCurrentCompany);
         localStorage.clear();
-        //this.router.navigate(['/auth/login']);
+        // this.router.navigate(['/auth/login']);
         document.location.reload();
         return data;
+        
       });
   }
 

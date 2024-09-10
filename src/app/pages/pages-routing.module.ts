@@ -34,6 +34,10 @@ const routes: Routes = [
         loadChildren: () => import('./holiday/holiday.module').then((m) => m.HolidayModule),
       },
       {
+        path: 'User management',
+        loadChildren: () => import('./holiday/holiday.module').then((m) => m.HolidayModule),
+      },
+      {
         path: 'typography',
         loadComponent: () => import('./../demo/elements/typography/typography.component')
       },

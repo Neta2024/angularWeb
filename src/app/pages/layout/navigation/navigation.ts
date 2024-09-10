@@ -68,6 +68,17 @@ const NavigationItems = [
         icon: 'ti ti-calendar',
         breadcrumbs: true
       },
+
+      // {
+      //   id: 'user management',
+      //   title: 'ser management',
+      //   type: 'item',
+      //   classes: 'nav-item',
+      //   url: '/timesheet/holidays',
+      //   icon: 'ti ti-calendar',
+      //   breadcrumbs: true
+      // },
+
       {
         id: 'signout',
         title: 'Sign Out',

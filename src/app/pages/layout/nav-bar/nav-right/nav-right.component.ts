@@ -13,8 +13,9 @@ import { Subscription } from 'rxjs';
 export class NavRightComponent implements OnInit, OnDestroy{
   userFullName: string = '';
   userEmail: string = '';
-  department: string = ''
-  userRole: string = '';
+  userRole: string = ''; // Default to 'USER'
+  isAdminMode: boolean = false; // Tracks whether admin mode is enabled
+  isAdminModeVisible: boolean = false; // Visibility of the admin switch
 
   private userSubscription: Subscription;
 
@@ -26,11 +27,24 @@ export class NavRightComponent implements OnInit, OnDestroy{
       this.userFullName = currentUser.firstName + ' ' + currentUser.lastName;
       this.userEmail = currentUser.email;
       this.userRole = currentUser.role.toUpperCase();
+      // this.isAdminModeVisible = this.userRole === 'ADMIN'; // Show switch if initially ADMIN
+      this.isAdminMode = false;
     } else {
       this.userFullName = 'Guest';
       this.userRole = 'No Role';
     }
   }
+
+    // Toggle between admin and user mode
+    toggleAdminMode(): void {
+      if (this.isAdminMode && this.isAdminModeVisible) {
+        this.userRole = 'ADMIN'; // When the switch is turned on
+         // Save the new state to localStorage
+        localStorage.setItem('isAdminMode', JSON.stringify(this.isAdminMode));
+      } else {
+        this.userRole = 'USER'; // When the switch is turned off
+      }
+    }
 
   onLogout() {
     this.authService.logout(); // Handle the logout process

@@ -152,18 +152,18 @@
                             <h4>{{ userEmail }}</h4>
                         </h4>
                         <p class="text-muted">Role: {{ userRole }}</p>
+
                         <ng-scrollbar style="height: calc(55vh - 280px)" visibility="hover">
                             <hr />
-                            <!-- <div class="settings-block bg-light-primary rounded">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
-                  <label class="form-check-label" for="flexSwitchCheckDefault">Start DND Mode</label>
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked />
-                  <label class="form-check-label" for="flexSwitchCheckChecked">Allow Notifications</label>
-                </div>
-              </div> -->
+
+                            <!-- Show Switch to Admin Mode only if the current user's actual role is 'ADMIN' -->
+                            <!-- <div *ngIf="isAdminModeVisible" class="settings-block bg-light-primary rounded">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" [(ngModel)]="isAdminMode" (change)="toggleAdminMode()" />
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Switch to Admin Mode</label>
+                            </div>
+                        </div> -->
+
                             <hr />
                             <a [routerLink]="['/profile']" class="dropdown-item">
                                 <i class="ti ti-settings"></i>

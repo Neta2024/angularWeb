@@ -22,17 +22,11 @@
                     <!-- Wrapper for Filter and View Select, aligned to top right -->
                     <div class="filter-select-container" style="display: flex; justify-content: flex-end; gap: 10px;">
                         <div class="modeFilter" *ngIf="selectedView === 'list'">
-                            <mat-form-field appearance="fill">
-                                <mat-label>
-                                    <mat-icon>filter_alt</mat-icon>
-                                    Filter by
-                                </mat-label>
-                                <mat-select [(value)]="selectedFilterColumn" (selectionChange)="updateListView()">
-                                    <mat-option *ngFor="let column of displayedColumns" [value]="column">
-                                        {{ column | titlecase }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                            <!-- Reset Button -->
+                            <button mat-button (click)="resetFilters()" style="background-color: #f0e6ff; color: #8400a9; padding: 8px 16px; border-radius: 4px; display: flex; align-items: center;">
+                            <mat-icon style="margin-right: 4px;">refresh</mat-icon>
+                            Reset Filters
+                            </button>
                         </div>
 
                         <div class="modeSelect">
@@ -49,70 +43,74 @@
 
                 <!-- Load table if selectedView is 'list' -->
                 <div *ngIf="selectedView === 'list' ">
-                    <ng-template #tableContent>
-                        <table mat-table [dataSource]="dataSource" matSort class="custom-table">
+                    <!-- Display tableContent using ngTemplateOutlet -->
+                    <ng-container *ngTemplateOutlet="tableContent"></ng-container>
 
+                    <ng-template #tableContent>
+                        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortChange($event)" class="custom-table">
                             <!-- Conditionally show userProfile column based on userRole -->
-                            <ng-container *ngIf="userRole !== 'USER'; else noUserProfile" matColumnDef="userProfile">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': '30%'}">
-                                    User Profile
-                                    <mat-form-field appearance="outline" class="filter-form-field">
-                                        <mat-label>User Profile</mat-label>
-                                        <mat-select [(value)]="filters.userProfile" (selectionChange)="updateListView()">
-                                            <mat-option *ngFor="let profile of userProfiles" [value]="profile">{{profile}}</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
+                            <ng-container *ngIf="userRole !== 'USER'" matColumnDef="userProfile">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': '25%'}">
+                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                        <span>User Profile</span>
+                                        <mat-form-field appearance="outline" class="filter-form-field">
+                                            <input matInput #searchInput (input)="applyFilter($event)" placeholder="Search by username">
+                                        </mat-form-field>
+                                    </div>
                                 </th>
-                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': '30%'}">{{element.userProfile}}</td>
+                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': '25%'}">{{element.userProfile}}</td>
                             </ng-container>
-                            <ng-template #noUserProfile></ng-template>
 
                             <!-- Project Name Column -->
                             <ng-container matColumnDef="projectName">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '35%' : '30%'}">
-                                    Project Name
-                                    <mat-form-field appearance="outline" class="filter-form-field">
-                                        <mat-label>Project Name</mat-label>
-                                        <mat-select [(ngModel)]="selectedProject" (selectionChange)="updateListView()">
-                                            <mat-option *ngFor="let project of projects" [value]="project.names">
-                                                {{ project.names }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">
+                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                        <span>Project Name</span>
+                                        <mat-form-field appearance="outline" class="filter-form-field">
+                                            <mat-label>Project Name</mat-label>
+                                            <mat-select [(ngModel)]="selectedProject" (selectionChange)="updateListView()">
+                                                <mat-option *ngFor="let project of projects" [value]="project.names">{{ project.names }}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
                                 </th>
-                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '35%' : '30%'}">{{element.projectName}}</td>
+                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">{{element.projectName}}</td>
                             </ng-container>
 
                             <!-- Task Column -->
                             <ng-container matColumnDef="task">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '30%' : '15%'}">
-                                    Task
-                                    <mat-form-field appearance="outline" class="filter-form-field">
-                                        <mat-label>Task</mat-label>
-                                        <mat-select [(ngModel)]="selectedTask" (selectionChange)="updateListView()">
-                                            <mat-option *ngFor="let task of tasks" [value]="task.t_name">{{ task.t_name }}</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">
+                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                        <span>Task</span>
+                                        <mat-form-field appearance="outline" class="filter-form-field">
+                                            <mat-label>Task</mat-label>
+                                            <mat-select [(ngModel)]="selectedTask" (selectionChange)="updateListView()">
+                                                <mat-option *ngFor="let task of tasks" [value]="task.names">{{ task.names }}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
                                 </th>
-                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '30%' : '15%'}">{{element.task}}</td>
+                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">{{element.task}}</td>
                             </ng-container>
 
                             <!-- Period Column -->
                             <ng-container matColumnDef="period">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '25%' : '15%'}">
-                                    Period
-                                    <mat-form-field appearance="outline" class="filter-form-field">
-                                        <mat-label>Period</mat-label>
-                                        <mat-select [(ngModel)]="selectedPeriod" (selectionChange)="updateListView()">
-                                            <mat-option *ngFor="let period of periods" [value]="period">{{period}}</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '15%' : '15%'}">
+                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                        <span>Period</span>
+                                        <mat-form-field appearance="outline" class="filter-period-field">
+                                            <mat-label>Period</mat-label>
+                                            <mat-select [(ngModel)]="selectedPeriod" (selectionChange)="updateListView()">
+                                                <mat-option *ngFor="let period of periods" [value]="period">{{period}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
                                 </th>
-                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '25%' : '15%'}">
+                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '15%' : '15%'}">
                                     <div class="period-container">
                                         <img *ngIf="element.period === 'Morning'" src="assets/icons/am.png" class="icon-image">
                                         <img *ngIf="element.period === 'Afternoon'" src="assets/icons/pm.png" class="icon-image">
-                                        <img *ngIf="element.period === 'All Days'" src="assets/icons/am-pm.png" class="icon-image">
+                                        <img *ngIf="element.period === 'All Day'" src="assets/icons/am-pm.png" class="icon-image">
                                         <span class="period-text">{{element.period}}</span>
                                     </div>
                                 </td>
@@ -120,9 +118,14 @@
 
                             <!-- Date Column -->
                             <ng-container matColumnDef="date">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': '10%'}">Date</th>
-                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': '10%'}">{{element.date | date: 'dd-MM-yyyy'}}</td>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '15%' : '15%'}">
+                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                        <span>Date</span>
+                                    </div>
+                                </th>
+                                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '15%' : '15%'}">{{element.date | date: 'dd-MM-yyyy'}}</td>
                             </ng-container>
+
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row-hover"></tr>
@@ -130,14 +133,51 @@
                     </ng-template>
 
                     <!-- Check if dataSource has any data -->
-                    <div *ngIf="dataSource?.data?.length === 0; else tableContent" style="display: flex; justify-content: center; align-items: center; height: 100%; text-align: center;">
+                    <div *ngIf="dataSource?.data?.length === 0;" style="display: flex; justify-content: center; align-items: center; height: 100%; text-align: center;">
                         <div style="font-size: 16px; color: #888; font-weight: 'bold'; margin: 20px;">
                             No records found.
                         </div>
                     </div>
 
+
                     <!-- Paginator -->
-                    <mat-paginator [pageSizeOptions]="[50, 100, 150, 200]" showFirstLastButtons></mat-paginator>
+                    <div class="custom-paginator">
+                        <!-- Page Size Options -->
+                        <div class="container-page-size-select">
+                            <p>Items per page
+                            </p>
+                            <mat-form-field appearance="outline" class="page-size-select">
+                                <mat-select [value]="pageSize" (selectionChange)="onPageSizeChange($event)">
+                                    <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
+                                        {{ size }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="paginator-controls">
+                            <button mat-icon-button (click)="previousPage()" [disabled]="pageIndex === 0 ">
+                                <mat-icon>chevron_left</mat-icon>
+                              </button>
+
+                            <ng-container *ngFor="let page of totalPagesArray">
+                                <button mat-button [ngClass]="{'active-page': pageIndex === page}" (click)="goToPage(page)" *ngIf="page !== '...'">
+                                  {{ displayPageNumber(page) }}
+                                  </button>
+                                <span *ngIf="page === '...'">...</span>
+                            </ng-container>
+
+                            <button mat-icon-button (click)="nextPage()" [disabled]="pageIndex === totalPages - 1">
+                                <mat-icon>chevron_right</mat-icon>
+                              </button>
+                        </div>
+
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <p style="margin-left: 0px; text-align: center; font-size: 16px;"> Total {{ tempTotalItems }} items</p>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <!-- Load calendar only if selectedView is not 'list' -->
@@ -178,13 +218,17 @@
                     <mat-label>Task: </mat-label>
                     <mat-form-field appearance="fill">
                         <mat-select [(ngModel)]="selectedTask" name="task">
-                            <mat-option *ngFor="let task of tasks" [value]="fetchTasks()">
-                                {{ task.t_name }}
+                            <!-- <mat-option *ngFor="let task of tasks" [value]="fetchTasks()">
+                                {{ task.name }}
+                            </mat-option> -->
+
+                            <mat-option *ngFor="let task of tasks" [value]="task.names">
+                                {{ task.names }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <button mat-raised-button color="primary" type="button" (click)="suggestTasks()">Suggest</button>
-                    <div *ngIf="suggestedTasks.length > 0">
+                    <button mat-raised-button color=" primary " type="button " (click)="suggestTasks() ">Suggest</button>
+                    <div *ngIf="suggestedTasks.length> 0">
                         <mat-list>
                             <mat-list-item *ngFor="let task of suggestedTasks" (click)="selectTask(task.name)">
                                 {{ task.name }}

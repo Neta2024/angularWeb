@@ -80,12 +80,8 @@ mat-form-field .mat-form-field-label {
     height: 20px;
 }
 
-.mat-paginator {
-    margin-top: 50px;
-}
-
 .custom-table {
-    width: 100%;
+    width: 90%;
     border-collapse: collapse;
 }
 
@@ -109,6 +105,122 @@ mat-form-field .mat-form-field-label {
 }
 
 
+/* Adjust mat-form-field size */
+
+.filter-form-field {
+    width: 90%;
+    /* Adjust as needed */
+    margin-top: 5px;
+}
+
+.filter-period-field {
+    margin-top: 5px;
+    margin-right: 8px;
+}
+
+
+/* Make the input field and icon smaller */
+
+.filter-form-field .mat-form-field-infix {
+    padding: 0;
+    /* Remove padding */
+}
+
+.filter-form-field .mat-form-field-label {
+    font-size: 12px;
+    /* Smaller label font size */
+}
+
+.filter-form-field input.mat-input-element {
+    font-size: 12px;
+    /* Smaller input font size */
+    height: 10px;
+    /* Adjust height */
+}
+
+.filter-form-field .mat-form-field-suffix {
+    font-size: 12px;
+    /* Adjust icon size */
+}
+
+.filter-form-field mat-icon {
+    font-size: 12px;
+    /* Smaller icon size */
+}
+
+#searchInput {
+    width: 100px;
+}
+
+
 /* .userProfile-col {
     width: 20%;
 } */
+
+.custom-paginator {
+    display: flex;
+    align-items: end;
+    margin-top: 20px;
+}
+
+.custom-paginator button {
+    margin: 0 2px;
+    padding: 2px;
+}
+
+.custom-paginator button.mat-button-primary {
+    font-weight: bold;
+}
+
+.custom-paginator {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Helps in responsiveness */
+    padding: 10px;
+    gap: 10px;
+}
+
+
+/* Style for the active page button */
+
+.active-page {
+    background-color: #60ff608f;
+    /* Change to your preferred color */
+    color: white;
+    /* Text color for the active button */
+    font-weight: bold;
+    /* Optional: Bold text for the active button */
+}
+
+.active-page p {
+    /* Change to your preferred color */
+    color: #048404;
+    /* Text color for the active button */
+    font-weight: bold;
+    /* Optional: Bold text for the active button */
+}
+
+.container-page-size-select {
+    display: flex;
+    align-items: center;
+}
+
+.container-page-size-select p {
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+.paginator-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    /* Spacing between buttons */
+}
+
+.page-size-select {
+    min-width: 50px;
+    margin-left: auto;
+    width: 70px;
+}

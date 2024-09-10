@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { CalendarOptions, EventInput, EventContentArg, EventClickArg, EventApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { AddEventDialogComponent } from './add-event-dialog/add-event-dialog.component';
@@ -10,8 +10,8 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { EventEmitter } from '@angular/core';
 import { start } from '@popperjs/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/pages/authentication/auth.service'; 
 import { NgIfContext } from '@angular/common';
@@ -32,11 +32,15 @@ export interface TableData {
 })
 
 export class CalendarComponent implements OnInit {
+[x: string]: any;
   public eventCreated = new EventEmitter<any>();
 
   tableData: any[] = []; // Declare tableData
   displayedColumns: string[] = [];
   selectedFilterColumn: string = this.displayedColumns[0];
+
+  // Add a ViewChild to get the reference to the input field
+  @ViewChild('searchInput') searchInput: ElementRef;
   dataSource: MatTableDataSource<TableData>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -54,7 +58,7 @@ export class CalendarComponent implements OnInit {
   userProfiles: string; // Populate this with your user profiles
   projectName: string[] = []; // Populate this with your project name
   taskName: string[] =   []; // Populate this with your task name
-  periods: string[] = ['Morning', 'Afternoon', 'All Days'];
+  periods: string[] = ['Morning', 'Afternoon', 'All Day'];
   dates: string[] = []; // Populate this with available dates
 
 
@@ -101,11 +105,12 @@ export class CalendarComponent implements OnInit {
   private holidayDates: Set<string> = new Set();
 
   selectedView: string = 'list';
+  // selectedView: string = 'calendar';
 
   userRole: string = '';
 
   private userSubscription: Subscription;
-tableContent: TemplateRef<NgIfContext<boolean>>;
+  tableContent: TemplateRef<NgIfContext<boolean>>;
 
   constructor(
     public dialog: MatDialog,
@@ -119,6 +124,120 @@ tableContent: TemplateRef<NgIfContext<boolean>>;
     this.selectedMonth = new Date().getMonth();
   }
 
+
+  // Pagination ----------------------------------------------------------------
+
+  @Input() tempTotalItems: number;    // Temporary total number of items after searching
+  @Input() pageSize = 30;      // Default Items per page
+  @Input() pageSizeOptions = [5, 10, 30, 50, 100]; // Page size options
+  pageIndex = 0;               // Current page index
+  totalItems : number;
+  sortField : String ='';
+  sortOrder : boolean = true;   // By default sorting by username
+
+  // Handle total items after searching by using tempTotalItems
+  get totalPages(): number {
+    return Math.ceil(this.tempTotalItems / this.pageSize);
+  }
+
+  // Generate and display page numbers with ellipses (...) when there are more than 10 pages
+  get totalPagesArray(): (number | string)[] {
+    const totalPages = this.totalPages;
+    const currentPage = this.pageIndex;
+    const maxPagesToShow = 10; // Show a maximum of 10 page buttons at once
+    const pages: (number | string)[] = [];
+  
+    // If the total number of pages is less than or equal to maxPagesToShow
+    if (totalPages <= maxPagesToShow) {
+      return Array(totalPages).fill(0).map((_, i) => i);
+    }
+  
+    // Calculate the start and end of the visible page range
+    let startPage: number, endPage: number;
+  
+    if (currentPage <= 5) {
+      // Near the beginning: show the first 10 pages
+      startPage = 0;
+      endPage = maxPagesToShow - 1;
+    } else if (currentPage + 5 >= totalPages) {
+      // Near the end: show the last 10 pages
+      startPage = totalPages - maxPagesToShow;
+      endPage = totalPages - 1;
+    } else {
+      // In the middle: show the current page in the center
+      startPage = currentPage - 5;
+      endPage = currentPage + 4;
+    }
+  
+    // Add pages to the array, with ellipses if needed
+    if (startPage > 0) {
+      pages.push(0); // Always show the first page
+      pages.push('...'); // Add ellipsis if there are pages before the current range
+    }
+  
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+  
+    if (endPage < totalPages - 1) {
+      pages.push('...'); // Add ellipsis if there are pages after the current range
+      pages.push(totalPages - 1); // Always show the last page
+    }
+  
+    return pages;
+  }  
+
+  // Helper function for handling of both numbers and ellipses.
+  displayPageNumber(page: number | string): string | number {
+    // If it's a number, display the page number + 1 (for 1-based indexing)
+    if (typeof page === 'number') {
+      return page + 1;
+    }
+    // If it's the ellipsis, just return the string '...'
+    return page;
+  }
+
+  goToPage(page: number | string) {
+    if (typeof page === 'number' && page >= 0 && page < this.totalPages) {
+      this.pageIndex = page;
+      this.updateListView();
+    }
+    
+  }
+
+  nextPage(): void {
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.updateListView();
+    }
+  }
+
+  previousPage(): void {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.updateListView();
+    }
+  }
+
+  onPageSizeChange(event: any): void {
+    this.pageSize = event.value;
+    this.pageIndex = 0; // Reset to first page whenever the page size changes
+    this.updateListView();
+  }
+
+  // Function triggered when sorting headers are clicked
+  onSortChange(sortState: Sort) {
+    const { active, direction } = sortState;
+    const isAsc = direction === 'asc';
+
+    this.sortField = active;   // Column name (e.g., 'userProfile', 'projectName', etc.)
+    this.sortOrder = isAsc;    // true if ascending, false if descending
+
+    this.updateListView();
+  }
+
+  //------------------------------------------------------------------//
+
   ngOnInit() {
     // check role
     const currentUser = this.authService.getAuthFromLocalStorage(); // Fetch the current user from local storage
@@ -131,6 +250,7 @@ tableContent: TemplateRef<NgIfContext<boolean>>;
     // Set displayedColumns based on the userRole
     if (this.userRole === 'USER') {
       this.displayedColumns = ['projectName', 'task', 'period', 'date'];
+
     } else {
       this.displayedColumns = ['userProfile', 'projectName', 'task', 'period', 'date'];
     }
@@ -141,15 +261,7 @@ tableContent: TemplateRef<NgIfContext<boolean>>;
     this.dataSource.sort = this.sort;
 
     this.initializeCalendarOptions();
-
-    console.log('Initial selected year:', this.selectedYear); // Debugging log
-    console.log('Initial selected month:', this.selectedMonth);
-
     this.selectedMonth = new Date().getMonth();
-
-    console.log('Initial selected year:', this.selectedYear); // Debugging log
-    console.log('Initial selected month:', this.selectedMonth);
-
     this.loadEvents(this.selectedYear, this.selectedMonth);
     this.loadTimesheets(this.selectedYear, this.selectedMonth);
     this.loadHolidays(this.selectedYear);
@@ -217,7 +329,7 @@ tableContent: TemplateRef<NgIfContext<boolean>>;
     console.log('type: ',typeof this.selectedMonth)
     this.cdr.detectChanges();
     this.loadEvents(this.selectedYear, this.selectedMonth);
-    this.loadTimesheets(this.selectedYear, this.selectedMonth);
+    // this.loadTimesheets(this.selectedYear, this.selectedMonth);
   }
 
   getColor(period: string, taskName: string): string {
@@ -269,7 +381,7 @@ tableContent: TemplateRef<NgIfContext<boolean>>;
     this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
       console.log(response);
       if (response) {
-        this.events = response.map((timesheet: any) => ({
+        this.events = response.data.map((timesheet: any) => ({
           title: `${timesheet.projectName} - ${timesheet.taskName}`,
           date: this.convertDate(timesheet.date),
           color: this.getColor(timesheet.period, timesheet.taskName),
@@ -295,19 +407,26 @@ tableContent: TemplateRef<NgIfContext<boolean>>;
   }
 
   loadTimesheets(year: number, month: number) {
+    const page: number = this.pageIndex + 1; // Set the desired page number
+    const size: number = this.pageSize; // Set the desired limit value
+    const url = `timesheets/get_all_timesheets/filter?page=${page}&size=${size}&sortField=${this.sortField}&sortOrder=${this.sortOrder}`;
     const numericMonth = month + 1;
     const request = {
       // dateList: this.filters.date ? [this.filters.date] : [{}],
       projectName: this.selectedProject || '',
       taskName: this.selectedTask || '',
-      period: this.filters.period || '',
+      period:  this.mapPeriod(this.selectedPeriod) || '',
       year: year,
       month: numericMonth
     };
-console.log('loadtimesheets', request);
-    this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
+    console.log('loadtimesheets', request);
+    this.restApi.post(url, request).subscribe(response => {
       if (response) {
-        this.tableData = response.map((timesheet: any) => ({
+        // Extracting pagination info
+        this.totalItems = response.totalElements;
+        this.tempTotalItems = this.totalItems;
+
+        this.tableData = response.data.map((timesheet: any) => ({
           userProfile: timesheet.fullName || 'Personal Profile',
           projectName: timesheet.projectName || '',
           task: timesheet.taskName ? timesheet.taskName.replace('Leave :', '').trim() : '',
@@ -315,15 +434,18 @@ console.log('loadtimesheets', request);
           date: this.convertDate(timesheet.date),
         }));
 
-        // Ensure that dataSource is updated properly
+        // To update dataSource properly
         this.dataSource.data = this.tableData;
-        console.log('Timesheets', response)
         this.cdr.detectChanges(); // Trigger change detection if needed
+
       } else {
         this.tableData = [];
         this.dataSource.data = [];
+        this.totalItems = 0;
+        console.log('Data source ',this.dataSource.data.length)
       }
     }, (error) => {
+      this.tempTotalItems = 0;
       this.tableData = [];
       this.dataSource.data = [];
       console.error('An error occurred:', error);
@@ -338,9 +460,16 @@ console.log('loadtimesheets', request);
       case 'N':
         return 'Afternoon';
       case 'A':
-        return 'All Days';
+        return 'All Day';
+
+      case 'Morning':
+        return 'M';
+      case 'Afternoon':
+        return 'N';
+      case 'All Day':
+        return 'A';
       default:
-        return 'Unknown';
+        return '';
     }
   }
   
@@ -415,8 +544,6 @@ console.log('loadtimesheets', request);
   updateListView() {
     this.selectedMonth = parseInt(this.selectedMonth.toString(), 10);
     this.loadTimesheets(this.selectedYear, this.selectedMonth);
-    this.fetchProjects();
-    this.fetchTasks();
   }
 
   openAddEventDialog(date: string = null): void {
@@ -906,7 +1033,7 @@ console.log('loadtimesheets', request);
     };
 
     this.restApi.post('/master/projects', payload).subscribe((response: any) => {
-      console.log(response);
+      console.log('Projects', response);
       this.projects = response.map((project: any) => ({
         names: project.project_name
       }));
@@ -927,13 +1054,13 @@ console.log('loadtimesheets', request);
 
   fetchTasks(): void {
     this.restApi.get('/tasks/get_all_tasks').subscribe((response: any) => {
-      console.log(response);
-      this.tasks = response;
-
+      console.log('tasks ', response);
+      this.tasks = response.map((task: any) => ({
+        names: task.t_name
+      }));
+      
     })
-    // this.restApi.get('timesheets/task-suggestion').subscribe((response: any) => {
-    //   this.tasks = response;
-    // })
+
   }
 
   suggestTasks(): void {
@@ -956,11 +1083,15 @@ console.log('loadtimesheets', request);
 
   selectProject(projectName: string) {
     this.selectedProject = projectName;
-    this.filters.projectName = projectName;
+    // this.filters.projectName = projectName;
   }
 
   selectTask(taskName: string) {
     this.selectedTask = taskName;
+  }
+
+  selectPeriod(period: string) {
+    this.selectedPeriod = period;
   }
 
   closeDetailsPane() {
@@ -1306,13 +1437,49 @@ console.log('loadtimesheets', request);
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+
+    // Define the filter predicate for userProfile column only
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+        return data.userProfile ? data.userProfile.toLowerCase().includes(filter) : false;
+    };
+
+    // Set the filter value
+    this.dataSource.filter = filterValue;
+    this.tempTotalItems = this.dataSource.filteredData.length;
+
+    console.log('Filter ',filterValue.length);
+
+    if(filterValue.length === 0) {
+      this.tempTotalItems = this.totalItems;
+    }
 
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+        this.dataSource.paginator.firstPage();
     }
   }
+
+  resetFilters() {
+    // Clear the search input field
+    if (this.searchInput) {
+      this.searchInput.nativeElement.value = '';
+    }
+
+    if(this.dataSource.data.length === 0) {
+      this.totalItems = 0;
+    }
+    this.dataSource.filter = '';
+    this.selectedProject = '',
+    this.selectedTask = '',
+    this.selectedPeriod= '',
+    this.selectedFilterColumn = '';
+    this.pageIndex = 0;
+    this.updateListView();
+    this.totalItems = this.totalItems;
+    
+  }
+
+  
 
   onYearMonthChange() {
     if (this.selectedView === 'list') {

@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { MSAL_GUARD_CONFIG, MsalGuardConfiguration, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { EventMessage, RedirectRequest, EventPayload, EventType } from '@azure/msal-browser';
-import { Subscription, catchError, filter, of } from 'rxjs';
+import { EMPTY, Subscription, catchError, filter, of } from 'rxjs';
 import { RestApi } from 'src/app/shared/rest-api';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
@@ -27,8 +27,11 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder, private rest: RestApi, private auth: AuthGuard, private router: Router,
     private authService: AuthService
   ) {
-    //console.log(this.auth.user);
-    if (this.auth.user) {
+
+    const user = this.auth.user;
+  
+    // Check if the user is properly authenticated before redirecting
+    if (user && user.token) {
       this.router.navigateByUrl('/timesheet/dashboard');
     }
 
@@ -113,6 +116,38 @@ export class LoginComponent implements OnInit {
     .add(() => this.busy = false);
   }
 
+  // login() {
+  //   if (this.form.invalid) {
+  //     return;
+  //   }
+  //   this.busy = true;
+  //   const username = this.form.value.email;
+  //   const pass = this.form.value.password;
+  
+  //   this.authService.login(username, pass)
+  //     .pipe(
+  //       catchError((err) => {
+  //         this.hasError = true;
+  //         this.errorMessage = err.error?.message || 'An error occurred during login';
+  //         this.busy = false;
+  //         return EMPTY; 
+  //       })
+  //     )
+  //     .subscribe((res) => {
+  //       this.busy = false;
+  //       if (res && res.token) {
+  //         this.hasError = false;
+  //         this.auth.user = res;
+  //         this.router.navigateByUrl('/timesheet/dashboard');
+  //       } else {
+  //         this.hasError = true; // Show error if authentication fails
+  //         this.errorMessage = 'Invalid login credentials';
+  //       }
+  //     })
+  //     .add(() => this.busy = false);
+  // }
+
+  
   loginIdp(){
     console.log("Log In IDP");
     if (this.msalGuardConfig.authRequest) {
