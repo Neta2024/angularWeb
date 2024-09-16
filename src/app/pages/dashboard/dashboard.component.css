@@ -1,10 +1,10 @@
 .leaves {
     padding-top: 19px;
     width: 100%;
-  }
-  
-  .leave-list {
-    max-height: 200px;
+}
+
+.leave-list {
+    /* max-height: 200px; */
     overflow-y: auto;
     list-style-type: none;
     padding: 0;
@@ -14,54 +14,56 @@
     border-radius: 8px;
     padding: 10px;
     background-color: #f9f9f9;
-  }
-  
-  .leave-item {
+}
+
+.leave-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ddd;
     width: 100%
-  }
-  
-  .leave-details {
+}
+
+.leave-details {
     display: flex;
     flex-direction: column;
-  }
-  
-  .leave-name {
+}
+
+.leave-name {
     font-weight: bold;
-  }
-  
-  .leave-type {
+}
+
+.leave-type {
     display: flex;
     align-items: center;
-  }
-  
-  .leave-type mat-icon {
+}
+
+.leave-type mat-icon {
     margin-right: 5px;
-  }
-  
-  .leave-icons mat-icon {
+}
+
+.leave-icons mat-icon {
     margin-left: 10px;
-  }
-  
-  /* ============================= */
-  
-  .dashboard-sections {
+}
+
+
+/* ============================= */
+
+.dashboard-sections {
     display: flex;
     justify-content: space-between;
-  }
-  
-  .remaining-leaves {
+}
+
+.remaining-leaves {
     justify-content: space-around;
     margin-bottom: 20px;
     width: 100%;
     padding: 20px;
-  }
-  
-  /* .leave-card {
+}
+
+
+/* .leave-card {
     display: flex;
     align-items: center;
     border: 1px solid #ddd;
@@ -70,88 +72,89 @@
     width: 100%;
     background-color: #f9f9f9;
   } */
-  
-  .leave-card {
+
+.leave-card {
     display: flex;
     align-items: center;
     padding-left: 10px;
     border-bottom: 1px solid #ddd;
     padding-top: 4px;
     padding-bottom: 4px;
-  }
-  
-  .leave-icon {
+}
+
+.leave-icon {
     margin-right: 10px;
     width: 36px;
-  }
-  
-  .leave-icon mat-icon {
+}
+
+.leave-icon mat-icon {
     font-size: 36px;
     width: 100%;
     height: auto;
-  }
-  
-  .leave-info {
+}
+
+.leave-info {
     display: flex;
     flex-direction: column;
-  }
-  
-  .leave-count {
+}
+
+.leave-count {
     font-size: 16px;
-  }
-  
-  .leave-count .used-days {
+}
+
+.leave-count .used-days {
     font-size: 24px;
-    font-weight: bold; /* Bold text for emphasis */
-  }
-  
-  .leave-type {
+    font-weight: bold;
+    /* Bold text for emphasis */
+}
+
+.leave-type {
     font-size: 14px;
-  }
-  
-  .leave-list {
+}
+
+.leave-list {
     list-style-type: none;
     padding: 0;
-  }
-  
-  .leave-item {
+}
+
+.leave-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ddd;
-  }
-  
-  .leave-details {
+}
+
+.leave-details {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-  }
-  
-  .leave-name {
+}
+
+.leave-name {
     font-weight: bold;
-  }
-  
-  .leave-type {
+}
+
+.leave-type {
     display: flex;
     align-items: center;
-  }
+}
 
-  .leave-type mat-icon {
+.leave-type mat-icon {
     margin-right: 5px;
-  }
-  
-  .leave-icons {
+}
+
+.leave-icons {
     display: flex;
     justify-content: space-between;
     margin-left: auto;
-  }
+}
 
-  .leave-icons mat-icon {
+.leave-icons mat-icon {
     margin-left: 10px;
-  }
-  
-  .leave-card-list {
+}
+
+.leave-card-list {
     list-style-type: none;
     padding: 0;
     width: 100%;
@@ -160,39 +163,50 @@
     border-radius: 8px;
     padding: 0px;
     background-color: #f9f9f9;
-  }
-  
-  .mat-icon.icon-color1 {
-    color: #40E0D0; /* Example color for Vacation icon */
-  }
-  
-  .mat-icon.icon-color2 {
-    color: #FF6B6B; /* Example color for Sick Leave icon */
-  }
-  
-  .mat-icon.icon-color3 {
-    color: #FFD93D; /* Example color for Personal Leave icon */
-  }
-  
-  /* =========================== */
-  .icon-color1 {
+}
+
+.mat-icon.icon-color1 {
+    color: #40E0D0;
+    /* Example color for Vacation icon */
+}
+
+.mat-icon.icon-color2 {
+    color: #FF6B6B;
+    /* Example color for Sick Leave icon */
+}
+
+.mat-icon.icon-color3 {
+    color: #FFD93D;
+    /* Example color for Personal Leave icon */
+}
+
+
+/* =========================== */
+
+.icon-color1 {
     color: #40E0D0
-  }
-  .icon-color2 {
+}
+
+.icon-color2 {
     color: #FF6B6B
-  }
-  .icon-color3 {
+}
+
+.icon-color3 {
     color: #FFD93D
-  }
-  .icon-color4 {
+}
+
+.icon-color4 {
     color: #9370DB
-  }
-  .day-icon {
+}
+
+.day-icon {
     color: #FDC0C5
-  }
-  .night-icon {
+}
+
+.night-icon {
     color: #ABB5FF
-  }
-  .allday-icon {
+}
+
+.allday-icon {
     color: #B76ABF
-  }
+}

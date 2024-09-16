@@ -17,6 +17,33 @@
                                 <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
                             </mat-select>
                         </mat-form-field>
+
+                        <!-- Calendar view -->
+
+                        <mat-form-field appearance="outline" *ngIf="userRole === 'ADMIN' && selectedView === 'calendar'" style="min-width: 250px;">
+                            <mat-label>Filter by</mat-label>
+                            <input type="text" placeholder="Select User" matInput [formControl]="userControl" [matAutocomplete]="auto" />
+
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onUserSelected($event.option.value)">
+                                <mat-option [value]="null">Only Me</mat-option>
+                                <mat-option *ngFor="let user of filteredUsers | async" [value]="user">{{ user.names }}</mat-option>
+                            </mat-autocomplete>
+
+                            <button *ngIf="userControl.value" mat-icon-button matSuffix aria-label="Clear" (click)="clearSelection()">
+                              <mat-icon>clear</mat-icon>
+                            </button>
+                        </mat-form-field>
+
+
+
+                        <!-- Table List view -->
+                        <mat-form-field appearance="outline" *ngIf="userRole === 'ADMIN' && selectedView === 'list' " style="min-width: 180px;">
+                            <mat-label>View Mode</mat-label>
+                            <mat-select [(value)]="selectedTableView" (selectionChange)="onTableViewChange()">
+                                <mat-option value="individual">Individual</mat-option>
+                                <mat-option value="all">All Employees</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
 
                     <!-- Wrapper for Filter and View Select, aligned to top right -->
@@ -218,10 +245,6 @@
                     <mat-label>Task: </mat-label>
                     <mat-form-field appearance="fill">
                         <mat-select [(ngModel)]="selectedTask" name="task">
-                            <!-- <mat-option *ngFor="let task of tasks" [value]="fetchTasks()">
-                                {{ task.name }}
-                            </mat-option> -->
-
                             <mat-option *ngFor="let task of tasks" [value]="task.names">
                                 {{ task.names }}
                             </mat-option>

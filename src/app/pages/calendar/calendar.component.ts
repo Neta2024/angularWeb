@@ -12,9 +12,11 @@ import { start } from '@popperjs/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { Subscription } from 'rxjs';
+import { debounceTime, map, Observable, startWith, Subscription, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/pages/authentication/auth.service'; 
 import { NgIfContext } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 
 export interface TableData {
@@ -45,6 +47,16 @@ export class CalendarComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+ // ------------------------------------------------
+
+  @ViewChild(MatAutocompleteTrigger) autoCompleteTrigger: MatAutocompleteTrigger;
+ 
+  endPointHeader: string = '';
+  userFullName: string = '';
+  userRole: string = '';
+  userControl = new FormControl();
+  filteredUsers: Observable<any[]>;
+  users: any[] = [];
   projects: any[] = [];
   tasks: any[] = [];
 
@@ -86,12 +98,13 @@ export class CalendarComponent implements OnInit {
   holidays: any[] = [];
   
   showDetails = false;
-  
+  selectedUserId: number = null;
   selectedProject: string;
   selectedTask: string;
   selectedPeriod: string;
 
   suggestedProjects: { name: string }[] = [];
+
   suggestedTasks: { name: string }[] = [];
 
   selectedDates: { date: Date }[] = [];
@@ -106,8 +119,9 @@ export class CalendarComponent implements OnInit {
 
   selectedView: string = 'list';
   // selectedView: string = 'calendar';
+  selectedTableView: string = 'individual';
+  selectedCalendarView: string = 'individual';
 
-  userRole: string = '';
 
   private userSubscription: Subscription;
   tableContent: TemplateRef<NgIfContext<boolean>>;
@@ -128,8 +142,8 @@ export class CalendarComponent implements OnInit {
   // Pagination ----------------------------------------------------------------
 
   @Input() tempTotalItems: number;    // Temporary total number of items after searching
-  @Input() pageSize = 30;      // Default Items per page
-  @Input() pageSizeOptions = [5, 10, 30, 50, 100]; // Page size options
+  @Input() pageSize = 50;      // Default Items per page
+  @Input() pageSizeOptions = [5, 50, 100, 150, 200]; // Page size options
   pageIndex = 0;               // Current page index
   totalItems : number;
   sortField : String ='';
@@ -242,6 +256,7 @@ export class CalendarComponent implements OnInit {
     // check role
     const currentUser = this.authService.getAuthFromLocalStorage(); // Fetch the current user from local storage
     if (currentUser) {
+      this.userFullName = currentUser.firstName + ' ' + currentUser.lastName;
       this.userRole = currentUser.role.toUpperCase();
     } else {
       this.userRole = 'No Role';
@@ -266,8 +281,17 @@ export class CalendarComponent implements OnInit {
     this.loadTimesheets(this.selectedYear, this.selectedMonth);
     this.loadHolidays(this.selectedYear);
 
+    
     this.fetchProjects();
     this.fetchTasks();
+
+    this.fetchUsers();
+    // Set up the filtered users based on user input
+    this.filteredUsers = this.userControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filterUsers(value || '')) // Ensure '' for clearing
+      );
   }
 
 
@@ -365,7 +389,7 @@ export class CalendarComponent implements OnInit {
   loadEvents(year: number, month: number) {
     const numericMonth = this.selectedMonth + 1;
     const request = {
-      id: 0,
+      userId: this.selectedUserId,
       dateList: [{}],
       projectName: '',
       taskName: '',
@@ -374,11 +398,14 @@ export class CalendarComponent implements OnInit {
       month: numericMonth
     };
 
+    const urlHeader: string = this.endPointHeader;
+    const url = `${urlHeader}timesheets/get_all_timesheets/filter`;
+
     console.log('Selected year value:', year);
     console.log('Selected month value:', numericMonth);
-    console.log(request);
+    console.log("LoadEvent ", request);
     
-    this.restApi.post('timesheets/get_all_timesheets/filter', request).subscribe(response => {
+    this.restApi.post(url, request).subscribe(response => {
       console.log(response);
       if (response) {
         this.events = response.data.map((timesheet: any) => ({
@@ -390,7 +417,7 @@ export class CalendarComponent implements OnInit {
           projectName: timesheet.projectName,
           period: timesheet.period
         }));
-      } else {
+      } else if(response.data.length == 0) {
         this.events = [];
       }
 
@@ -403,16 +430,26 @@ export class CalendarComponent implements OnInit {
     },
     (error) => {
       console.error('An error occurred:', error);
+      // Clear events but keep only the holidays in calendarOptions
+      this.events = [];
+
+      // Update calendar options to include only holidays
+      this.calendarOptions = {
+        ...this.calendarOptions,
+        events: [...this.holidays] // Only holidays are retained
+      }; 
     });
   }
 
   loadTimesheets(year: number, month: number) {
     const page: number = this.pageIndex + 1; // Set the desired page number
     const size: number = this.pageSize; // Set the desired limit value
-    const url = `timesheets/get_all_timesheets/filter?page=${page}&size=${size}&sortField=${this.sortField}&sortOrder=${this.sortOrder}`;
+    const adminUser: String = this.userFullName;
+    const urlHeader: string = this.endPointHeader;
+    const url = `${urlHeader}timesheets/get_all_timesheets/filter?page=${page}&size=${size}&sortField=${this.sortField}&sortOrder=${this.sortOrder}`;
+    console.log('url: ' + url);
     const numericMonth = month + 1;
     const request = {
-      // dateList: this.filters.date ? [this.filters.date] : [{}],
       projectName: this.selectedProject || '',
       taskName: this.selectedTask || '',
       period:  this.mapPeriod(this.selectedPeriod) || '',
@@ -427,7 +464,7 @@ export class CalendarComponent implements OnInit {
         this.tempTotalItems = this.totalItems;
 
         this.tableData = response.data.map((timesheet: any) => ({
-          userProfile: timesheet.fullName || 'Personal Profile',
+          userProfile: timesheet.fullName || adminUser,
           projectName: timesheet.projectName || '',
           task: timesheet.taskName ? timesheet.taskName.replace('Leave :', '').trim() : '',
           period: this.mapPeriod(timesheet.period),
@@ -710,23 +747,6 @@ export class CalendarComponent implements OnInit {
         });
       }
     });
-    // dialogRef.afterClosed().subscribe(updatedEvent => {
-    //   if (updatedEvent) {
-    //     console.log('Updated event data from dialog:', updatedEvent);
-    //     // Update your calendar's event data or trigger API calls here
-    //   }
-    // });
-    // dialogRef.afterClosed().subscribe(result => {
-    //   if (result) {
-    //     event.setProp('title', result.title);
-    //     event.setStart(result.date);
-    //     event.setEnd(result.date);
-  
-    //     event.setExtendedProp('projectName', result.projectName);
-    //     event.setExtendedProp('taskName', result.taskName);
-    //     event.setExtendedProp('period', result.period);
-    //   }
-    // });
   }
 
 
@@ -831,7 +851,9 @@ export class CalendarComponent implements OnInit {
     });
     // deleteButton.addEventListener('click', () => this.deleteEvent(arg.event.id));
 
-    buttonContainer.appendChild(duplicateButton);
+    if(this.selectedUserId == null){
+      buttonContainer.appendChild(duplicateButton);
+    }
   }
 
     
@@ -861,30 +883,31 @@ export class CalendarComponent implements OnInit {
     if (clickedElement.classList.contains('btn-delete')) {
       this.deleteEvent(clickInfo.event.id);
     } else {
-      const eventDef = clickInfo.event._def;
-      const eventInstance = clickInfo.event._instance;
+  
+      if(this.selectedUserId == null){
+        const eventDef = clickInfo.event._def;
+        const eventInstance = clickInfo.event._instance;
 
-      console.log('Extended Props:', eventDef.extendedProps);
+        console.log('Extended Props:', eventDef.extendedProps);
+        
+        // Extract details from the event
+        const date = eventInstance.range.start.toISOString().split('T')[0]; // Format date
+        const period = eventDef.extendedProps['period'] || ''; // Adjust based on actual structure
+        const projectName = eventDef.title.split(' - ')[0] || ''; // Extract project name from title
+        const taskName = eventDef.title.split(' - ')[1] || ''; // Extract task name from title
+        const id = eventDef.publicId || ''; // Use publicId or another unique identifier
+
+        // Log extracted details for debugging
+        console.log('Extracted details:', { date, period, projectName, taskName, id });
+        this.isEditMode = true;
+        this.showDetails = true;
       
-      // Extract details from the event
-      const date = eventInstance.range.start.toISOString().split('T')[0]; // Format date
-      const period = eventDef.extendedProps['period'] || ''; // Adjust based on actual structure
-      const projectName = eventDef.title.split(' - ')[0] || ''; // Extract project name from title
-      const taskName = eventDef.title.split(' - ')[1] || ''; // Extract task name from title
-      const id = eventDef.publicId || ''; // Use publicId or another unique identifier
-
-      // Log extracted details for debugging
-      console.log('Extracted details:', { date, period, projectName, taskName, id });
-      this.isEditMode = true;
-      this.showDetails = true;
-      // Call editEvent with the extracted details
-      // this.editEvent({ date, period, projectName, taskName, id });
-      // this.editEvent(clickInfo.event);
-      // console.log('clickInfo:', clickInfo);
-      // console.log('EventImpl details:', clickInfo.event);
-      this.updateCalendar();
-
-      this.showEditPane({ date, period, projectName, taskName, id });
+        this.updateCalendar();
+  
+        
+        this.showEditPane({ date, period, projectName, taskName, id });
+      }
+      
     }
   }
 
@@ -909,17 +932,12 @@ export class CalendarComponent implements OnInit {
     console.log(this.eventDate);
 
     console.log(this.selectedDates);
-    this.showDetails = true;
-    // const clickedDate = arg.dateStr; // Get the clicked date as a string
-    // // Check if the clicked date already has an event
-    // const hasEvent = this.events.some(event => event.date === clickedDate);
     
-    // // if (!hasEvent) {
-    //   this.clickedDate = clickedDate;
-    //   console.log('Opening dialog for date:', this.clickedDate);
-    //   this.openAddEventDialog(this.clickedDate);
-    // // }
-    this.updateCalendar();
+    if(this.selectedUserId == null){
+      this.showDetails = true;
+      this.updateCalendar();
+    }
+    
   }
 
   duplicateEvent(event: EventApi): void {
@@ -1026,6 +1044,15 @@ export class CalendarComponent implements OnInit {
 
   /////// ========================
 
+  fetchUsers(): void {
+    this.restApi.get('/users/get').subscribe((response: any) => {
+      console.log('users ', response);
+      this.users = response.map((user: any) => ({
+        id: user.userId,
+        names: user.firstName + ' ' + user.lastName,
+      })); 
+    })
+  }
 
   fetchProjects(): void {
     const payload = {
@@ -1072,18 +1099,40 @@ export class CalendarComponent implements OnInit {
         name: task.t_name
       }))
     });
-    // this.suggestedTasks = [
-    //   { name: 'Task A' },
-    //   { name: 'Task B' },
-    //   { name: 'Task C' },
-    //   { name: 'Task D' },
-    //   { name: 'Task E' }
-    // ];
+
   }
+
+  // Handle user selection change
+  onUserSelected(user: any): void {
+    this.selectedUserId = user.id;
+    this.onCalendarViewChange(); // Call your existing function
+   
+  }
+
+  clearSelection(): void {
+    this.userControl.setValue('');  // Clear the user input
+    this.selectedUserId = null;     // Reset the selected user ID
+  
+    // Temporarily disable and re-enable the control to reset autocomplete state
+    const control = this.userControl;
+    control.disable();
+    setTimeout(() => {
+      control.enable();
+      control.updateValueAndValidity();
+    }, 0);
+  
+    // Reset filteredUsers to show all users
+    this.filteredUsers = this.userControl.valueChanges.pipe(
+      startWith(''),  // Trigger the filter with an empty string to show all users
+      map(value => this._filterUsers(value || '')) // Filter based on value
+    );
+  
+    this.onCalendarViewChange();    // Call your method to handle calendar view updates
+  }
+  
 
   selectProject(projectName: string) {
     this.selectedProject = projectName;
-    // this.filters.projectName = projectName;
   }
 
   selectTask(taskName: string) {
@@ -1379,31 +1428,6 @@ export class CalendarComponent implements OnInit {
     this.isEditMode = false;
   }
 
-  // showEditPane(event: any): void {
-  //   if (!event || !event.date) {
-  //     console.error('Error: No event or date provided.');
-  //     return;
-  //   }
-
-  //   const periodToNumber = this.convertPeriodToNumber(event.period);
-
-  //   // Set up selected dates and other fields from the event parameter
-  //   this.selectedDates = [{ date: new Date(event.date) }];
-  //   this.selectedPeriod = periodToNumber;
-  //   // this.selectedPeriod = event.period || ''; // Assuming `event` has a `period` property
-  //   this.selectedProject = event.projectName; // Assuming `event` has a `projectName` property
-  //   this.selectedTask = event.taskName; // Assuming `event` has a `taskName` property
-    
-  //   console.log('Selected Period:', this.selectedPeriod);
-
-  //   console.log(this.selectedDates);
-
-  //   const formattedDates = this.selectedDates.map(d => this.formatDate(d.date));
-  //   console.log(formattedDates);
-
-  //   this.eventData = event;
-  // }
-
   showDuplicatePane(event: any): void {
     if (!event || !event.date) {
       console.error('Error: No event or date provided.');
@@ -1479,6 +1503,16 @@ export class CalendarComponent implements OnInit {
     
   }
 
+  // Method to filter users based on input value
+  private _filterUsers(value: string): any[] {
+    const filterValue = value.toLowerCase();
+    return this.users.filter(user => user.names.toLowerCase().includes(filterValue));
+  }
+
+   // Display function for the mat-autocomplete input field
+   displayFn(user: any): string {
+    return user ? user.names : ''; // Display the user's name or empty if null
+  }
   
 
   onYearMonthChange() {
@@ -1495,6 +1529,34 @@ export class CalendarComponent implements OnInit {
     } else {
       // Handle other view change logic here if needed
       this.updateCalendar();
+    }
+  }
+
+  onTableViewChange() {
+    if (this.selectedTableView === 'all') {
+      this.endPointHeader = 'admin/'
+      this.updateListView();
+      console.log("Admin view mode = ", this.endPointHeader)
+     
+    } else if (this.selectedTableView === 'individual') {
+      this.endPointHeader = ''
+      this.updateListView();
+      console.log("Individual view mode, ", this.endPointHeader)
+     
+    }
+  }
+
+  onCalendarViewChange() {
+    if (this.selectedUserId == null) {
+      this.endPointHeader = ''
+      this.updateCalendar();
+      console.log("Individual view mode = ", this.endPointHeader)
+     
+    } else {
+      this.endPointHeader = 'admin/'
+      this.updateCalendar();
+      console.log("Admin view mode, ", this.endPointHeader)
+     
     }
   }
   

@@ -7,11 +7,13 @@
             <div class="card my-5">
                 <div class="card-body">
                     <form class="form" [formGroup]="form" novalidate="novalidate" (ngSubmit)="login()">
+
                         <a href="/" class="d-flex justify-content-center">
                             <!-- <h1>GinkgoRun</h1> -->
                             <img src="assets/images/ginkgo-run.png" alt="" style="width: 400px;" />
                         </a>
-                        <h5 class="my-4 d-flex justify-content-center"> Sign in with Email address </h5>
+                        <!-- <h5 class="my-4 d-flex justify-content-center"> Sign in with Email address </h5> -->
+                        <br>
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="floatingInput" value="" name="email" formControlName="email" />
                             <label for="floatingInput">Email address / Username</label>
@@ -35,7 +37,7 @@
                         <div class="d-grid mt-4">
                             <button type="button" class="btn btn-custom" (click)="login()" [disabled]="form.invalid || busy">Sign In</button>
                         </div>
-                        <hr />
+
                         <!-- <h5 class="d-flex justify-content-center">
                             <a [routerLink]="['/guest/register']">Don't have an account?</a>
                         </h5> -->
