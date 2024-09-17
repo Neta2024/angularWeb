@@ -1,48 +1,78 @@
 :host {
-   display: flex;
-   justify-content: space-between;
-   line-height: 24px;
+    // display: flex;
+    // justify-content: start;
+    // align-items: center;
+    // line-height: 24px;
 }
 
 .mat-snack-bar-container {
-   &.alert-info .mat-icon {
-      color: #1c96eb;
-   }
+    display: flex;
+    align-items: center; // Align items vertically centered
+}
 
-   &.alert-success .mat-icon {
-      color: #009e55;
-   }
+.mat-snack-bar-container {
+    &.alert-info .mat-icon {
+        color: #1c96eb;
+    }
+    &.alert-success .mat-icon {
+        color: #009e55;
+    }
+    &.alert-warn {
+        background-color: #ffb607;
+        color: #404040;
+    }
+    &.alert-error {
+        background-color: #cc3a17;
+        color: #fff;
+    }
+}
 
-   &.alert-warn {
-      background-color: #ffb607;
-      color: #404040;
-   }
+.alert-info .mat-icon {
+    color: #1c96eb;
+}
 
-   &.alert-error {
-      background-color: #cc3a17;
-      color: #fff;
-   }
+.alert-success .mat-icon {
+    color: #009e55;
+}
+
+.alert-warn {
+    background-color: #ffb607;
+    color: #404040;
+}
+
+.alert-error {
+    background-color: #cc3a17;
+    color: #fff;
+}
+
+.flex {
+    display: flex;
+    align-items: center; // Vertically center align items
+    justify-content: start; // Space between items
+    line-height: 24px; // Ensure
 }
 
 .alert-icon {
-   margin-right: 10px;
+    margin-right: 10px;
+    font-size: 24px;
 }
 
 .alert-text {
-   align-self: center;
+    // display: flex;
+    align-self: center;
 }
 
 .alert-action {
-   -webkit-user-select: none;
-   -moz-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
-   cursor: pointer;
-   outline: 0;
-   border: none;
-   -webkit-tap-highlight-color: transparent;
-   background: none;
-   flex-shrink: 0;
-   margin-left: 48px;
-   padding: 4px 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    outline: 0;
+    border: none;
+    -webkit-tap-highlight-color: transparent;
+    background: none;
+    flex-shrink: 0;
+    margin-left: 48px;
+    padding: 4px 10px;
 }

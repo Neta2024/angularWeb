@@ -44,8 +44,8 @@ export class AlertComponent extends SimpleSnackBar implements OnInit {
    }
 
    ngOnInit(): void {
-      //const parentNode = this.findContainer();
-      //this.renderer.addClass(parentNode, this.className);
+      // const parentNode = this.findContainer();
+      // this.renderer.addClass(parentNode, this.className);
    }
 
    private findContainer(): any {

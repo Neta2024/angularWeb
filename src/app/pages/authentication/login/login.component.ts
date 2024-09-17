@@ -7,6 +7,7 @@ import { EMPTY, Subscription, catchError, filter, of } from 'rxjs';
 import { RestApi } from 'src/app/shared/rest-api';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
+import { Alert } from 'src/app/shared/components/alert/alert';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ export class LoginComponent implements OnInit {
     private msal: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private fb: FormBuilder, private rest: RestApi, private auth: AuthGuard, private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private alert: Alert  // Inject the Alert service
   ) {
 
     const user = this.auth.user;
@@ -98,6 +100,7 @@ export class LoginComponent implements OnInit {
       this.hasError = true;
       this.busy = false;
       //return undefined;
+      this.alert.error(this.errorMessage);
       return of(err);
     }))
     .subscribe((res) => {
@@ -106,47 +109,22 @@ export class LoginComponent implements OnInit {
       if (res.message) {
         this.hasError = true;
         this.errorMessage = res.message;
+
+        // Show error message if login fails
+        this.alert.error(this.errorMessage);
       }
       else {
         this.hasError = false;
+
+         // Show success message
+         this.alert.success("Login successful!");
+
         this.auth.user = res;
         this.router.navigateByUrl('/timesheet/dashboard');
       }
     })
     .add(() => this.busy = false);
   }
-
-  // login() {
-  //   if (this.form.invalid) {
-  //     return;
-  //   }
-  //   this.busy = true;
-  //   const username = this.form.value.email;
-  //   const pass = this.form.value.password;
-  
-  //   this.authService.login(username, pass)
-  //     .pipe(
-  //       catchError((err) => {
-  //         this.hasError = true;
-  //         this.errorMessage = err.error?.message || 'An error occurred during login';
-  //         this.busy = false;
-  //         return EMPTY; 
-  //       })
-  //     )
-  //     .subscribe((res) => {
-  //       this.busy = false;
-  //       if (res && res.token) {
-  //         this.hasError = false;
-  //         this.auth.user = res;
-  //         this.router.navigateByUrl('/timesheet/dashboard');
-  //       } else {
-  //         this.hasError = true; // Show error if authentication fails
-  //         this.errorMessage = 'Invalid login credentials';
-  //       }
-  //     })
-  //     .add(() => this.busy = false);
-  // }
-
   
   loginIdp(){
     console.log("Log In IDP");

@@ -17,6 +17,7 @@ import { AuthService } from 'src/app/pages/authentication/auth.service';
 import { NgIfContext } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { Alert } from 'src/app/shared/components/alert/alert';
 
 
 export interface TableData {
@@ -130,7 +131,8 @@ export class CalendarComponent implements OnInit {
     public dialog: MatDialog,
     private restApi: RestApi,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private alert: Alert  // Inject the Alert service
   ) { 
     const currentYear = new Date().getFullYear();
     this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
@@ -268,6 +270,14 @@ export class CalendarComponent implements OnInit {
 
     } else {
       this.displayedColumns = ['userProfile', 'projectName', 'task', 'period', 'date'];
+      this.fetchUsers();
+
+      // Set up the filtered users based on user input
+      this.filteredUsers = this.userControl.valueChanges
+        .pipe(
+          startWith(''),
+          map(value => this._filterUsers(value || '')) // Ensure '' for clearing
+        );
     }
 
     // Initialize the dataSource
@@ -284,14 +294,6 @@ export class CalendarComponent implements OnInit {
     
     this.fetchProjects();
     this.fetchTasks();
-
-    this.fetchUsers();
-    // Set up the filtered users based on user input
-    this.filteredUsers = this.userControl.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filterUsers(value || '')) // Ensure '' for clearing
-      );
   }
 
 
@@ -429,6 +431,7 @@ export class CalendarComponent implements OnInit {
       };
     },
     (error) => {
+      this.alert.error("No timesheet found");
       console.error('An error occurred:', error);
       // Clear events but keep only the holidays in calendarOptions
       this.events = [];
@@ -485,7 +488,8 @@ export class CalendarComponent implements OnInit {
       this.tempTotalItems = 0;
       this.tableData = [];
       this.dataSource.data = [];
-      console.error('An error occurred:', error);
+      this.alert.error("Timesheet not found");
+      console.error('An error occurred:',this.alert.success);
     });
   }
   

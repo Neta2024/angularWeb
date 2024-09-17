@@ -85,14 +85,21 @@ export class RestApi {
       if (ex.status === 0) {
         ex.message = 'Unable to connect to web service';
       } else if (!ex.message) {
-        ex.message = `HTTP Error ${e.status} ${e.message}`;
+        // ex.message = `HTTP Error ${e.status} ${e.message}`;
+        ex.message = `${e.message}`;
+      }
+      if (e.status === 400) {
+        this.alert.error(e.message);
       }
       if (e.status === 401) {
         //this.unauthorized.emit(null);
       }
-      //if (!silent) {
+      if (e.status === 403) {
+        this.alert.error('Access denied');
+      }
+      // if (!silent) {
         this.alert.error(ex.message);
-      //}
+      // }
       return throwError(() => ex)
     };
   }
