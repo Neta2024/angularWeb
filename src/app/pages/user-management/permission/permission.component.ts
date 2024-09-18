@@ -43,7 +43,7 @@ export class PermissionComponent implements OnInit {
     this.dataSource.data = this.userPermissions;
   }
 
-  fetchUsers(): void {
+  fetchUsers(){
     this.restApi.get('/users/get').subscribe((response: any) => {
       console.log('users ', response);
       this.users = response.map((user: any ) => ({
@@ -61,7 +61,8 @@ export class PermissionComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.dataSource.data = [...this.userPermissions]; // Reset data
+    // this.dataSource.data = [...this.users]; // Reset data
+    this.fetchUsers(); // Fetch updated data from server
   }
 }
 

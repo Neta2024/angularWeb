@@ -39,13 +39,3 @@ mat-option {
     font-size: 0.875rem;
     /* Adjust the font size as needed */
 }
-
-
-/* Add hover effect to table rows */
-
-::ng-deep .mat-row:hover {
-    background-color: #9d1f1f;
-    /* Light grey for hover effect */
-    cursor: pointer;
-    /* Optional: change cursor on hover */
-}

@@ -174,7 +174,7 @@ export class CalendarComponent implements OnInit {
     if (currentPage <= 5) {
       // Near the beginning: show the first 10 pages
       startPage = 0;
-      endPage = maxPagesToShow - 1;
+      endPage = maxPagesToShow - 3;
     } else if (currentPage + 5 >= totalPages) {
       // Near the end: show the last 10 pages
       startPage = totalPages - maxPagesToShow;
@@ -188,7 +188,7 @@ export class CalendarComponent implements OnInit {
     // Add pages to the array, with ellipses if needed
     if (startPage > 0) {
       pages.push(0); // Always show the first page
-      pages.push('...'); // Add ellipsis if there are pages before the current range
+      // pages.push('...'); // Add ellipsis if there are pages before the current range
     }
   
     for (let i = startPage; i <= endPage; i++) {
