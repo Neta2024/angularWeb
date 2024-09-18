@@ -34,8 +34,8 @@ const routes: Routes = [
         loadChildren: () => import('./holiday/holiday.module').then((m) => m.HolidayModule),
       },
       {
-        path: 'User management',
-        loadChildren: () => import('./holiday/holiday.module').then((m) => m.HolidayModule),
+        path: 'user-management',
+        loadChildren: () => import('./user-management/user-management.module').then((m) => m.UserManagementModule),
       },
       {
         path: 'typography',

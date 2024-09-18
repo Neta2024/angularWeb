@@ -1,0 +1,51 @@
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.tab-content {
+    padding: 20px;
+}
+
+.table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    /* Ensure responsiveness on smaller screens */
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.full-width {
+    margin-top: 10px;
+    width: 80%;
+    font-size: 12px;
+    margin-bottom: -10px;
+}
+
+.mat-elevation-z8 {
+    margin-top: 10px;
+    width: 100%;
+}
+
+
+/* Reduce font size inside mat-option */
+
+mat-option {
+    font-size: 0.875rem;
+    /* Adjust the font size as needed */
+}
+
+
+/* Add hover effect to table rows */
+
+::ng-deep .mat-row:hover {
+    background-color: #9d1f1f;
+    /* Light grey for hover effect */
+    cursor: pointer;
+    /* Optional: change cursor on hover */
+}

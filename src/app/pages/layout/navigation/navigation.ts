@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { AuthService } from '../../authentication/auth.service';
+import { AuthGuard } from '../../authentication/auth.guard';
 
 export interface NavigationItem {
   id: string;
   title: string;
   type: 'item' | 'collapse' | 'group';
+  role?: string[];
   icon?: string;
   url?: string;
   classes?: string;
@@ -21,6 +24,7 @@ const NavigationItems = [
     id: 'dashboard',
     title: 'Ginkgo Run',
     type: 'group',
+    role: ['ADMIN', 'USER'],
     icon: 'icon-navigation',
     children: [
       // {
@@ -92,38 +96,6 @@ const NavigationItems = [
   },
   
   // {
-  //   id: 'page',
-  //   title: 'Pages',
-  //   type: 'group',
-  //   icon: 'icon-navigation',
-  //   children: [
-  //     {
-  //       id: 'Authentication',
-  //       title: 'Authentication',
-  //       type: 'collapse',
-  //       icon: 'ti ti-key',
-  //       children: [
-  //         {
-  //           id: 'login',
-  //           title: 'Sign In',
-  //           type: 'item',
-  //           url: '/login',
-  //           target: true,
-  //           breadcrumbs: false
-  //         },
-  //         {
-  //           id: 'logout',
-  //           title: 'Sign Out',
-  //           type: 'item',
-  //           url: '/logout',
-  //           target: false,
-  //           breadcrumbs: true
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // },
-  // {
   //   id: 'elements',
   //   title: 'Elements',
   //   type: 'group',
@@ -187,7 +159,53 @@ const NavigationItems = [
 
 @Injectable()
 export class NavigationItem {
+  constructor(private authGuard: AuthGuard){
+  }
   get() {
+    const userRole = this.authGuard.user?.role.toUpperCase();
+    if (userRole === 'ADMIN') {
+      NavigationItems.push(
+        {
+        id: 'admin',
+        title: 'Admin',
+        type: 'group',
+        role: ['ADMIN'],
+        icon: 'icon-navigation',
+        children: [
+          {
+            id: 'management',
+            title: 'User Management',
+            type: 'item',
+            icon: 'ti ti-key',
+            classes: 'nav-item',
+            url: '/timesheet/user-management',
+            breadcrumbs: false,
+            // children: [
+            //   {
+            //     id: 'login',
+            //     title: 'Sign In',
+            //     type: 'item',
+            //     url: '/login',
+            //     target: true,
+            //     breadcrumbs: false
+            //   },
+            //   {
+            //     id: 'logout',
+            //     title: 'Sign Out',
+            //     type: 'item',
+            //     url: '/logout',
+            //     target: false,
+            //     breadcrumbs: true
+            //   }
+            // ]
+          }
+        ]
+      });
+     
+    } else{
+      // NavigationItems.pop();
+    }
+
     return NavigationItems;
   }
 }
