@@ -1049,7 +1049,7 @@ export class CalendarComponent implements OnInit {
   /////// ========================
 
   fetchUsers(): void {
-    this.restApi.get('/users/get').subscribe((response: any) => {
+    this.restApi.get('admin/users/get').subscribe((response: any) => {
       console.log('users ', response);
       this.users = response.map((user: any) => ({
         id: user.userId,

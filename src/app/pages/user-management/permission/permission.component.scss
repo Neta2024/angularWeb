@@ -20,22 +20,54 @@
     gap: 10px;
 }
 
-.full-width {
-    margin-top: 10px;
-    width: 80%;
-    font-size: 12px;
-    margin-bottom: -10px;
+
+/* Add a border around the mat-select */
+
+.custom-select {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    box-sizing: border-box;
+    width: 70%;
+    font-size: 0.8rem;
 }
 
-.mat-elevation-z8 {
-    margin-top: 10px;
-    width: 100%;
+
+/* Optional: Add hover or focus effect */
+
+.custom-select:focus,
+.custom-select:hover {
+    border-color: #049004bd;
+    ;
 }
 
 
-/* Reduce font size inside mat-option */
+/* Highlighted select style after selection */
 
-mat-option {
-    font-size: 0.875rem;
-    /* Adjust the font size as needed */
+.custom-select-selected {
+    border: 2px solid #3f51b5;
+    background-color: #60ff605e;
+    border: 1px solid #808080;
+    border-radius: 4px;
+    padding: 4px;
+    box-sizing: border-box;
+    width: 70%;
+    font-size: 0.8rem;
+}
+
+.mat-option {
+    font-size: 0.8rem;
+}
+
+
+/* Add hover effect to mat-row */
+
+table.mat-table .mat-row:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+table.mat-table .mat-row:hover .mat-cell {
+    color: #000;
+    /* Optional: Change text color on hover */
 }
