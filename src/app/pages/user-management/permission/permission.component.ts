@@ -15,6 +15,8 @@ export class PermissionComponent implements OnInit {
 
   users: any[] = [];
 
+  searchQuery: string = ''; // For the search input
+
   // By default save and cancel buttons are disabled
   buttonsDisabled: boolean = true;
 
@@ -22,13 +24,11 @@ export class PermissionComponent implements OnInit {
   dataSource = new MatTableDataSource<UserPermission>([]);
 
   // Columns displayed in the table
-  displayedColumns: string[] = ['user', 'fullName', 'role'];
-
-  // Example data to display
-  userPermissions: UserPermission[] = [];
+  displayedColumns: string[] = ['fullName', 'user', 'role'];
 
   // Track role changes
   userRoleUpdates: { userId: number; role: string }[] = [];
+  filteredUsers: any[];
 
   constructor(private restApi: RestApi, private alert: Alert) {}
 
@@ -47,8 +47,15 @@ export class PermissionComponent implements OnInit {
         isChanged: false // Track if a row has changed
       })); 
       this.dataSource.data = this.users;
+      this.filteredUsers = this.users; // Store the full user list for filtering
     })
   }
+
+  applyFilter() {
+    this.dataSource.data = this.users.filter(user =>
+        user.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+}
 
    // Method to track changes in role selector
   checkIfDataChanged(): void {
@@ -108,8 +115,8 @@ export class PermissionComponent implements OnInit {
 
 export interface UserPermission {
   no: number;
-  user: string;
   fullName: string;
+  user: string;
   role: string;
   isChanged?: boolean; // Track if the row has been changed
 }

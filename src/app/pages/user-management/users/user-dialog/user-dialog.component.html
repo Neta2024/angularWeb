@@ -1,0 +1,60 @@
+<div class="user-dialog">
+    <h2 mat-dialog-title>{{ data.mode === 'add' ? 'Add User' : 'Edit User' }}</h2>
+
+    <mat-dialog-content>
+        <mat-form-field class="full-width" *ngIf="data.mode !== 'edit'">
+            <div class="hint">Email</div>
+            <mat-label>User Name</mat-label>
+            <input matInput [(ngModel)]="userName" placeholder="Enter email " required />
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <div class="hint">First name.</div>
+            <mat-label>First Name</mat-label>
+            <input matInput [(ngModel)]="firstName" placeholder="Enter first name" required />
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <div class="hint">Last name.</div>
+            <mat-label>Last Name</mat-label>
+            <input matInput [(ngModel)]="lastName" placeholder="Enter last name" required />
+        </mat-form-field>
+
+        <mat-form-field class="full-width" *ngIf="data.mode !== 'edit'">
+            <div class="hint">Password.</div>
+            <mat-label>Password</mat-label>
+            <input matInput [(ngModel)]="password" placeholder="Enter password" required />
+        </mat-form-field>
+
+        <mat-form-field class="full-width" *ngIf="data.mode !== 'edit'">
+            <div class="hint">Role</div>
+            <mat-label>Role</mat-label>
+            <mat-select [(ngModel)]="role" placeholder="Select role" required>
+                <mat-option *ngFor="let roleOption of roles" [value]="roleOption">
+                    {{ roleOption }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <div class="hint">Status
+            </div>
+            <mat-label>Status</mat-label>
+            <input matInput [(ngModel)]="status" placeholder="status" required />
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <div class="hint">Phone number
+            </div>
+            <mat-label>Phone</mat-label>
+            <input matInput [(ngModel)]="phone" placeholder="Enter phone number" required />
+        </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+        <button mat-raised-button color="warn" (click)="onCancel() ">Cancel</button>
+        <button mat-raised-button color="primary" (click)="onSave() " *ngIf="data.mode==='edit' ">Update</button>
+        <button mat-raised-button color="primary" (click)="addUser() " *ngIf="data.mode !=='edit' ">Add</button>
+    </mat-dialog-actions>
+
+</div>

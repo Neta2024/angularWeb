@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { PermissionComponent } from './permission/permission.component';
 import { PermissionModule } from './permission/permission.module';
+import { UsersModule } from './users/users.module';
 
 
 
@@ -19,6 +20,7 @@ import { PermissionModule } from './permission/permission.module';
   imports: [
     CommonModule,
     PermissionModule, // Import PermissionModule
+    UsersModule,      // Import UsersModule
     MatTabsModule,
     FormsModule,
     SharedModule,

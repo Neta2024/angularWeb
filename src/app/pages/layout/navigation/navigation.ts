@@ -94,6 +94,25 @@ const NavigationItems = [
       }
     ]
   },
+
+  {
+    id: 'admin',
+    title: 'Admin',
+    type: 'group',
+    role: ['ADMIN'],
+    icon: 'icon-navigation',
+    children: [
+      {
+        id: 'management',
+        title: 'User Management',
+        type: 'item',
+        icon: 'ti ti-key',
+        classes: 'nav-item',
+        url: '/timesheet/user-management',
+        breadcrumbs: false,
+      }
+    ]
+  },
   
   // {
   //   id: 'elements',
@@ -163,47 +182,8 @@ export class NavigationItem {
   }
   get() {
     const userRole = this.authGuard.user?.role.toUpperCase();
-    if (userRole === 'ADMIN') {
-      NavigationItems.push(
-        {
-        id: 'admin',
-        title: 'Admin',
-        type: 'group',
-        role: ['ADMIN'],
-        icon: 'icon-navigation',
-        children: [
-          {
-            id: 'management',
-            title: 'User Management',
-            type: 'item',
-            icon: 'ti ti-key',
-            classes: 'nav-item',
-            url: '/timesheet/user-management',
-            breadcrumbs: false,
-            // children: [
-            //   {
-            //     id: 'login',
-            //     title: 'Sign In',
-            //     type: 'item',
-            //     url: '/login',
-            //     target: true,
-            //     breadcrumbs: false
-            //   },
-            //   {
-            //     id: 'logout',
-            //     title: 'Sign Out',
-            //     type: 'item',
-            //     url: '/logout',
-            //     target: false,
-            //     breadcrumbs: true
-            //   }
-            // ]
-          }
-        ]
-      });
-     
-    } else{
-      // NavigationItems.pop();
+    if (userRole === 'USER') {
+      NavigationItems.splice(1, 1);
     }
 
     return NavigationItems;

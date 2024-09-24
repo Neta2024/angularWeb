@@ -489,7 +489,7 @@ export class CalendarComponent implements OnInit {
       this.tableData = [];
       this.dataSource.data = [];
       this.alert.error("Timesheet not found");
-      console.error('An error occurred:',this.alert.success);
+      console.error('An error occurred:', error);
     });
   }
   
