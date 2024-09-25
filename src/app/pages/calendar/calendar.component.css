@@ -187,7 +187,7 @@ mat-form-field .mat-form-field-label {
 .active-page {
     background-color: #60ff608f;
     /* Change to your preferred color */
-    color: white;
+    color: rgb(0, 0, 0);
     /* Text color for the active button */
     font-weight: bold;
     /* Optional: Bold text for the active button */

@@ -7,10 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
-
-
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [UsersComponent, UserDialogComponent],
@@ -24,6 +23,14 @@ import { FormsModule } from '@angular/forms';
     MatButtonModule,
     MatDialogModule, // Add MatDialogModule here
     FormsModule,  // Import FormsModule here
+    MatSlideToggleModule,
+  ],
+  providers: [
+    // Global dialog default options
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS, 
+      useValue: { hasBackdrop: true, zIndex: 1000 }  // Custom options for all dialogs
+    }
   ],
   exports: [UsersComponent]
 })

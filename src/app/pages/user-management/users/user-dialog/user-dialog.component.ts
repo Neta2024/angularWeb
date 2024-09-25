@@ -45,6 +45,12 @@ export class UserDialogComponent {
     }
   }
 
+  toggleStatus(element: any) {
+    // Handle status toggle here
+    console.log('Status toggled for:', element);
+    // You can update the element or call a service to persist the change
+  }
+
   addUser(): void{
     const userRequest = {
       username: this.userName,

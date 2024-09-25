@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
@@ -19,7 +19,8 @@ export interface User {
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  styleUrl: './users.component.scss',
+  encapsulation: ViewEncapsulation.None // Disable view encapsulation
 })
 export class UsersComponent implements OnInit {
 
@@ -62,9 +63,17 @@ export class UsersComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
+  toggleStatus(element: any) {
+    // Handle status toggle here
+    console.log('Status toggled for:', element);
+    // You can update the element or call a service to persist the change
+  }
+
   // Opens the Add User dialog
   openAddUserDialog(): void {
     const dialogRef = this.dialog.open(UserDialogComponent, {
+      disableClose: true,
+      autoFocus: true,
       width: '500px',
       data: { mode: 'add' } // Pass mode as 'add' to distinguish between add/edit
     });
