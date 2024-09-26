@@ -8,8 +8,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [UsersComponent, UserDialogComponent],
@@ -24,6 +29,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatDialogModule, // Add MatDialogModule here
     FormsModule,  // Import FormsModule here
     MatSlideToggleModule,
+    MatGridListModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+    MatCardModule,
+    MatRadioModule,
+    MatIconModule,
   ],
   providers: [
     // Global dialog default options

@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { RestApi } from 'src/app/shared/rest-api';
 import { Alert } from 'src/app/shared/components/alert/alert';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 export interface User {
   id: number;
@@ -11,6 +12,7 @@ export interface User {
   lastName: string;
   fullName: string;
   userName: string;
+  pwd: string;
   role: string;
   status: string;
   phone: string;
@@ -20,19 +22,22 @@ export interface User {
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
-  encapsulation: ViewEncapsulation.None // Disable view encapsulation
 })
 export class UsersComponent implements OnInit {
 
   // Columns to display in the table
-  displayedColumns: string[] = ['fullName', 'userName',  'status', 'phone'];
+  displayedColumns: string[] = ['fullName', 'userName',  'phone', 'status'];
   dataSource = new MatTableDataSource<User>([]); // Data source for the table
 
   users: any[] = [];
 
   searchQuery: string = '';
 
-  constructor(private dialog: MatDialog, private restApi: RestApi, private alert: Alert) {}
+  isAddMode: boolean;
+  isActive: boolean;
+
+ 
+  constructor(private modalService: NgbModal, private restApi: RestApi, private alert: Alert) {}
 
   ngOnInit(): void {
     this.fetchUsers();
@@ -49,13 +54,15 @@ export class UsersComponent implements OnInit {
         firstName: user.firstName,
         lastName: user.lastName,
         fullName: `${user.firstName} ${user.lastName}`,
-        status: user.status === 'A' ? 'active' : 'inactive',
+        status: user.status === 'A' ?  this.isActive = true : false,
         role: user.role,
         phone: user.phone ? user.phone : 'no contact',
-        isChanged: false // Track if a row has changed
-      })); 
+        isChanged: false, // Track if a row has changed
+        isActive: user.status === 'A'
+      }));   
       this.dataSource.data = this.users;
     })
+
   }
 
   applyFilter() {
@@ -64,45 +71,63 @@ export class UsersComponent implements OnInit {
   }
 
   toggleStatus(element: any) {
-    // Handle status toggle here
+    this.isActive = !this.isActive;
     console.log('Status toggled for:', element);
     // You can update the element or call a service to persist the change
   }
 
   // Opens the Add User dialog
   openAddUserDialog(): void {
-    const dialogRef = this.dialog.open(UserDialogComponent, {
-      disableClose: true,
-      autoFocus: true,
-      width: '500px',
-      data: { mode: 'add' } // Pass mode as 'add' to distinguish between add/edit
+    this.isAddMode = true;
+    const modalRef = this.modalService.open(UserDialogComponent, {
+      size: 'lg', // You can specify the size of the modal (lg, sm, etc.)
+      centered: true
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    // Pass data to the modal component
+    modalRef.componentInstance.mode = 'add';
+    modalRef.componentInstance.isAddMode = this.isAddMode;
+
+    // Handle the modal close event
+    modalRef.result.then((result) => {
       if (result) {
         // Add the new user to the data source and refresh the table
-        this.users.push(result);
-        this.dataSource.data = [...this.users]; // Refresh data
+        this.users.push(result);  
+        this.dataSource.data = [...this.users]; // Refresh data     
+        this.fetchUsers();
       }
+    }).catch((error) => {
+      console.log('Modal dismissed');
     });
   }
 
+
   // Opens the Edit User dialog
   openEditUserDialog(user: User): void {
-    const dialogRef = this.dialog.open(UserDialogComponent, {
-      width: '500px',
-      data: { mode: 'edit', user } // Pass mode as 'edit' and the selected user
+    this.isAddMode = false;
+    const modalRef = this.modalService.open(UserDialogComponent, {
+      size: 'lg',
+      centered: true
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    // Pass data to the modal component
+    modalRef.componentInstance.mode = 'edit';
+    modalRef.componentInstance.isAddMode = this.isAddMode;
+    modalRef.componentInstance.user = user;
+
+    // Handle the modal close event
+    modalRef.result.then((result) => {
       if (result) {
         // Update the user in the list and refresh the table
         const index = this.users.findIndex(u => u.id === result.id);
         if (index !== -1) {
-          this.users[index] = result;
-          this.dataSource.data = [...this.users]; // Refresh data
+          this.users[index] = result;      
+          this.dataSource.data = [...this.users]; // Refresh data   
+          this.fetchUsers(); 
         }
       }
+    }).catch((error) => {
+      console.log('Modal dismissed');
     });
   }
 }

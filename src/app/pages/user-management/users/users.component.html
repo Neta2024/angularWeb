@@ -26,8 +26,8 @@
             <th mat-header-cell *matHeaderCellDef>Active</th>
             <!-- <td mat-cell *matCellDef="let element">{{ element.status | titlecase }}</td> -->
             <td mat-cell *matCellDef="let element">
-                <mat-slide-toggle color="primary" [(ngModel)]="element.status" (change)="toggleStatus(element)">
-                    <!-- {{ element.status ? 'Active' : 'Inactive' }} -->
+                <mat-slide-toggle color="primary" [(ngModel)]="element.status" (change)="toggleStatus(isActive)">
+
                 </mat-slide-toggle>
             </td>
         </ng-container>

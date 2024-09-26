@@ -13,6 +13,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { PermissionComponent } from './permission/permission.component';
 import { PermissionModule } from './permission/permission.module';
 import { UsersModule } from './users/users.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 
@@ -29,6 +32,10 @@ import { UsersModule } from './users/users.module';
     MatFormFieldModule,  // For form field (dropdown)
     MatSelectModule,     // For select dropdown
     MatButtonModule  ,    // For Material buttons
+    MatSlideToggleModule,
+    MatDialogModule, // Add MatDialogModule here
+    FormsModule,  // Import FormsModule here
+    MatGridListModule,
     RouterModule.forChild([
       {
         path: '',

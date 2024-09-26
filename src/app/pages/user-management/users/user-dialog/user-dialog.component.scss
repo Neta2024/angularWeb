@@ -1,103 +1,151 @@
 // .user-dialog {
-//     // Main dialog styles
-//     mat-dialog-title {
-//         background-color: #007bff;
-//         color: white;
-//         padding: 16px;
-//         font-size: 20px;
+//     padding: 20px;
+//     h2 {
+//         font-size: 1.5rem;
+//         margin-bottom: 20px;
 //         text-align: center;
+//         color: #3f51b5; // Material blue for title
 //     }
 //     mat-dialog-content {
-//         padding: 10px;
-//         .full-width {
-//             width: 100%;
-//             margin-bottom: 10px;
-//             mat-label {
-//                 font-weight: bold;
-//                 color: #555;
-//             }
+//         display: flex;
+//         flex-direction: column;
+//         gap: 16px; // Add spacing between form fields
+//         .mat-form-field {
+//             // width: 100%; // Ensure full width by default
+//             max-width: 500px; // Set a maximum width for the input fields
+//             margin: 0 auto; // Center the form fields horizontally
 //             input,
 //             mat-select {
-//                 border-radius: 4px;
-//                 border: 1px solid #ced4da;
+//                 width: 100%;
+//                 padding: 12px 20px; // Add padding inside the input
+//                 border: 1px solid #ccc; // Optional: add a border for better visibility
+//                 transition: border-color 0.3s ease-in-out;
 //                 &:focus {
-//                     border-color: #007bff;
-//                     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+//                     border-color: #3f51b5; // Change border color on focus
+//                     box-shadow: 0 0 5px rgba(63, 81, 181, 0.5); // Add subtle shadow effect
 //                 }
 //             }
 //         }
-//         .mat-form-field {
-//             margin-bottom: 10px; // Alternatively, directly adjust margin here
+//         // Styling for input hints
+//         .hint {
+//             font-size: 0.8rem;
+//             color: #616161; // Light grey hint text
+//             margin-bottom: 4px;
 //         }
 //     }
+//     // Dialog actions: Align buttons and space them evenly
 //     mat-dialog-actions {
 //         display: flex;
-//         justify-content: flex-end;
-//         padding: 10px;
+//         justify-content: flex-end; // Align buttons to the right
+//         gap: 12px; // Space between buttons
+//         padding-top: 16px;
 //         button {
-//             margin-left: 10px;
-//             &:first-child {
-//                 background-color: #f44336; // Cancel button color
-//                 color: white;
-//                 &:hover {
-//                     background-color: #d32f2f;
-//                 }
+//             min-width: 120px; // Increase button width
+//             font-size: 0.9rem;
+//             padding: 12px 24px; // Add more padding for larger buttons
+//             border-radius: 20px; // Rounded buttons to match the round input style
+//         }
+//         button[color='warn'] {
+//             background-color: #f44336; // Material Red for cancel
+//             color: white;
+//         }
+//         button[color='primary'] {
+//             background-color: #368c31; // Material Blue for primary actions
+//             color: white;
+//         }
+//     }
+//     // Responsive design for mobile devices
+//     @media screen and (max-width: 600px) {
+//         mat-dialog-content {
+//             gap: 12px; // Reduce gap between fields on smaller screens
+//         }
+//         mat-dialog-actions {
+//             flex-direction: column; // Stack buttons on smaller screens
+//             align-items: stretch;
+//             button {
+//                 width: 100%; // Make buttons full-width on mobile
 //             }
-//             &:last-child {
-//                 background-color: #007bff; // Save button color
-//                 color: white;
-//                 &:hover {
-//                     background-color: #0056b3;
-//                 }
-//             }
+//         }
+//         // Make input fields full-width on small screens
+//         .mat-form-field {
+//             max-width: 100%;
 //         }
 //     }
 // }
-// .hint {
-//     font-size: 12px;
-//     color: #6c757d; // A subtle gray color
-//     margin-bottom: 4px; // Adds spacing below the hint
-//     display: block; // Ensures it behaves like a block element
+// ======================================================form scss
+// form {
+//     display: flex;
+//     flex-direction: column;
+//     padding: 20px;
+//     max-width: 500px;
+//     margin: auto;
+//     background-color: #f9f9f9;
+//     border-radius: 10px;
+//     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+//     h1 {
+//         font-size: 24px;
+//         text-align: center;
+//         margin-bottom: 20px;
+//         color: #333;
+//     }
+//     mat-form-field {
+//         width: 100%;
+//         margin-bottom: 20px;
+//         .mat-label {
+//             color: #666;
+//         }
+//         input {
+//             padding: 10px;
+//         }
+//     }
+//     .mat-mdc-form-field {
+//         width: 98%;
+//         margin: 1%;
+//     }
+//     .mat-50 {
+//         width: 48%;
+//         margin: 1%;
+//     }
+//     mat-checkbox {
+//         margin-top: 10px;
+//         z-index: 9999 !important;
+//     }
+//     div[mat-dialog-actions] {
+//         display: flex;
+//         justify-content: space-between;
+//         margin-top: 20px;
+//         button {
+//             padding: 10px 20px;
+//             font-size: 16px;
+//         }
+//         a {
+//             text-align: center;
+//             cursor: pointer;
+//         }
+//     }
 // }
-.user-dialog {
-    padding: 5px;
-    width: 100%; // Adjust based on your layout
-    margin: auto; // Center the dialog
-    align-items: center;
-    justify-content: space-between;
-    h2 {
-        text-align: center;
-        margin-bottom: 10px;
-        font-size: 1.2rem;
-        color: #333; // Darker text for better contrast
-    }
-    .mat-dialog-content {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); // Two equal columns
-        gap: 15px; // Space between items
-        align-items: center;
-        mat-form-field {
-            flex: 1 1 calc(50% - 15px); // Two columns with spacing
-            margin-bottom: 5px; // Space between fields
-            .hint {
-                font-size: 0.7rem;
-                color: #888; // Lighter hint color
-            }
-            .mat-select-dropdown {
-                z-index: 1000 !important;
-                /* Higher than default dialog z-index */
-            }
-        }
-    }
-    mat-dialog-actions {
-        display: flex;
-        justify-content: space-between; // Align buttons on either side
-        button {
-            min-width: 100px; // Consistent button width
-        }
-    }
+// ======================================================form scss
+.text-danger {
+    color: red;
+    font-size: 0.8em;
+    margin-right: 10px;
 }
 
-.cdk-overlay-container {
-    z-index: 1127;
+.mat-mdc-slide-toggle.mat-primary {
+    --mdc-switch-selected-focus-state-layer-color: #4CAF50;
+    --mdc-switch-selected-handle-color: #4CAF50;
+    --mdc-switch-selected-hover-state-layer-color: #4CAF50;
+    --mdc-switch-selected-pressed-state-layer-color: #4CAF50;
+    --mdc-switch-selected-focus-handle-color: #2E7D32;
+    --mdc-switch-selected-hover-handle-color: #2E7D32;
+    --mdc-switch-selected-pressed-handle-color: #2E7D32;
+    --mdc-switch-selected-focus-track-color: #4CAF50;
+    --mdc-switch-selected-hover-track-color: #4CAF50;
+    --mdc-switch-selected-pressed-track-color: #4CAF50;
+    --mdc-switch-selected-track-color: #4CAF50;
+}
+
+.small-slide-toggle {
+    transform: scale(0.7);
+    height: 20px;
 }

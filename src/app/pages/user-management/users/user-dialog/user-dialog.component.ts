@@ -1,6 +1,7 @@
-import { Component, Inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Alert } from 'src/app/shared/components/alert/alert';
 import { RestApi } from 'src/app/shared/rest-api';
 
@@ -9,87 +10,163 @@ import { RestApi } from 'src/app/shared/rest-api';
   templateUrl: './user-dialog.component.html',
   styleUrl: './user-dialog.component.scss'
 })
-export class UserDialogComponent {
-  userId = 0;
-  userName = '';
-  firstName = '';
-  lastName = '';
-  password = '';
-  role = '';
-  status = ''; // Default to active
-  phone = '';
+export class UserDialogComponent implements OnInit{
+  @Input() mode: 'add' | 'edit';
+  @Input() isAddMode: boolean;
+  @Input() user: any = {};  // Holds the user data
+  @Output() userUpdated = new EventEmitter<void>(); // Emit event when user is updated
 
-   // Define roles for the dropdown
-  roles: string[] = ['ADMIN', 'USER'];
+  // Fields for user details
+  userId: number;
+  password: string = '';
+  userName: string = '';
+  firstName: string = '';
+  lastName: string = '';
+  role: string = '';
+  status: boolean = false;
+  phone: string = '';
 
+  showPassword: boolean = false;
+
+  // Define the form group
+  userForm: FormGroup;
+
+  roles: string[] = ['ADMIN', 'USER', 'MANAGER']; // Role options
+  // Inject services
   constructor(
+    private fb: FormBuilder,
     private restApi: RestApi,
     private alert: Alert,
-    public dialogRef: MatDialogRef<UserDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    if (data.mode === 'edit') {
-      // If editing, pre-populate the fields with the existing user data
-      this.userId = data.user.id;
-      this.firstName = data.user.firstName;
-      this.lastName = data.user.lastName;
-      this.status = data.user.status === 'A' ? 'active' : 'inactive',
-      this.role = data.user.role === 'admin' ? 'admin' : 'user';
-      this.phone = data.user.phone;
-    } else{
-       // Initialize role and status for 'add' mode
-       this.role = 'user'; // Default role
-       this.status = 'active'; // Default status
-       this.password = this.password;
-       
+    public activeModal: NgbActiveModal,
+
+  ) {}
+
+  ngOnInit(): void {
+    // Initialize the form
+    if (this.mode === 'add' && this.user){
+      this.userForm = this.fb.group({
+        userId: [this.user.id == null],
+        userName: ['', [Validators.required, Validators.email]],
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        password: ['', Validators.required], // Only for add mode
+        role: ['', Validators.required],
+        status: [false], // For active/inactive toggle
+        phone: ['', [Validators.required, Validators.pattern('^[0-9]*$')]], // Only numbers allowed for phone
+      });
+    }
+    
+    // Initialize form for edit mode
+    if (this.mode === 'edit' && this.user) {
+      this.userForm = this.fb.group({
+        userId: [this.user.id],
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        role: ['', Validators.required],
+        status: [false], // For active/inactive toggle
+        phone: ['', [Validators.required, Validators.pattern('^[0-9]*$')]], // Only numbers allowed for phone
+      });
+
+      this.userForm.patchValue({
+        userId: this.user.id,
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        role: this.user.role,
+        phone: this.user.phone,
+        status: this.user.status ? this.status = true : false // Assuming 'A' means active
+      });
+    }
+
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword; // Toggle the password visibility
+  }
+  
+  toggleStatus() {
+    this.status = !this.status;
+  }
+
+  // Method to add a user
+  addUser() {
+    if (this.userForm.invalid) {
+      // Mark all controls as touched to trigger validation messages
+      this.userForm.markAllAsTouched();
+      this.alert.error('Please fill out the form correctly');
+      return;
+    }
+
+    const userRequest = {
+      username: this.userForm.get('userName')?.value,
+      email: this.userForm.get('userName')?.value, // Using username as email
+      firstName: this.userForm.get('firstName')?.value,
+      lastName: this.userForm.get('lastName')?.value,
+      pwd: this.userForm.get('password')?.value, // Only used in add mode
+      role: this.userForm.get('role')?.value,
+      status: this.userForm.get('status')?.value ? 'A' : 'I', // Convert status to A (active) / I (inactive)
+      phone: this.userForm.get('phone')?.value,
+    };
+
+    console.log(userRequest);
+
+
+    // API call
+    this.restApi.post('/admin/users/user/add', userRequest).subscribe(
+      (response) => {
+        console.log('User added successfully', response);
+        this.alert.success('User added successfully');
+        this.userUpdated.emit(); // Emit event to notify user update
+        this.onCancel(); // Close modal on success
+      },
+      (error) => {
+        this.alert.error('Unsuccessful in adding user');
+        console.error('Unsuccessful in adding user:', error);
+      }
+    );
+  }
+
+  editUser() {
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      this.alert.error('Please fill out the form correctly');
+      return;
+    }
+
+    const userRequest = {
+      userId : this.userForm.get('userId')?.value,
+      firstName: this.userForm.get('firstName')?.value,
+      lastName: this.userForm.get('lastName')?.value,
+      role: this.userForm.get('role')?.value,
+      status: this.userForm.get('status')?.value ? 'A' : 'I', // Convert status to A (active) / I (inactive)
+      phone: this.userForm.get('phone')?.value,
+    };
+
+    // Assuming user.id holds the id of the user to be updated
+    this.restApi.put(`/admin/users/user/update`, userRequest).subscribe(
+      (response) => {
+        this.alert.success('User updated successfully');
+        this.activeModal.close(response); // Close modal on success
+        this.userUpdated.emit(); // Emit event to notify user update
+      },
+      (error) => {
+        console.log( this.userId);
+        this.alert.error('Unsuccessful in updating user');
+        console.error('Unsuccessful in updating user:', error);
+      }
+    );
+  }
+
+
+  onSubmit() {
+    if (this.mode === 'add') {
+      this.addUser();
+    } else if (this.mode === 'edit') {
+      this.editUser();
     }
   }
 
-  toggleStatus(element: any) {
-    // Handle status toggle here
-    console.log('Status toggled for:', element);
-    // You can update the element or call a service to persist the change
+  onCancel() {
+    this.activeModal.dismiss('cancel');
   }
 
-  addUser(): void{
-    const userRequest = {
-      username: this.userName,
-      email: this.userName,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      pwd : this.password,
-      role: this.role, 
-      status: this.status,
-      phone: this.phone,
-    };
-    console.log(userRequest);
-    this.restApi.post('/admin/users/user/add', userRequest).subscribe(response => {
-      console.log('User added successfully', response);
-      this.alert.success('User added successfully');
-      this.dialogRef.close(); 
-    }, (error) => {
-      this.alert.error("Unsuccessful add user");
-      console.error('Unsuccessful add user:', error);
-    });
-
-  }
-
-  onSave(): void {
-    const user = {
-      id: this.data.user.id,
-      userName: this.userName,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      pwd: this.password, 
-      role: this.role, 
-      status: this.status,
-      phone: this.phone,
-    };
-
-    this.dialogRef.close(user); 
-  }
-
-  onCancel(): void {
-    this.dialogRef.close(); // Close dialog without saving
-  }
 }
