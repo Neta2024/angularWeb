@@ -16,6 +16,7 @@ export interface User {
   role: string;
   status: string;
   phone: string;
+  isActive: boolean;
 }
 
 @Component({
@@ -34,9 +35,7 @@ export class UsersComponent implements OnInit {
   searchQuery: string = '';
 
   isAddMode: boolean;
-  isActive: boolean;
 
- 
   constructor(private modalService: NgbModal, private restApi: RestApi, private alert: Alert) {}
 
   ngOnInit(): void {
@@ -47,18 +46,18 @@ export class UsersComponent implements OnInit {
 
   fetchUsers(){
     this.restApi.get('admin/users/get').subscribe((response: any) => {
-      console.log(response);
+      // console.log(response);
       this.users = response.map((user: any ) => ({
         id: user.userId,
         userName: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
         fullName: `${user.firstName} ${user.lastName}`,
-        status: user.status === 'A' ?  this.isActive = true : false,
+        status: user.status === 'A',
         role: user.role,
         phone: user.phone ? user.phone : 'no contact',
         isChanged: false, // Track if a row has changed
-        isActive: user.status === 'A'
+        isActive: user.status === 'A' ? true : false,
       }));   
       this.dataSource.data = this.users;
     })
@@ -70,10 +69,38 @@ export class UsersComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
-  toggleStatus(element: any) {
-    this.isActive = !this.isActive;
-    console.log('Status toggled for:', element);
-    // You can update the element or call a service to persist the change
+  toggleStatus(user: User) {
+    const updatedUser = { ...user };
+    updatedUser.isActive = !updatedUser.isActive;
+    updatedUser.status = updatedUser.isActive ? 'A' : 'I'; // Assuming 'A' is active and 'I' is inactive
+
+    // Prepare userRequest object
+    const userRequest = {
+      userId: updatedUser.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      role: updatedUser.role,
+      status: updatedUser.status,
+      phone: updatedUser.phone
+    };
+
+    // Call the API to update the user status
+    this.restApi.put('/admin/users/user/update', userRequest).subscribe(
+      (response) => {
+          this.alert.success('User updated successfully');
+          const index = this.users.findIndex(u => u.id === updatedUser.id);
+          if (index !== -1) {
+              this.users[index] = updatedUser;
+              this.dataSource.data = [...this.users]; // Refresh data
+          }
+          this.fetchUsers();
+          console.log(`Updated user ${updatedUser.userName} isActive= ${updatedUser.isActive}`);
+      },
+      (error) => {
+          this.alert.error('Unsuccessful in updating user');
+          console.error('Unsuccessful in updating user:', error);
+      }
+    );
   }
 
   // Opens the Add User dialog

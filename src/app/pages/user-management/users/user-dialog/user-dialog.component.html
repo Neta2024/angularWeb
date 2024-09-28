@@ -16,18 +16,30 @@
                 </div>
             </div>
 
-            <div class="col-md-6 mb-3" *ngIf="mode === 'add'">
+            <div class="col-md-6 mb-3" *ngIf="mode==='add'">
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-group">
-                        <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control" formControlName="password" placeholder="Enter password" />
-                        <div class="input-group-append">
-                            <span class="input-group-text" (click)="togglePasswordVisibility()" style="cursor: pointer;">
+                    <label for="password ">Password</label>
+                    <!-- <div class="input-group ">
+                        <input [type]="showPassword ? 'text' : 'password' " id="password " class="form-control " formControlName="password " placeholder="Enter password " />
+                        <div class="input-group-append ">
+                            <span class="input-group-text " (click)="togglePasswordVisibility() " style="cursor: pointer; ">
                                 <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
                             </span>
                         </div>
+                    </div> -->
+
+                    <div class="input-group align-items-center password-container">
+
+                        <!-- Password Input -->
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control border-0" formControlName="password" placeholder="Enter password" style="flex: 1;" />
+
+                        <!-- Icon (toggle visibility) -->
+                        <span class="input-group-text bg-white border-0" (click)="togglePasswordVisibility()" style="cursor: pointer;">
+                          <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </span>
                     </div>
-                    <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="text-danger">
+
+                    <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched " class="text-danger ">
                         Password is required
                     </div>
                 </div>
@@ -89,7 +101,13 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-        <button type="submit" class="btn btn-primary">{{ mode === 'add' ? 'Add' : 'Update' }}</button>
+        <button type="button" mat-button (click)="onCancel()" style="background-color: #7a7a7ac3; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0,
+                        0, 0, 0.1); transition: box-shadow 0.3s ease;">
+        Cancel
+        </button>
+        <button type="submit" mat-button style=" background-color: #4caf4fe1; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition:
+                        box-shadow 0.3s ease;">
+        {{ mode === 'add' ? 'Add' : 'Update' }}
+        </button>
     </div>
 </form>
