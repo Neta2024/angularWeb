@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Alert } from 'src/app/shared/components/alert/alert';
 import { RestApi } from 'src/app/shared/rest-api';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-user-dialog',
@@ -24,6 +25,7 @@ export class UserDialogComponent implements OnInit{
   lastName: string = '';
   role: string = '';
   status: boolean = false;
+  lockedOut: boolean = false;
   phone: string = '';
 
   showPassword: boolean = false;
@@ -34,14 +36,18 @@ export class UserDialogComponent implements OnInit{
   roles: string[] = ['ADMIN', 'USER', 'MANAGER']; // Role options
   // Inject services
   constructor(
+    private service: UserService,
     private fb: FormBuilder,
-    private restApi: RestApi,
     private alert: Alert,
     public activeModal: NgbActiveModal,
 
   ) {}
 
   ngOnInit(): void {
+    this.service.RefreshRequired.subscribe(respone=>{
+      this.addUser();
+      this.editUser();
+    })
     // Initialize the form
     if (this.mode === 'add' && this.user){
       this.userForm = this.fb.group({
@@ -53,6 +59,8 @@ export class UserDialogComponent implements OnInit{
         role: ['', Validators.required],
         status: [false], // For active/inactive toggle
         phone: ['', [Validators.required, Validators.pattern('^[0-9]*$')]], // Only numbers allowed for phone
+        department_code: [this.user.emp_dep_code],
+  
       });
     }
     
@@ -65,6 +73,8 @@ export class UserDialogComponent implements OnInit{
         role: ['', Validators.required],
         status: [false], // For active/inactive toggle
         phone: ['', [Validators.required, Validators.pattern('^[0-9]*$')]], // Only numbers allowed for phone
+        department_code: [this.user.emp_dep_code],
+        lockedOut:[this.user.lockedOut],
       });
 
       this.userForm.patchValue({
@@ -73,7 +83,9 @@ export class UserDialogComponent implements OnInit{
         lastName: this.user.lastName,
         role: this.user.role,
         phone: this.user.phone,
-        status: this.user.status ? this.status = true : false // Assuming 'A' means active
+        status: this.user.status ? this.status = true : false, // Assuming 'A' means active
+        emp_dep_code: this.user.emp_dep_code,
+        lockedOut: this.user.lockedOut, // Assuming 'N' means not locked out
       });
     }
 
@@ -85,6 +97,10 @@ export class UserDialogComponent implements OnInit{
   
   toggleStatus() {
     this.status = !this.status;
+  }
+
+  toggleLockedOut() {
+    this.lockedOut = !this.lockedOut;
   }
 
   // Method to add a user
@@ -107,16 +123,13 @@ export class UserDialogComponent implements OnInit{
       phone: this.userForm.get('phone')?.value,
     };
 
-    console.log(userRequest);
-
-
-    // API call
-    this.restApi.post('/admin/users/user/add', userRequest).subscribe(
+    // Call Service API
+    this.service.addUser(userRequest).subscribe(
       (response) => {
         console.log('User added successfully', response);
         this.alert.success('User added successfully');
         this.userUpdated.emit(); // Emit event to notify user update
-        this.onCancel(); // Close modal on success
+        this.activeModal.close(userRequest); // Close modal on success
       },
       (error) => {
         this.alert.error('Unsuccessful in adding user');
@@ -139,17 +152,17 @@ export class UserDialogComponent implements OnInit{
       role: this.userForm.get('role')?.value,
       status: this.userForm.get('status')?.value ? 'A' : 'I', // Convert status to A (active) / I (inactive)
       phone: this.userForm.get('phone')?.value,
+      lockedOut: this.userForm.get('lockedOut').value,
     };
 
-    // Assuming user.id holds the id of the user to be updated
-    this.restApi.put(`/admin/users/user/update`, userRequest).subscribe(
+    this.service.updateUser(userRequest).subscribe(
       (response) => {
+        console.log('User updated successfully', response);
         this.alert.success('User updated successfully');
-        this.activeModal.close(response); // Close modal on success
-        this.userUpdated.emit(); // Emit event to notify user update
+        this.userUpdated.emit(); // Emit event to notify that the user has been updated
+        this.activeModal.close(userRequest); // Close modal or redirect after update
       },
       (error) => {
-        console.log( this.userId);
         this.alert.error('Unsuccessful in updating user');
         console.error('Unsuccessful in updating user:', error);
       }

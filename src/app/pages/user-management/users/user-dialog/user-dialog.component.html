@@ -90,10 +90,32 @@
 
             <div class="col-md-6 mb-3">
                 <div class="form-group">
-                    <label>Status</label>
-                    <div class="form-check form-switch mt-2">
-                        <input type="checkbox" class="form-check-input" formControlName="status" (change)="toggleStatus()" />
-                        <label class="form-check-label">{{ userForm.get('status')?.value ? 'Active' : 'Inactive' }}</label>
+                    <label>Department Code</label>
+                    <input type="text" class="form-control" formControlName="department_code" placeholder="Enter department code" />
+                    <!-- <div *ngIf="userForm.get('department_code')?.invalid && userForm.get('department_code')?.touched" class="text-danger">
+                    Valid phone number is required
+                </div> -->
+                </div>
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+                <div class="form-group">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1 me-3">
+                            <label>Status</label>
+                            <div class="form-check form-switch mt-2">
+                                <input type="checkbox" class="form-check-input" formControlName="status" (change)="toggleStatus()" />
+                                <label class="form-check-label">{{ userForm.get('status')?.value ? 'Active' : 'Inactive' }}</label>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3" *ngIf="mode === 'edit'">
+                            <label>Locked Out</label>
+                            <div class="form-check form-switch mt-2">
+                                <input type="checkbox" class="form-check-input" formControlName="lockedOut" (change)="toggleLockedOut()" />
+                                <label class="form-check-label">{{ userForm.get('lockedOut')?.value ? 'Locked' : 'Unlocked' }}</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

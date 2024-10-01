@@ -1,23 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { RestApi } from 'src/app/shared/rest-api';
 import { Alert } from 'src/app/shared/components/alert/alert';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-export interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  userName: string;
-  pwd: string;
-  role: string;
-  status: string;
-  phone: string;
-  isActive: boolean;
-}
+import { UserService } from '../services/user.service';
+import { User } from '../model/user.model';
 
 @Component({
   selector: 'app-users',
@@ -27,7 +16,19 @@ export interface User {
 export class UsersComponent implements OnInit {
 
   // Columns to display in the table
-  displayedColumns: string[] = ['fullName', 'userName',  'phone', 'status'];
+  displayedColumns: string[] = [
+    'fullName', 
+    'userName',  
+    'phone', 
+    'status',  
+    'role', 
+    'emp_dep_code',
+    'lockedOut', 
+    'creator',
+    'createdDate', 
+    'updateDate', 
+    'lastLoginDate',  
+    'failureCount'];
   dataSource = new MatTableDataSource<User>([]); // Data source for the table
 
   users: any[] = [];
@@ -36,18 +37,23 @@ export class UsersComponent implements OnInit {
 
   isAddMode: boolean;
 
-  constructor(private modalService: NgbModal, private restApi: RestApi, private alert: Alert) {}
+  constructor(
+    private service: UserService,
+    private modalService: NgbModal, 
+    private alert: Alert, 
+    private cdr: ChangeDetectorRef,) {}
 
   ngOnInit(): void {
     this.fetchUsers();
-    // Initialize the data source with the list of users
-    this.dataSource.data = this.users;
+    this.service.RefreshRequired.subscribe(respone=>{
+      this.fetchUsers();
+    })
+    
   }
 
-  fetchUsers(){
-    this.restApi.get('admin/users/get').subscribe((response: any) => {
-      // console.log(response);
-      this.users = response.map((user: any ) => ({
+  fetchUsers() {
+    this.service.getUsers().subscribe((response: any) => {
+      this.users = response.map((user: any) => ({
         id: user.userId,
         userName: user.username,
         firstName: user.firstName,
@@ -58,15 +64,76 @@ export class UsersComponent implements OnInit {
         phone: user.phone ? user.phone : 'no contact',
         isChanged: false, // Track if a row has changed
         isActive: user.status === 'A' ? true : false,
-      }));   
-      this.dataSource.data = this.users;
-    })
-
+        failureCount: user.failureCount,
+        lockedOut: user.lockedOut,
+        // Apply the formatDate method for the createdDate and lastLoginDate
+        createdDate: this.formatDate(user.createdDate),
+        lastLoginDate: user.lastLoginDate ? this.formatDate(user.lastLoginDate) : '-----',   
+        creator: user.createBy ? user.createBy : 'System',
+        updateDate: this.formatDate(user.updateDate),
+        emp_dep_code: user.emp_dep_code ? user.emp_dep_code : '-----',
+      }));
+      this.dataSource.data = this.users; // Update data source
+    });
   }
 
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const formattedDate = date.toISOString().split('T')[0]; 
+    const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Return the formatted date and time together
+    return `${formattedDate} ${formattedTime}`;
+  }
+  
+  // Search query 
   applyFilter() {
     const filterValue = this.searchQuery.trim().toLowerCase();
     this.dataSource.filter = filterValue;
+  }
+
+  // Clear the search input and trigger the filter with empty value
+  clearSearch() {
+    this.searchQuery = ''; // Clear the input
+    this.applyFilter(); // Re-apply filter with an empty search query
+  }
+
+  toggleLockedOut(user: User){
+    const updatedUser = {...user };
+    // updatedUser.isActive = !updatedUser.isActive;
+    updatedUser.status = updatedUser.isActive ? 'A' : 'I'; // Assuming 'A' is active and 'I' is inactive
+    user.lockedOut = !user.lockedOut;
+
+     // Prepare userRequest object
+     const userRequest = {
+      userId: updatedUser.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      role: updatedUser.role,
+      status: updatedUser.status,
+      phone: updatedUser.phone,
+      lockedOut: updatedUser.lockedOut,
+    };
+
+    // Call the API to update the user status
+    this.service.updateUser(userRequest).subscribe(
+      (response) => {      
+          const index = this.users.findIndex(u => u.id === updatedUser.id);
+          if (index !== -1) {
+              this.users[index] = updatedUser;
+              this.dataSource.data = [...this.users]; // Refresh data
+          }
+          this.fetchUsers();
+          this.dataSource.data = [...this.users];
+          this.cdr.detectChanges();
+          this.alert.success('User lock updated successfully');
+          console.log(`Updated user ${updatedUser.userName} isLocked= ${updatedUser.lockedOut}`);
+      },
+      (error) => {
+          this.alert.error('Unsuccessful in updating user');
+          console.error('Unsuccessful in updating user:', error);
+      }
+    );
+
   }
 
   toggleStatus(user: User) {
@@ -81,19 +148,22 @@ export class UsersComponent implements OnInit {
       lastName: updatedUser.lastName,
       role: updatedUser.role,
       status: updatedUser.status,
-      phone: updatedUser.phone
+      phone: updatedUser.phone,
+      lockedOut: updatedUser.lockedOut,
     };
 
     // Call the API to update the user status
-    this.restApi.put('/admin/users/user/update', userRequest).subscribe(
+    this.service.updateUser(userRequest).subscribe(
       (response) => {
-          this.alert.success('User updated successfully');
+          this.alert.success('User status updated successfully');
           const index = this.users.findIndex(u => u.id === updatedUser.id);
           if (index !== -1) {
               this.users[index] = updatedUser;
               this.dataSource.data = [...this.users]; // Refresh data
           }
           this.fetchUsers();
+          this.dataSource.data = [...this.users];
+          this.cdr.detectChanges();
           console.log(`Updated user ${updatedUser.userName} isActive= ${updatedUser.isActive}`);
       },
       (error) => {
@@ -122,12 +192,12 @@ export class UsersComponent implements OnInit {
         this.users.push(result);  
         this.dataSource.data = [...this.users]; // Refresh data     
         this.fetchUsers();
+       
       }
     }).catch((error) => {
       console.log('Modal dismissed');
     });
   }
-
 
   // Opens the Edit User dialog
   openEditUserDialog(user: User): void {
@@ -149,13 +219,16 @@ export class UsersComponent implements OnInit {
         const index = this.users.findIndex(u => u.id === result.id);
         if (index !== -1) {
           this.users[index] = result;      
-          this.dataSource.data = [...this.users]; // Refresh data   
-          this.fetchUsers(); 
+          this.dataSource.data = [...this.users]; // Refresh data
         }
+        this.fetchUsers(); 
+        console.log(result);
       }
     }).catch((error) => {
       console.log('Modal dismissed');
     });
   }
 }
+
+export { User };
 

@@ -2,53 +2,104 @@
     <!-- Table Header with Add Button -->
     <div class="table-header">
         <h4>User Management</h4>
-
-        <button mat-button (click)="openAddUserDialog()" style="
-            background-color: #f0e6ff; 
-            color: #8400a9;
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease;">
-        <mat-icon style="margin-right: 4px;">add_circle_outline</mat-icon>Add
-        </button>
-
+        <div class="action-container">
+            <div class="search-input">
+                <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()" />
+                <button class="clear-search" *ngIf="searchQuery" (click)="clearSearch()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <button class="add-user" mat-button (click)="openAddUserDialog()">
+                <mat-icon style="margin-right: 4px;">add_circle_outline</mat-icon>Add
+            </button>
+        </div>
     </div>
 
-    <!-- Users Table -->
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
+    <div class="table-container">
+        <!-- Users Table -->
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
 
-        <!-- User Column -->
-        <ng-container matColumnDef="userName">
-            <th mat-header-cell *matHeaderCellDef>User</th>
-            <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
-        </ng-container>
+            <!-- Full Name Column -->
+            <ng-container matColumnDef="fullName">
+                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'width': '20%'}">Full Name
+                </th>
+                <td mat-cell *matCellDef="let element" [ngStyle]="{'width': '20%'}">{{ element.fullName }}</td>
+            </ng-container>
 
-        <!-- Full Name Column -->
-        <ng-container matColumnDef="fullName">
-            <th mat-header-cell *matHeaderCellDef>Full Name <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()" class="search-input" /></th>
-            <td mat-cell *matCellDef="let element">{{ element.fullName }}</td>
-        </ng-container>
+            <!-- User Column -->
+            <ng-container matColumnDef="userName">
+                <th mat-header-cell *matHeaderCellDef>User</th>
+                <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+            </ng-container>
 
-        <!-- Status Column -->
-        <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Active</th>
-            <td mat-cell *matCellDef="let element">
-                <mat-slide-toggle color="primary" [(ngModel)]="element.status" (change)="toggleStatus(element)">
-                </mat-slide-toggle>
-            </td>
-        </ng-container>
+            <!-- Phone Column -->
+            <ng-container matColumnDef="phone">
+                <th mat-header-cell *matHeaderCellDef>Phone</th>
+                <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
+            </ng-container>
 
-        <!-- Phone Column -->
-        <ng-container matColumnDef="phone">
-            <th mat-header-cell *matHeaderCellDef>Phone</th>
-            <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
-        </ng-container>
+            <!-- Role Column -->
+            <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef>Role</th>
+                <td mat-cell *matCellDef="let element">{{ element.role }}</td>
+            </ng-container>
 
-        <!-- Table Header and Rows -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openEditUserDialog(row)"></tr>
-    </table>
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Active</th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-slide-toggle color="primary" [(ngModel)]="element.status" (change)="toggleStatus(element)">
+                    </mat-slide-toggle>
+                </td>
+            </ng-container>
+
+
+
+
+            <!-- lockedOut Column -->
+            <ng-container matColumnDef="lockedOut">
+                <th mat-header-cell *matHeaderCellDef>LockedOut</th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-slide-toggle color="primary" [(ngModel)]="element.lockedOut" (change)="toggleLockedOut(element)">
+                    </mat-slide-toggle>
+                </td>
+            </ng-container>
+
+            <!-- createdDate Column -->
+            <ng-container matColumnDef="createdDate">
+                <th mat-header-cell *matHeaderCellDef>CreatedDate</th>
+                <td mat-cell *matCellDef="let element">{{ element.createdDate }}</td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="lastLoginDate">
+                <th mat-header-cell *matHeaderCellDef>LastLoginDate</th>
+                <td mat-cell *matCellDef="let element">{{ element.lastLoginDate }}</td>
+            </ng-container>
+            <ng-container matColumnDef="creator">
+                <th mat-header-cell *matHeaderCellDef>CreatedBy</th>
+                <td mat-cell *matCellDef="let element">{{ element.creator }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="updateDate">
+                <th mat-header-cell *matHeaderCellDef>UpdateDate</th>
+                <td mat-cell *matCellDef="let element">{{ element.updateDate }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="emp_dep_code">
+                <th mat-header-cell *matHeaderCellDef>DepartmentCode</th>
+                <td mat-cell *matCellDef="let element">{{ element.emp_dep_code }}</td>
+            </ng-container>
+
+            <!-- failure count Column -->
+            <ng-container matColumnDef="failureCount">
+                <th mat-header-cell *matHeaderCellDef>FailureCount</th>
+                <td mat-cell *matCellDef="let element">{{ element.failureCount }}</td>
+            </ng-container>
+
+            <!-- Table Header and Rows -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openEditUserDialog(row)"></tr>
+        </table>
+    </div>
 </div>

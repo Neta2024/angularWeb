@@ -224,3 +224,67 @@ mat-form-field .mat-form-field-label {
     margin-left: auto;
     width: 70px;
 }
+
+
+/* Styles for card ========================*/
+
+.custom-mat-list {
+    border: 1px solid #ccc;
+    /* Adds a border around the list */
+    /* background-color: #f5f5f5; */
+    /* Sets the background color */
+    border-radius: 4px;
+    /* Optional: rounds the corners */
+    padding: 8px;
+    /* Optional: adds padding inside the list */
+    margin-bottom: 20px;
+}
+
+
+/* Styles for each mat-list-item */
+
+.custom-mat-list-item {
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 4px;
+    /* padding: 8px 2px; */
+    background-color: #ebebed;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+
+/* Remove border from the last item */
+
+.custom-mat-list-item:last-child {
+    border-bottom: none;
+}
+
+
+/* Style the close icon */
+
+.custom-mat-list-item mat-icon {
+    cursor: pointer;
+    float: right;
+    /* color: #ff5252; */
+}
+
+.custom-form-field-card {
+    min-width: 100%;
+}
+
+.period-radio-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.mat-radio-button {
+    /* margin: 0 10px; */
+}
+
+.custom-button-card {
+    margin-top: 4px;
+    /* Adds vertical space if necessary */
+    min-width: 120px;
+    /* Ensures button has a decent width */
+}

@@ -102,7 +102,7 @@ export class CalendarComponent implements OnInit {
   selectedUserId: number = null;
   selectedProject: string;
   selectedTask: string;
-  selectedPeriod: string;
+  selectedPeriod: string;  // default
 
   suggestedProjects: { name: string }[] = [];
 
@@ -938,6 +938,7 @@ export class CalendarComponent implements OnInit {
     console.log(this.selectedDates);
     
     if(this.selectedUserId == null){
+      this.selectedPeriod = '1';
       this.showDetails = true;
       this.updateCalendar();
     }
