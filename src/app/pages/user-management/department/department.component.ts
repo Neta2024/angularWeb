@@ -6,11 +6,6 @@ import { DepartmentService } from '../services/department.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DepartmentDialogComponent } from './department-dialog/department-dialog.component';
 
-export interface DepartmentMockUp {
-  dep_id: number
-  dep_code: string;
-  dep_name: string;
-}
 
 
 @Component({
@@ -25,16 +20,15 @@ export class DepartmentComponent implements OnInit{
     'dep_code',
     'dep_name'
    ];
-  dataSource = new MatTableDataSource<DepartmentMockUp>([
-    { dep_id:1, dep_code: 'HR01', dep_name: 'Human Resources' },
-    { dep_id:2, dep_code: 'IT02', dep_name: 'Information Technology' },
-    { dep_id:3, dep_code: 'FN03', dep_name: 'Finance' },
-    { dep_id:4,dep_code: 'MK04', dep_name: 'Marketing' },
-    { dep_id:5, dep_code: 'SA05', dep_name: 'Sales' },
-    { dep_id:6, dep_code: 'PR06', dep_name: 'Procurement' }
-  ]); 
+  dataSource = new MatTableDataSource<Department>([]); 
 
   departments: any[] = [];
+  // set default request parameters
+  requestDep: any = {
+    emp_dep_id: 0,           
+    emp_dep_code: '',
+    emp_dep_name: ''
+  };
   searchQuery: string = '';
   isAddMode: boolean;
 
@@ -47,12 +41,61 @@ export class DepartmentComponent implements OnInit{
    }
 
   ngOnInit(): void {
+    this.fetchDepartment();
    
   }
 
-  fetchDepartment(){
-
+  fetchDepartment() {
+    this.service.getDepartments(this.requestDep).subscribe(
+      (response: any) => {
+        if (Array.isArray(response)) {
+          this.departments = response.map((department: any) => ({
+            emp_dep_id: department.emp_dep_id,
+            emp_dep_code: department.emp_dep_code,
+            emp_dep_name: department.emp_dep_name
+          }));
+          this.dataSource.data = this.departments;
+        } else {
+          this.alert.error('Unexpected response format');
+        }
+      },
+      (error) => {
+        this.alert.error('Failed to fetch departments');
+      }
+    );
   }
+
+  addDepartment(requestDep: any){
+    // Call Service API
+    this.service.addDepartment(requestDep).subscribe(
+      (response) => {
+        console.log('Department added successfully', response);
+        this.alert.success('Department added successfully');
+        this.fetchDepartment();
+      },
+      (error) => {
+        this.alert.error(error.message);
+        console.error('Unsuccessful in adding user:', error);
+      }
+    );
+  }
+
+  updateDepartment(requestDep: any){
+    // Call Service API
+    this.service.updateDepartment(requestDep).subscribe(
+      (response) => {
+        console.log('Department updated successfully', response);
+        this.alert.success('Department updated successfully');
+        this.fetchDepartment();
+      },
+      (error) => {
+        this.alert.error(error.message);
+        console.error('Unsuccessful in updating department:', error);
+      }
+    );
+  }
+
+
 
   // Opens the department dialog
   openDepartmentDialog(): void {
@@ -69,11 +112,10 @@ export class DepartmentComponent implements OnInit{
     // Handle the modal close event
     modalRef.result.then((result) => {
       if (result) {
-        // Add the new user to the data source and refresh the table
-        this.departments.push(result);  
-        this.dataSource.data = [...this.departments]; // Refresh data     
-        this.fetchDepartment();
-       
+        this.addDepartment(result);
+        // this.departments.push(result);  
+        // this.dataSource.data = [...this.departments]; // Refresh data     
+        console.log('Result from dialog',result);
       }
     }).catch((error) => {
       console.log('Modal dismissed');
@@ -81,7 +123,7 @@ export class DepartmentComponent implements OnInit{
   }
 
   // Opens the Edit User dialog
-  openEditDepartmentDialog(department : DepartmentMockUp): void {
+  openEditDepartmentDialog(department : Department): void {
     this.isAddMode = false;
     const modalRef = this.modalService.open(DepartmentDialogComponent, {
       size: 'sm',
@@ -99,11 +141,11 @@ export class DepartmentComponent implements OnInit{
         // Update the user in the list and refresh the table
         const index = this.departments.findIndex(u => u.id === result.id);
         if (index !== -1) {
-          this.departments[index] = result;      
-          this.dataSource.data = [...this.departments]; // Refresh data
-        }
-        this.fetchDepartment();
-        console.log(result);
+          // this.departments[index] = result;        
+          // this.dataSource.data = [...this.departments]; // Refresh data
+          this.updateDepartment(result); 
+        }   
+        console.log('Result from dialog',result);
       }
     }).catch((error) => {
       console.log('Modal dismissed');

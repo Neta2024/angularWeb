@@ -73,6 +73,9 @@ export class UsersComponent implements OnInit {
         emp_dep_code: user.emp_dep_code ? user.emp_dep_code : '-----',
       }));
       this.dataSource.data = this.users; // Update data source
+    },  
+    (error) => {
+      this.alert.error('Failed to fetch users');
     });
   }
 
@@ -216,7 +219,7 @@ export class UsersComponent implements OnInit {
           this.dataSource.data = [...this.users]; // Refresh data
         }
         this.fetchUsers(); 
-        console.log(result);
+        console.log('Result from dialog',result);
       }
     }).catch((error) => {
       console.log('Modal dismissed');

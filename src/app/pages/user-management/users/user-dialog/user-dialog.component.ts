@@ -159,7 +159,6 @@ export class UserDialogComponent implements OnInit{
       (response) => {
         console.log('User updated successfully', response);
         this.alert.success('User updated successfully');
-        this.userUpdated.emit(); // Emit event to notify that the user has been updated
         this.activeModal.close(userRequest); // Close modal or redirect after update
       },
       (error) => {

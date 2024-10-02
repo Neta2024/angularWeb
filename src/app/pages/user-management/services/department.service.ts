@@ -13,7 +13,17 @@ export class DepartmentService {
     }
 
     // Using the RestApi service to get users
-    getUsers(): Observable<Department[]> {
-        return this.restApi.get(`${this.apiUrl}/get`);
+    getDepartments(requestDep: any): Observable<Department[]> {
+        return this.restApi.post(`${this.apiUrl}/get`, requestDep);
+    }
+
+    // Add a new department
+    addDepartment(requestDep: any): Observable<Department[]> {
+        return this.restApi.post(`${this.apiUrl}/add`, requestDep);
+    }
+
+    // Update department
+    updateDepartment(requestDep: any): Observable<Department[]> {
+        return this.restApi.put(`${this.apiUrl}/update`, requestDep);
     }
 }

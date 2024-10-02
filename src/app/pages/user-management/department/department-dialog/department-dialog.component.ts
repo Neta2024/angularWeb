@@ -27,33 +27,57 @@ export class DepartmentDialogComponent  implements OnInit {
     // Initialize the form
     if (this.mode === 'add' && this.department){
       this.departmentForm = this.fb.group({
-        dep_Id: [this.department.id == null],
-        dep_code: ['', [Validators.required,]],
-        dep_name: ['', Validators.required],
+        emp_dep_id: [this.department.emp_dep_id == null],
+        emp_dep_code: ['', Validators.required],
+        emp_dep_name: ['', Validators.required],
       });
     }
 
     if(this.mode === 'edit' && this.department){
       this.departmentForm = this.fb.group({
-        dep_Id: [this.department.id],
-        dep_code: ['', [Validators.required,]],
-        dep_name: ['', Validators.required],
+        emp_dep_id: [this.department.emp_dep_id],
+        emp_dep_code: ['', Validators.required],
+        emp_dep_name: ['', Validators.required],
       });
     }
 
     this.departmentForm.patchValue({
-      dep_Id: this.department.dep_id,
-      dep_code: this.department.dep_code,
-      dep_name: this.department.dep_name,
+      emp_dep_id: this.department.emp_dep_id,
+      emp_dep_code: this.department.emp_dep_code,
+      emp_dep_name: this.department.emp_dep_name,
     })
    
   }
 
   addDepartment(){
+    if (this.departmentForm.invalid) {
+      // Mark all controls as touched to trigger validation messages
+      this.departmentForm.markAllAsTouched();
+      this.alert.error('Please fill out the form correctly');
+      return;
+    }
 
+    const departmentRequest = {
+      emp_dep_code: this.departmentForm.get('emp_dep_code').value,
+      emp_dep_name: this.departmentForm.get('emp_dep_name').value,
+    }
+    
+    this.activeModal.close(departmentRequest);
   }
 
   editDepartment(){
+    if (this.departmentForm.invalid) {
+      this.departmentForm.markAllAsTouched();
+      this.alert.error('Please fill out the form correctly');
+      return;
+    }
+
+    const departmentRequest = {
+      emp_dep_id: this.departmentForm.get('emp_dep_id').value,
+      emp_dep_code: this.departmentForm.get('emp_dep_code').value,
+      emp_dep_name: this.departmentForm.get('emp_dep_name').value,
+    }
+    this.activeModal.close(departmentRequest);
 
   }
 
