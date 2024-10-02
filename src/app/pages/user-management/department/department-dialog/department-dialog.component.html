@@ -1,0 +1,42 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ mode === 'add' ? 'Add Department' : 'Edit Department' }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+
+<form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <div class="form-group">
+                    <label>Department Code</label>
+                    <input type="text" class="form-control" formControlName="dep_code" placeholder="Department code" />
+                    <div *ngIf="departmentForm.get('dep_code')?.invalid && departmentForm.get('dep_code')?.touched" class="text-danger" style="font-size: 0.875rem;">
+                        Department code is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-3">
+                <div class="form-group">
+                    <label>Department Name</label>
+                    <input type="text" class="form-control" formControlName="dep_name" placeholder="Department name" />
+                    <div *ngIf="departmentForm.get('dep_name')?.invalid && departmentForm.get('dep_name')?.touched" class="text-danger" style="font-size: 0.875rem;">
+                        Department name is required
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" mat-button (click)="onCancel()" style="background-color: #7a7a7ac3; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0,
+                        0, 0, 0.1); transition: box-shadow 0.3s ease;">
+        Cancel
+        </button>
+        <button type="submit" mat-button style=" background-color: #4caf4fe1; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition:
+                        box-shadow 0.3s ease;">
+        {{ mode === 'add' ? 'Add' : 'Update' }}
+        </button>
+    </div>
+</form>

@@ -16,6 +16,7 @@ import { UsersModule } from './users/users.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { DepartmentModule } from "./department/department.module";
 
 
 
@@ -23,31 +24,32 @@ import { MatGridListModule } from '@angular/material/grid-list';
   imports: [
     CommonModule,
     PermissionModule, // Import PermissionModule
-    UsersModule,      // Import UsersModule
+    UsersModule, // Import UsersModule
     MatTabsModule,
     FormsModule,
     SharedModule,
-    MatTabsModule,       // Importing Angular Material Tabs
-    MatTableModule,      // For material table
-    MatFormFieldModule,  // For form field (dropdown)
-    MatSelectModule,     // For select dropdown
-    MatButtonModule  ,    // For Material buttons
+    MatTabsModule, // Importing Angular Material Tabs
+    MatTableModule, // For material table
+    MatFormFieldModule, // For form field (dropdown)
+    MatSelectModule, // For select dropdown
+    MatButtonModule, // For Material buttons
     MatSlideToggleModule,
     MatDialogModule, // Add MatDialogModule here
-    FormsModule,  // Import FormsModule here
+    FormsModule, // Import FormsModule here
     MatGridListModule,
     RouterModule.forChild([
-      {
-        path: '',
-        component: UserManagementComponent,
-      },
-      {
-        path: ':id',
-        component: UserManagementComponent,
-      }
+        {
+            path: '',
+            component: UserManagementComponent,
+        },
+        {
+            path: ':id',
+            component: UserManagementComponent,
+        }
     ]),
-    MaterialModule
-  ],
+    MaterialModule,
+    DepartmentModule
+],
   declarations: [  
     UserManagementComponent,
     

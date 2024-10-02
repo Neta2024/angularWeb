@@ -22,7 +22,6 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     MatTabsModule,       // Importing MatTabsModule to use mat-tab
     MatTableModule,      // Other Angular Material modules you need
-    MatTableModule,
     MatFormFieldModule,
     MatSelectModule,
     MatButtonModule,

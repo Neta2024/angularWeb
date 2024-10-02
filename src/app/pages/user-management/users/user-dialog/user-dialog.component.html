@@ -106,7 +106,6 @@
                             <label>Status</label>
                             <div class="form-check form-switch mt-2">
                                 <input type="checkbox" class="form-check-input custom-checkbox" formControlName="status" (change)="toggleStatus()" />
-                                <!-- <mat-slide-toggle color="primary" formControlName="status" (change)="toggleStatus()"></mat-slide-toggle> -->
                                 <label class="form-check-label">{{ userForm.get('status')?.value ? 'Active' : 'Inactive' }}</label>
                             </div>
                         </div>
@@ -114,7 +113,6 @@
                             <label>Locked Out</label>
                             <div class="form-check form-switch mt-2">
                                 <input type="checkbox" class="form-check-input custom-checkbox" formControlName="lockedOut" (change)="toggleLockedOut()" />
-                                <!-- <mat-slide-toggle color="primary" formControlName="lockedOut" (change)="toggleLockedOut()"></mat-slide-toggle> -->
                                 <label class="form-check-label">{{ userForm.get('lockedOut')?.value ? 'Locked' : 'Unlocked' }}</label>
                             </div>
                         </div>
