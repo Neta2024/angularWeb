@@ -48,7 +48,6 @@ export class UsersComponent implements OnInit {
     this.service.RefreshRequired.subscribe(respone=>{
       this.fetchUsers();
     })
-    
   }
 
   fetchUsers() {
@@ -99,8 +98,7 @@ export class UsersComponent implements OnInit {
 
   toggleLockedOut(user: User){
     const updatedUser = {...user };
-    // updatedUser.isActive = !updatedUser.isActive;
-    updatedUser.status = updatedUser.isActive ? 'A' : 'I'; // Assuming 'A' is active and 'I' is inactive
+    updatedUser.status = updatedUser.isActive ? 'A' : 'I'; 
     user.lockedOut = !user.lockedOut;
 
      // Prepare userRequest object
@@ -123,8 +121,6 @@ export class UsersComponent implements OnInit {
               this.dataSource.data = [...this.users]; // Refresh data
           }
           this.fetchUsers();
-          this.dataSource.data = [...this.users];
-          this.cdr.detectChanges();
           this.alert.success('User lock updated successfully');
           console.log(`Updated user ${updatedUser.userName} isLocked= ${updatedUser.lockedOut}`);
       },
@@ -139,7 +135,7 @@ export class UsersComponent implements OnInit {
   toggleStatus(user: User) {
     const updatedUser = { ...user };
     updatedUser.isActive = !updatedUser.isActive;
-    updatedUser.status = updatedUser.isActive ? 'A' : 'I'; // Assuming 'A' is active and 'I' is inactive
+    updatedUser.status = updatedUser.isActive ? 'A' : 'I';
 
     // Prepare userRequest object
     const userRequest = {
@@ -162,8 +158,6 @@ export class UsersComponent implements OnInit {
               this.dataSource.data = [...this.users]; // Refresh data
           }
           this.fetchUsers();
-          this.dataSource.data = [...this.users];
-          this.cdr.detectChanges();
           console.log(`Updated user ${updatedUser.userName} isActive= ${updatedUser.isActive}`);
       },
       (error) => {

@@ -20,21 +20,23 @@
     margin-right: 10px;
 }
 
-.mat-mdc-slide-toggle.mat-primary {
-    --mdc-switch-selected-focus-state-layer-color: #4CAF50;
-    --mdc-switch-selected-handle-color: #4CAF50;
-    --mdc-switch-selected-hover-state-layer-color: #4CAF50;
-    --mdc-switch-selected-pressed-state-layer-color: #4CAF50;
-    --mdc-switch-selected-focus-handle-color: #2E7D32;
-    --mdc-switch-selected-hover-handle-color: #2E7D32;
-    --mdc-switch-selected-pressed-handle-color: #2E7D32;
-    --mdc-switch-selected-focus-track-color: #4CAF50;
-    --mdc-switch-selected-hover-track-color: #4CAF50;
-    --mdc-switch-selected-pressed-track-color: #4CAF50;
-    --mdc-switch-selected-track-color: #4CAF50;
+.custom-checkbox:checked {
+    background-color: #4CAF50;
+    /* When selected */
 }
 
-.small-slide-toggle {
-    transform: scale(0.7);
-    height: 20px;
+.custom-checkbox:checked:focus {
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5);
+    /* Focus state */
+}
+
+.custom-checkbox:checked:active {
+    background-color: #2E7D32;
+    /* When pressed */
+}
+
+.custom-checkbox:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5);
+    /* General focus shadow */
 }
