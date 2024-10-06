@@ -26,4 +26,11 @@ export class DepartmentService {
     updateDepartment(requestDep: any): Observable<Department[]> {
         return this.restApi.put(`${this.apiUrl}/update`, requestDep);
     }
+
+     // Update department
+     deleteDepartment(requestDep: { emp_dep_id: number }): Observable<any> {
+        // Pass the department ID as part of the request body
+        return this.restApi.delete(`${this.apiUrl}/delete`, { body: requestDep });
+    }
+    
 }

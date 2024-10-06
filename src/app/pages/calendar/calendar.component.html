@@ -4,19 +4,19 @@
             <app-card cardTitle="Ginkgo Calendar">
                 <div class="dropdown">
                     <div class="yearmonth">
-                        <mat-form-field appearance="fill">
-                            <mat-label>Year</mat-label>
-                            <mat-select [(value)]="selectedYear" (selectionChange)="onYearMonthChange()">
+                        <div class="year-container">
+                            <span>Year</span>
+                            <mat-select class="select-year" [(value)]="selectedYear" (selectionChange)="onYearMonthChange()">
                                 <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </div>
 
-                        <mat-form-field appearance="fill">
-                            <mat-label>Month</mat-label>
-                            <mat-select [(value)]="selectedMonth" (selectionChange)="onYearMonthChange()">
+                        <div class="month-container">
+                            <span>Month</span>
+                            <mat-select class="select-month" [(value)]="selectedMonth" (selectionChange)="onYearMonthChange()">
                                 <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </div>
 
                         <!-- Calendar view -->
 
@@ -33,8 +33,6 @@
                               <mat-icon>clear</mat-icon>
                             </button>
                         </mat-form-field>
-
-
 
                         <!-- Table List view -->
                         <mat-form-field appearance="outline" *ngIf="userRole === 'ADMIN' && selectedView === 'list' " style="min-width: 180px;">
@@ -86,11 +84,9 @@
                             <!-- Conditionally show userProfile column based on userRole -->
                             <ng-container *ngIf="userRole !== 'USER'" matColumnDef="userProfile">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': '25%'}">
-                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <div class="name-container">
                                         <span>User Profile</span>
-                                        <mat-form-field appearance="outline" class="filter-form-field">
-                                            <input matInput #searchInput (input)="applyFilter($event)" placeholder="Search by username">
-                                        </mat-form-field>
+                                        <input class="search-name" matInput #searchInput (input)="applyFilter($event)" placeholder="Search...">
                                     </div>
                                 </th>
                                 <td mat-cell *matCellDef="let element" [ngStyle]="{'width': '25%'}">{{element.userProfile}}</td>
@@ -99,14 +95,11 @@
                             <!-- Project Name Column -->
                             <ng-container matColumnDef="projectName">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">
-                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <div class="project-container">
                                         <span>Project Name</span>
-                                        <mat-form-field appearance="outline" class="filter-form-field">
-                                            <mat-label>Project Name</mat-label>
-                                            <mat-select [(ngModel)]="selectedProject" (selectionChange)="updateListView()">
-                                                <mat-option *ngFor="let project of projects" [value]="project.names">{{ project.names }}</mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
+                                        <mat-select class="select-project" [(ngModel)]="selectedProject" (selectionChange)="updateListView()">
+                                            <mat-option *ngFor="let project of projects" [value]="project.names">{{ project.names }}</mat-option>
+                                        </mat-select>
                                     </div>
                                 </th>
                                 <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">{{element.projectName}}</td>
@@ -115,14 +108,13 @@
                             <!-- Task Column -->
                             <ng-container matColumnDef="task">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">
-                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <div class="task-container">
                                         <span>Task</span>
-                                        <mat-form-field appearance="outline" class="filter-form-field">
-                                            <mat-label>Task</mat-label>
-                                            <mat-select [(ngModel)]="selectedTask" (selectionChange)="updateListView()">
-                                                <mat-option *ngFor="let task of tasks" [value]="task.names">{{ task.names }}</mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
+
+                                        <mat-select class="select-task" [(ngModel)]="selectedTask" (selectionChange)="updateListView()">
+                                            <mat-option *ngFor="let task of tasks" [value]="task.names">{{ task.names }}</mat-option>
+                                        </mat-select>
+
                                     </div>
                                 </th>
                                 <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '25%' : '20%'}">{{element.task}}</td>
@@ -131,14 +123,11 @@
                             <!-- Period Column -->
                             <ng-container matColumnDef="period">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'width': userRole === 'USER' ? '15%' : '15%'}">
-                                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <div class="period-container">
                                         <span>Period</span>
-                                        <mat-form-field appearance="outline" class="filter-period-field">
-                                            <mat-label>Period</mat-label>
-                                            <mat-select [(ngModel)]="selectedPeriod" (selectionChange)="updateListView()">
-                                                <mat-option *ngFor="let period of periods" [value]="period">{{period}}</mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
+                                        <mat-select class="select-period custom-select" [(ngModel)]="selectedPeriod" (selectionChange)="updateListView()">
+                                            <mat-option *ngFor="let period of periods" [value]="period">{{period}}</mat-option>
+                                        </mat-select>
                                     </div>
                                 </th>
                                 <td mat-cell *matCellDef="let element" [ngStyle]="{'width': userRole === 'USER' ? '15%' : '15%'}">

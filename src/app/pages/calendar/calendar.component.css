@@ -1,290 +1,293 @@
-app-card {
-    /* Adjust padding or margins */
-    padding: 0px;
-    /* Adjust as needed */
-    margin: 0px;
-    /* Adjust as needed */
-}
-
-.card-title {
-    /* Adjust the title styling */
-    font-size: 16px;
-    /* Smaller font size */
-    white-space: nowrap;
-    /* Prevent text from wrapping */
-    overflow: hidden;
-    /* Hide overflow */
-    text-overflow: ellipsis;
-    /* Add ellipsis (...) for overflow text */
-}
-
-
-/* Adjust the size of the form fields */
-
-mat-form-field {
-    font-size: 14px;
-    /* Smaller font size */
-    width: 150px;
-    /* Adjust width as needed */
-}
-
-
-/* Adjust the size of the select dropdown */
-
-mat-select {
-    font-size: 14px;
-    /* Smaller font size */
-}
-
-
-/* Adjust the label size */
-
-mat-form-field .mat-form-field-label {
-    font-size: 14px;
-    /* Smaller font size */
-}
-
-
-/* Adjust padding and margin of the form fields */
-
-.yearmonth {
-    display: flex;
-    gap: 10px;
-    /* Adjust spacing between form fields */
-}
-
-.dropdown {
-    display: flex;
-    justify-content: space-between;
-}
-
-.mat-column-total {
-    text-align: right;
-}
-
-.period-container {
-    display: flex;
-    align-items: flex-end;
-}
-
-.period-text {
-    margin-left: 10px;
-    /* Adjust space between text and images if needed */
-    line-height: 16px;
-    /* Adjust this value if needed to align with the images */
-}
-
-.icon-image {
-    width: 20px;
-    /* Ensure consistent size */
-    height: 20px;
-}
-
-.custom-table {
-    width: 90%;
-    border-collapse: collapse;
-}
-
-.custom-table .mat-header-cell,
-.custom-table .mat-cell {
-    padding: 8px;
-    text-align: left;
-}
-
-.custom-table .mat-row-hover:hover {
-    background-color: #d6f5d6;
-    color: black
-    /* Change this to your desired hover color */
-}
-
-
-/* Optional: Add a border to the rows */
-
-.custom-table .mat-row {
-    border-bottom: 1px solid #e0e0e0;
-}
-
-
-/* Adjust mat-form-field size */
-
-.filter-form-field {
-    width: 90%;
-    /* Adjust as needed */
-    margin-top: 5px;
-}
-
-.filter-period-field {
-    margin-top: 5px;
-    margin-right: 8px;
-}
-
-
-/* Make the input field and icon smaller */
-
-.filter-form-field .mat-form-field-infix {
-    padding: 0;
-    /* Remove padding */
-}
-
-.filter-form-field .mat-form-field-label {
-    font-size: 12px;
-    /* Smaller label font size */
-}
-
-.filter-form-field input.mat-input-element {
-    font-size: 12px;
-    /* Smaller input font size */
-    height: 10px;
-    /* Adjust height */
-}
-
-.filter-form-field .mat-form-field-suffix {
-    font-size: 12px;
-    /* Adjust icon size */
-}
-
-.filter-form-field mat-icon {
-    font-size: 12px;
-    /* Smaller icon size */
-}
-
-#searchInput {
-    width: 100px;
-}
-
-
-/* .userProfile-col {
-    width: 20%;
-} */
-
-.custom-paginator {
-    display: flex;
-    align-items: end;
-    margin-top: 20px;
-}
-
-.custom-paginator button {
-    margin: 0 2px;
-    padding: 2px;
-}
-
-.custom-paginator button.mat-button-primary {
-    font-weight: bold;
-}
-
-.custom-paginator {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    /* Helps in responsiveness */
-    padding: 10px;
-    gap: 10px;
-}
-
-
-/* Style for the active page button */
-
-.active-page {
-    background-color: #60ff608f;
-    /* Change to your preferred color */
-    color: rgb(0, 0, 0);
-    /* Text color for the active button */
-    font-weight: bold;
-    /* Optional: Bold text for the active button */
-}
-
-.active-page p {
-    /* Change to your preferred color */
-    color: #048404;
-    /* Text color for the active button */
-    font-weight: bold;
-    /* Optional: Bold text for the active button */
-}
-
-.container-page-size-select {
-    display: flex;
-    align-items: center;
-}
-
-.container-page-size-select p {
-    margin-right: 5px;
-    margin-left: 10px;
-}
-
-.paginator-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    /* Spacing between buttons */
-}
-
-.page-size-select {
-    min-width: 50px;
-    margin-left: auto;
-    width: 70px;
-}
-
-
-/* Styles for card ========================*/
-
-.custom-mat-list {
-    border: 1px solid #ccc;
-    /* Adds a border around the list */
-    /* background-color: #f5f5f5; */
-    /* Sets the background color */
-    border-radius: 4px;
-    /* Optional: rounds the corners */
-    padding: 8px;
-    /* Optional: adds padding inside the list */
-    margin-bottom: 20px;
-}
-
-
-/* Styles for each mat-list-item */
-
-.custom-mat-list-item {
-    border-bottom: 1px solid #e0e0e0;
-    border-radius: 4px;
-    /* padding: 8px 2px; */
-    background-color: #ebebed;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-
-/* Remove border from the last item */
-
-.custom-mat-list-item:last-child {
-    border-bottom: none;
-}
-
-
-/* Style the close icon */
-
-.custom-mat-list-item mat-icon {
-    cursor: pointer;
-    float: right;
-    /* color: #ff5252; */
-}
-
-.custom-form-field-card {
-    min-width: 100%;
-}
-
-.period-radio-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.mat-radio-button {
-    /* margin: 0 10px; */
-}
-
-.custom-button-card {
-    margin-top: 4px;
-    /* Adds vertical space if necessary */
-    min-width: 120px;
-    /* Ensures button has a decent width */
-}
+    app-card {
+        padding: 0px;
+        margin: 0px;
+    }
+    
+    .card-title {
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    mat-select {
+        font-size: 14px;
+    }
+    
+    .dropdown {
+        display: flex;
+        justify-content: space-between;
+        .yearmonth {
+            display: flex;
+            margin-bottom: 8px;
+            gap: 10px;
+            .year-container {
+                width: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-year {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+            .month-container {
+                width: 120px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-month {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+        }
+    }
+    
+    .mat-column-total {
+        text-align: right;
+    }
+    
+    .period-container {
+        display: flex;
+        align-items: flex-end;
+    }
+    
+    .period-text {
+        margin-left: 10px;
+        /* Adjust space between text and images if needed */
+        line-height: 16px;
+        /* Adjust this value if needed to align with the images */
+    }
+    
+    .icon-image {
+        width: 20px;
+        /* Ensure consistent size */
+        height: 20px;
+    }
+    
+    .custom-table {
+        width: 90%;
+        border-collapse: collapse;
+    }
+    
+    .custom-table .mat-header-cell,
+    .custom-table .mat-cell {
+        padding: 8px;
+        text-align: left;
+    }
+    
+    .custom-table .mat-row-hover:hover {
+        background-color: #d6f5d6;
+        color: black
+        /* Change this to your desired hover color */
+    }
+    /* Optional: Add a border to the rows */
+    
+    .custom-table .mat-row {
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    #searchInput {
+        width: 100px;
+    }
+    
+    th {
+        /* project-column */
+        .name-container {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            .search-name {
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 4px;
+                box-sizing: border-box;
+                width: 95%;
+                font-size: 0.9rem;
+                margin: 8px 0;
+            }
+        }
+        /* project-column */
+        .project-container {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            .select-project {
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 4px;
+                box-sizing: border-box;
+                width: 95%;
+                font-size: 0.9rem;
+                margin: 8px 0;
+            }
+        }
+        /* task-column */
+        .task-container {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            .select-task {
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 4px;
+                box-sizing: border-box;
+                width: 95%;
+                font-size: 0.9rem;
+                margin: 8px 0;
+            }
+        }
+        /* role-column */
+        .period-container {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            .select-period {
+                align-items: flex-start;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 4px;
+                box-sizing: border-box;
+                width: 95%;
+                font-size: 0.9rem;
+                margin: 8px 0;
+            }
+        }
+    }
+    
+    .custom-paginator {
+        display: flex;
+        align-items: end;
+        margin-top: 20px;
+    }
+    
+    .custom-paginator button {
+        margin: 0 2px;
+        padding: 2px;
+    }
+    
+    .custom-paginator button.mat-button-primary {
+        font-weight: bold;
+    }
+    
+    .custom-paginator {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        /* Helps in responsiveness */
+        padding: 10px;
+        gap: 10px;
+    }
+    /* Style for the active page button */
+    
+    .active-page {
+        background-color: #60ff608f;
+        /* Change to your preferred color */
+        color: rgb(0, 0, 0);
+        /* Text color for the active button */
+        font-weight: bold;
+        /* Optional: Bold text for the active button */
+    }
+    
+    .active-page p {
+        /* Change to your preferred color */
+        color: #048404;
+        /* Text color for the active button */
+        font-weight: bold;
+        /* Optional: Bold text for the active button */
+    }
+    
+    .container-page-size-select {
+        display: flex;
+        align-items: center;
+    }
+    
+    .container-page-size-select p {
+        margin-right: 5px;
+        margin-left: 10px;
+    }
+    
+    .paginator-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        /* Spacing between buttons */
+    }
+    
+    .page-size-select {
+        min-width: 50px;
+        margin-left: auto;
+        width: 70px;
+    }
+    /* Styles for card ========================*/
+    
+    .custom-mat-list {
+        border: 1px solid #ccc;
+        /* Adds a border around the list */
+        /* background-color: #f5f5f5; */
+        /* Sets the background color */
+        border-radius: 4px;
+        /* Optional: rounds the corners */
+        padding: 8px;
+        /* Optional: adds padding inside the list */
+        margin-bottom: 20px;
+    }
+    /* Styles for each mat-list-item */
+    
+    .custom-mat-list-item {
+        border-bottom: 1px solid #e0e0e0;
+        border-radius: 4px;
+        /* padding: 8px 2px; */
+        background-color: #ebebed;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    /* Remove border from the last item */
+    
+    .custom-mat-list-item:last-child {
+        border-bottom: none;
+    }
+    /* Style the close icon */
+    
+    .custom-mat-list-item mat-icon {
+        cursor: pointer;
+        float: right;
+        /* color: #ff5252; */
+    }
+    
+    .custom-form-field-card {
+        min-width: 100%;
+    }
+    
+    .period-radio-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    .mat-radio-button {
+        /* margin: 0 10px; */
+    }
+    
+    .custom-button-card {
+        margin-top: 4px;
+        /* Adds vertical space if necessary */
+        min-width: 120px;
+        /* Ensures button has a decent width */
+    }

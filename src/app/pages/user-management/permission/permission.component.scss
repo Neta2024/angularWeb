@@ -16,32 +16,81 @@
         font-size: 24px;
         color: #333;
     }
-    .button-container {
+    .action-container {
         display: flex;
-        gap: 10px;
-        button {
-            font-size: 16px;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            border: none;
-            &[color="primary"] {
-                background-color: #007bff;
-                color: white;
+        justify-content: space-between;
+        align-items: center;
+        .search-input {
+            position: relative;
+            display: flex;
+            margin-right: 8px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            width: 250px;
+            input[type="text"] {
+                margin-left: 8px;
+                padding: 8px;
+                border: none;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                background: none;
+                width: 88%;
+            }
+            /* Clear button inside the input field */
+            .clear-search {
+                width: 9%;
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-35%);
+                padding: 0;
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+            mat-icon {
+                font-size: 18px;
+                font-weight: bold;
+                color: #a1a1a1;
+            }
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            .save-button {
+                width: 80px;
+                background-color: #d6f5d6 !important;
+                color: #1e7b1e !important;
+                padding: 8px 16px !important;
+                border-radius: 20px !important;
+                display: flex !important;
+                align-items: center !important;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+                transition: box-shadow 0.3s ease !important;
                 &:hover {
-                    background-color: #0056b3;
+                    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15) !important;
                 }
             }
-            &[color="warn"] {
-                background-color: #ff5252;
-                color: white;
+            .cancel-button {
+                width: 80px;
+                background-color: #ffbbbbd1 !important;
+                color: #a80000 !important;
+                padding: 8px 16px !important;
+                border-radius: 20px !important;
+                display: flex !important;
+                align-items: center !important;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+                transition: box-shadow 0.3s ease !important;
                 &:hover {
-                    background-color: #e04848;
+                    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15) !important;
                 }
             }
-            &:disabled {
-                background-color: #cccccc;
-                cursor: not-allowed;
+            .save-button:disabled,
+            .cancel-button:disabled {
+                background-color: #f0f0f0 !important;
+                color: #a1a1a1 !important;
+                box-shadow: none !important;
+                cursor: not-allowed !important;
             }
         }
     }
@@ -63,15 +112,6 @@ table {
         text-align: left;
         font-weight: bold;
         color: #495057;
-        // Styling for the search input in the Full Name column header
-        .search-input {
-            margin-left: 10px; // Space between header and search input
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            width: 150px; // Adjust width as needed
-        }
     }
     td {
         padding: 10px;
@@ -113,8 +153,8 @@ table {
 }
 
 .custom-select-selected {
-    background-color: #60ff605e;
-    border: 2px solid #3f51b5;
+    background-color: #d6f5d6 !important;
+    border: 1px solid #0a5800;
 }
 
 .mat-option {

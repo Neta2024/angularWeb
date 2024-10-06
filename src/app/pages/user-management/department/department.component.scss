@@ -47,7 +47,8 @@
                 }
                 mat-icon {
                     font-size: 18px;
-                    /* Adjust icon size */
+                    font-weight: bold;
+                    color: #a1a1a1;
                 }
             }
             .add-department {
@@ -89,11 +90,21 @@
             }
         }
         td {
-            padding: 10px;
+            // padding: 10px;
             border-bottom: 1px solid #dee2e6;
             color: #212529;
+            .delete-button {
+                color: #f28b82;
+                font-size: 16px;
+                &:hover {
+                    color: #f55a4c;
+                }
+                mat-icon {
+                    font-size: 20px;
+                }
+            }
         }
-        .mat-column-role {
+        .mat-column-action {
             width: 20%;
         }
         tr {

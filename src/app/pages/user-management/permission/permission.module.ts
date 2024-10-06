@@ -7,8 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
-
-
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [ PermissionComponent],
@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
     MatTableModule,      // Other Angular Material modules you need
     MatTableModule,
     MatFormFieldModule,
+    MatIconModule,
     MatSelectModule,
     MatButtonModule,
     FormsModule,

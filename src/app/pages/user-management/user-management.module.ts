@@ -14,10 +14,9 @@ import { PermissionComponent } from './permission/permission.component';
 import { PermissionModule } from './permission/permission.module';
 import { UsersModule } from './users/users.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { DepartmentModule } from "./department/department.module";
-
 
 
 @NgModule({

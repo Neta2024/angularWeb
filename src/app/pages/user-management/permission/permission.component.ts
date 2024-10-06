@@ -51,6 +51,12 @@ export class PermissionComponent implements OnInit {
     })
   }
 
+   // Clear the search input and trigger the filter with empty value
+  clearSearch() {
+    this.searchQuery = ''; // Clear the input
+    this.applyFilter(); // Re-apply filter with an empty search query
+  }
+
   applyFilter() {
     this.dataSource.data = this.users.filter(user =>
         user.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())

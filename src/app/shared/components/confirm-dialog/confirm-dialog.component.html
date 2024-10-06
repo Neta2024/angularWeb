@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content>
+    <p>{{ data.message }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" style="background-color: #7a7a7ac3; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0,
+                        0, 0, 0.1); transition: box-shadow 0.3s ease;">Cancel</button>
+    <button mat-button (click)="onConfirm()" style=" background-color: #da1010e1; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition:
+                        box-shadow 0.3s ease;">Delete</button>
+</mat-dialog-actions>

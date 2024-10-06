@@ -5,6 +5,8 @@ import { Alert } from 'src/app/shared/components/alert/alert';
 import { DepartmentService } from '../services/department.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DepartmentDialogComponent } from './department-dialog/department-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -18,7 +20,8 @@ export class DepartmentComponent implements OnInit{
   // Columns to display in the table
   displayedColumns: string[] = [
     'dep_code',
-    'dep_name'
+    'dep_name',
+    'action'
    ];
   dataSource = new MatTableDataSource<Department>([]); 
 
@@ -36,6 +39,7 @@ export class DepartmentComponent implements OnInit{
     private service: DepartmentService,
     private alert: Alert,
     private modalService: NgbModal, 
+    private dialog: MatDialog 
    ) {
     
    }
@@ -94,6 +98,34 @@ export class DepartmentComponent implements OnInit{
       }
     );
   }
+
+  deleteDepartment(departmentId: number) {
+    // Open confirmation dialog
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '315px',
+      data: {
+        title: 'Confirm Deletion',
+        message: 'Are you sure to delete this department?'
+      }
+    });
+
+    // Handle the dialog result
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // If confirmed, call the delete API
+        this.service.deleteDepartment({ emp_dep_id: departmentId }).subscribe(
+          (response) => {
+            this.alert.success('Department deleted successfully');
+            this.fetchDepartment();
+          },
+          (error) => {
+            this.alert.error(error.message);
+          }
+        );
+      }
+    });
+  }
+
 
 
 

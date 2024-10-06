@@ -18,6 +18,9 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { LoadingComponent } from './components/loading/loading.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   imports: [
@@ -51,12 +54,15 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     NgApexchartsModule,
     FullCalendarModule,
     LoadingComponent,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    MatDialogModule, 
+    MatButtonModule, 
   ],
   declarations: [
     SpinnerComponent, 
     AlertComponent,
-    LoadingComponent
+    LoadingComponent,
+    ConfirmDialogComponent 
   ]
 })
 export class SharedModule {}
