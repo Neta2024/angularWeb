@@ -51,7 +51,6 @@ export class DepartmentDialogComponent  implements OnInit {
 
   addDepartment(){
     if (this.departmentForm.invalid) {
-      // Mark all controls as touched to trigger validation messages
       this.departmentForm.markAllAsTouched();
       this.alert.error('Please fill out the form correctly');
       return;

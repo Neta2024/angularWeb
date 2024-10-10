@@ -16,12 +16,14 @@ export class NavRightComponent implements OnInit, OnDestroy{
   userRole: string = ''; // Default to 'USER'
   isAdminMode: boolean = false; // Tracks whether admin mode is enabled
   isAdminModeVisible: boolean = false; // Visibility of the admin switch
+  greeting: string = '';
 
   private userSubscription: Subscription;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.setGreeting();  // Set greeting on initialization
     const currentUser = this.authService.getAuthFromLocalStorage(); // Fetch the current user from local storage
     if (currentUser) {
       this.userFullName = currentUser.firstName + ' ' + currentUser.lastName;
@@ -35,16 +37,29 @@ export class NavRightComponent implements OnInit, OnDestroy{
     }
   }
 
-    // Toggle between admin and user mode
-    toggleAdminMode(): void {
-      if (this.isAdminMode && this.isAdminModeVisible) {
-        this.userRole = 'ADMIN'; // When the switch is turned on
-         // Save the new state to localStorage
-        localStorage.setItem('isAdminMode', JSON.stringify(this.isAdminMode));
-      } else {
-        this.userRole = 'USER'; // When the switch is turned off
-      }
+   // Method to determine the greeting based on current time
+   setGreeting(): void {
+    const currentHour = new Date().getHours();
+
+    if (currentHour < 12) {
+      this.greeting = 'Good Morning';
+    } else if (currentHour >= 12 && currentHour < 17) {
+      this.greeting = 'Good Afternoon';
+    } else {
+      this.greeting = 'Good Evening';
     }
+  }
+
+  // Toggle between admin and user mode
+  toggleAdminMode(): void {
+    if (this.isAdminMode && this.isAdminModeVisible) {
+      this.userRole = 'ADMIN'; // When the switch is turned on
+        // Save the new state to localStorage
+      localStorage.setItem('isAdminMode', JSON.stringify(this.isAdminMode));
+    } else {
+      this.userRole = 'USER'; // When the switch is turned off
+    }
+  }
 
   onLogout() {
     this.authService.logout(); // Handle the logout process

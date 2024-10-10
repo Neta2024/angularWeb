@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { HolidayService } from '../services/holiday.service';
+import { HolidayService } from './services/holiday.service';
 import { RestApi } from 'src/app/shared/rest-api';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { Alert } from 'src/app/shared/components/alert/alert';
+import { MatDialog } from '@angular/material/dialog';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HolidayDialogComponent } from './holiday-dialog/holiday-dialog.component';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { AuthService } from '../authentication/auth.service';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-holiday',
-  standalone: true,
-  imports :[CommonModule],
   templateUrl: './holiday.component.html',
   styleUrls: ['./holiday.component.scss'],
 })
@@ -27,18 +34,31 @@ export class HolidayComponent implements OnInit {
     { name: 'November', number: 11 },
     { name: 'December', number: 12 },
   ];
-  selectedMonth: number | '' = ''; // Default to empty string for optional month
+  selectedMonth: number | '' = ''; 
   selectedYear: number;
   availableYears: number[] = [];
+  isAddMode: boolean;
+  userRole: string = '';
 
   constructor(
+    private authService: AuthService,
     private holidayService: HolidayService,
-    private restApi: RestApi,
+    private alert: Alert,
+    private modalService: NgbModal, 
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
+     // check role
+     const currentUser = this.authService.getAuthFromLocalStorage(); 
+     if (currentUser) {
+       this.userRole = currentUser.role.toUpperCase();
+     } else {
+       this.userRole = 'No Role';
+     }
+
     this.initializeYears();
-    this.selectedYear = new Date().getFullYear();  // Set the current year as the default selected year
+    this.selectedYear = new Date().getFullYear(); 
     this.getHolidays(this.selectedYear, this.selectedMonth);
   }
 
@@ -49,41 +69,48 @@ export class HolidayComponent implements OnInit {
     }
   }
 
-  getHolidays(year: number, month: number | ''): void {
-    // Convert month to a string if it's not empty
-    const monthParam = month ? month.toString: '';
 
-    this.restApi.get('/master/get-holidays', { params: { year: year.toString(), month: monthParam } }).subscribe(
+  getHolidays(year: number, month: number | ''): void {
+    this.holidayService.getHolidays(year, month).subscribe(
       (response: any[]) => {
         console.log('Holidays response:', response);
 
         if (response) {
           this.holidays = response.map((holiday: any) => ({
-            title: holiday.holidayName,
-            date: this.convertDate(holiday.holiday),
+            date:  holiday.holiday,
             name: holiday.holidayName
           }));
 
-          // Organize holidays by month
-          this.holidaysByMonth = this.monthsWithNumbers.reduce((acc, month) => {
-            acc[month.name] = this.holidays.filter(holiday =>
-              new Date(holiday.date).getMonth() + 1 === month.number
-            );
-            return acc;
-          }, {} as { [key: string]: any[] });
-        } else {
-          this.holidays = [];
-        }
-
-        console.log('Holidays:', this.holidays);
+          // Organize holidays by month using manual date parsing
+        this.holidaysByMonth = this.monthsWithNumbers.reduce((acc, month) => {
+          acc[month.name] = this.holidays.filter(holiday => {
+            const [day, monthStr, year] = holiday.date.split('-'); // Split DD-MM-YYYY
+            const holidayDate = new Date(Number(year), Number(monthStr) - 1, Number(day)); // Create Date object
+            return holidayDate.getMonth() + 1 === month.number;
+          });
+          return acc;
+        }, {} as { [key: string]: any[] });
+      } else {
+        this.holidays = [];
+      }
+      console.log('Holidays by Month:', this.holidaysByMonth);
       }
     );
   }
 
-  convertDate(dateString: string): string {
+  convertToDate(dateString: string): Date {
     const [day, month, year] = dateString.split('-');
-    return `${year}-${month}-${day}`;
+    return new Date(Number(year), Number(month) - 1, Number(day));
   }
+  formatDateToDDMMYYYY(date: Date | string): string {
+    const d = typeof date === 'string' ? new Date(date) : date; 
+    const day = String(d.getDate()).padStart(2, '0'); 
+    const month = String(d.getMonth() + 1).padStart(2, '0'); 
+    const year = d.getFullYear(); 
+    return `${day}-${month}-${year}`; // Return formatted date
+  }
+  
+  
 
   getDaySuffix(day: string): string {
     const dayNumber = parseInt(day, 10);
@@ -113,4 +140,118 @@ export class HolidayComponent implements OnInit {
     this.getHolidays(this.selectedYear, this.selectedMonth);
     console.log(this.selectedMonth);
   }
+
+  addHoliday(holidayRequest: any) {
+    // Call Service API
+    this.holidayService.addHoliday(holidayRequest).subscribe(
+      (response) => {
+        this.alert.success('Department added successfully');
+        this.getHolidays(this.selectedYear, this.selectedMonth);
+      },
+      (error) => {
+        this.alert.error(error.message);
+      }
+    );
+
+  }
+
+  updateHoliday(holidayRequest: any) {
+    this.holidayService.updateHoliday(holidayRequest).subscribe(
+      (response) => {
+        this.alert.success('Department updated successfully');
+        this.getHolidays(this.selectedYear, this.selectedMonth);
+      },
+      (error) => {
+        this.alert.error(error.message);
+      }
+    )
+
+  }
+
+  deleteHoliday(holidayDate: Date) {
+     // Open confirmation dialog
+     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '315px',
+      data: {
+        title: 'Confirm Deletion',
+        message: 'Are you sure to delete this holiday?'
+      }
+    });
+
+    // Handle the dialog result
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const dateObject = new Date(holidayDate); // Convert to Date if necessary
+        console.log(dateObject);
+        const formattedDate = this.formatDateToDDMMYYYY(dateObject); // Format to DD-MM-YYYY
+      
+        // Call the service method with the correct property name
+        this.holidayService.deleteHoliday({ holiday: formattedDate }).subscribe(
+          (response) => {
+            this.alert.success('Holiday deleted successfully'); // Message adjustment
+            this.getHolidays(this.selectedYear, this.selectedMonth);
+          },
+          (error) => {
+            this.alert.error(error.message);
+          }
+        );
+      }
+    });
+
+    
+  }
+  
+
+  openHolidayDialog(): void{
+    this.isAddMode = true;
+    const modalRef = this.modalService.open(HolidayDialogComponent, {
+      size: 'lg', // You can specify the size of the modal (lg, sm, etc.)
+      centered: true
+    });
+
+    // Pass data to the modal component
+    modalRef.componentInstance.mode = 'add';
+    modalRef.componentInstance.isAddMode = this.isAddMode;
+
+    // Handle the modal close event
+    modalRef.result.then((result) => {
+      if (result) {
+        this.addHoliday(result);     
+        console.log('Result from dialog',result);
+      }
+    }).catch((error) => {
+      console.log('Modal dismissed');
+    });
+  }
+
+
+  openEditHoliday(holiday: any): void {
+    this.isAddMode = false;
+    const modalRef = this.modalService.open(HolidayDialogComponent, {
+      size: 'lg',
+      centered: true
+    });
+  
+    // Pass data to the modal component
+    modalRef.componentInstance.mode = 'edit';
+    modalRef.componentInstance.isAddMode = this.isAddMode;
+    modalRef.componentInstance.holiday = holiday; // Pass the selected holiday data
+  
+    // Handle the modal close event
+    modalRef.result.then((result) => {
+      if (result) {
+        // Update the user in the list and refresh the table
+        const index = this.holidays.findIndex(u => u.id === holiday.id);
+        if (index !== -1) {
+          // this.holidays[index] = result; // Update the list with edited values
+          this.updateHoliday(result);
+        }
+      }
+    }).catch((error) => {
+      console.log('Modal dismissed');
+    });
+  }
+  
+
+  
 }

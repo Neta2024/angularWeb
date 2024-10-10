@@ -5,14 +5,29 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/shared/material.module';
 import { HolidayComponent } from './holiday.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { HolidayDialogComponent } from './holiday-dialog/holiday-dialog.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
+  declarations: [
+    HolidayComponent, HolidayDialogComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
     SharedModule,
+    FormsModule, 
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
     RouterModule.forChild([
       {
         path: '',
@@ -25,8 +40,9 @@ import { FormsModule } from '@angular/forms';
     ]),
     MaterialModule
   ],
-  declarations: [
-   
+  
+  exports: [
+    HolidayComponent
   ]
 })
 export class HolidayModule { }

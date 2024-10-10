@@ -41,12 +41,25 @@ export class AuthGuard {
     }
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+   // General auth check
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    const guardMethod = route.data['guardMethod'];
+
+    if (guardMethod === 'canActivateAdmin') {
+      return this.canActivateAdmin(route, state);
+    }
+
     return this.user !== null;
   }
 
-  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    return this.canActivate(childRoute, state);
+  // Check if user is authenticated and has admin role
+  canActivateAdmin(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    if (this.user !== null && this.user.role === 'ADMIN') {
+      return true;
+    } else {
+      // Redirect to error page or login if user is not an admin
+      return this.router.createUrlTree(['/error']); // or you can use `/login`
+    }
   }
 
   unauthorize(): void {

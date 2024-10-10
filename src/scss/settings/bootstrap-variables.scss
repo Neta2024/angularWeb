@@ -259,11 +259,21 @@ $theme-background: #f4f7fa;
 $theme-font-color: #888;
 $theme-heading-color: #111;
 $form-bg: #f0f3f6;
+// ===========================================
+// $theme-color: linear-gradient(-135deg,
+// #673ab7 0%,
+// #673ab7 100%);
+// $theme-color2: linear-gradient(-135deg,
+// #899fd4 0%,
+// #a389d4 100%);
+// ====================================
 $theme-color: linear-gradient(-135deg,
-#673ab7 0%,
-#673ab7 100%);
+#1c9520 0%, // Start with the green color
+#1c9520 100% // End with the same green color for a solid effect
+);
 $theme-color2: linear-gradient(-135deg,
-#899fd4 0%,
-#a389d4 100%);
+#1c9520 0%, // Start with the dark green color
+#b2e0a2 100% // End with a lighter green
+);
 $theme-colors: map-merge( ( 'primary': $primary, 'secondary': $secondary, 'success': $success, 'info': $info, 'warning': $warning, 'danger': $danger, 'light': $light, 'dark': $dark),
 $theme-colors); // Color contrast

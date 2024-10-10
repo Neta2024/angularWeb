@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { Error1Component } from './error1/error1.component';
 import { LogoutComponent } from './authentication/logout/logout.component';
+import { AuthGuard } from './authentication/auth.guard';
 
 const routes: Routes = [
   {
@@ -36,6 +37,8 @@ const routes: Routes = [
       {
         path: 'user-management',
         loadChildren: () => import('./user-management/user-management.module').then((m) => m.UserManagementModule),
+        canActivate: [AuthGuard], // Use AuthGuard to protect the route
+        data: { guardMethod: 'canActivateAdmin' },  // This tells the guard to use the canActivateAdmin method
       },
       {
         path: 'typography',

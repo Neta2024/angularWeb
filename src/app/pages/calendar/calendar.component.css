@@ -1,3 +1,7 @@
+    .timesheet-container {
+        width: 100%;
+    }
+    
     app-card {
         padding: 0px;
         margin: 0px;
@@ -17,6 +21,13 @@
     .dropdown {
         display: flex;
         justify-content: space-between;
+        align-items: flex-start;
+        padding: 8px 16px;
+        background-color: rgb(253, 253, 253);
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        margin-top: -20px;
+        margin-bottom: 20px;
         .yearmonth {
             display: flex;
             margin-bottom: 8px;
@@ -42,6 +53,104 @@
                 flex-direction: column;
                 align-items: flex-start;
                 .select-month {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+            .view-mode-container {
+                width: 180px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-view-mode {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+            .select-user-container {
+                width: 180px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-user-mode {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 100%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+                .search-input {
+                    display: flex;
+                    /* margin-right: 8px; */
+                    position: relative;
+                    margin-top: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    width: 100%;
+                    input[type="text"] {
+                        margin-left: 8px;
+                        padding: 6px;
+                        border: none;
+                        border-radius: 20px;
+                        font-size: 0.9rem;
+                        background: none;
+                        width: 90%;
+                    }
+                    /* Clear button inside the input field */
+                    .clear-search {
+                        width: 9%;
+                        position: absolute;
+                        right: 20px;
+                        top: 50%;
+                        transform: translateY(-35%);
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                    }
+                    mat-icon {
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #a1a1a1;
+                    }
+                }
+            }
+        }
+        .filter-select-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            gap: 10px;
+            .modeFilter {
+                margin: 8px 0;
+                .reset-filer-bt {
+                    background-color: #d6f5d6 !important;
+                    color: #1e7b1e !important;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    display: flex;
+                    align-items: center;
+                    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+                    transition: box-shadow 0.3s ease;
+                }
+            }
+            .switch-view-container {
+                width: 180px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-switch-view {
                     border: 1px solid #ccc;
                     border-radius: 4px;
                     padding: 4px;
@@ -79,6 +188,77 @@
     .custom-table {
         width: 90%;
         border-collapse: collapse;
+        th {
+            background-color: none;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            /* project-column */
+            .name-container {
+                width: 200px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .search-name {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+            /* project-column */
+            .project-container {
+                width: 200px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-project {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+            /* task-column */
+            .task-container {
+                width: 200px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-task {
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+            /* role-column */
+            .period-container {
+                width: 150px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                .select-period {
+                    align-items: flex-start;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-sizing: border-box;
+                    width: 95%;
+                    font-size: 0.9rem;
+                    margin: 8px 0;
+                }
+            }
+        }
     }
     
     .custom-table .mat-header-cell,
@@ -100,74 +280,6 @@
     
     #searchInput {
         width: 100px;
-    }
-    
-    th {
-        /* project-column */
-        .name-container {
-            width: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            .search-name {
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 4px;
-                box-sizing: border-box;
-                width: 95%;
-                font-size: 0.9rem;
-                margin: 8px 0;
-            }
-        }
-        /* project-column */
-        .project-container {
-            width: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            .select-project {
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 4px;
-                box-sizing: border-box;
-                width: 95%;
-                font-size: 0.9rem;
-                margin: 8px 0;
-            }
-        }
-        /* task-column */
-        .task-container {
-            width: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            .select-task {
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 4px;
-                box-sizing: border-box;
-                width: 95%;
-                font-size: 0.9rem;
-                margin: 8px 0;
-            }
-        }
-        /* role-column */
-        .period-container {
-            width: 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            .select-period {
-                align-items: flex-start;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 4px;
-                box-sizing: border-box;
-                width: 95%;
-                font-size: 0.9rem;
-                margin: 8px 0;
-            }
-        }
     }
     
     .custom-paginator {
@@ -196,30 +308,37 @@
     /* Style for the active page button */
     
     .active-page {
-        background-color: #60ff608f;
-        /* Change to your preferred color */
-        color: rgb(0, 0, 0);
-        /* Text color for the active button */
+        background-color: #d6f5d6 !important;
+        color: #1e7b1e !important;
         font-weight: bold;
-        /* Optional: Bold text for the active button */
     }
     
     .active-page p {
-        /* Change to your preferred color */
         color: #048404;
-        /* Text color for the active button */
         font-weight: bold;
-        /* Optional: Bold text for the active button */
     }
     
     .container-page-size-select {
         display: flex;
         align-items: center;
-    }
-    
-    .container-page-size-select p {
-        margin-right: 5px;
-        margin-left: 10px;
+        width: 150px;
+        .page_item_label {
+            color: #a1a1a1;
+            font-size: 0.7rem;
+            justify-content: end;
+            align-items: start;
+            margin-right: 5px;
+        }
+        .select-page {
+            color: #585858;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 4px;
+            box-sizing: border-box;
+            width: 40%;
+            font-size: 0.7rem;
+            margin: 8px 0;
+        }
     }
     
     .paginator-controls {
@@ -239,13 +358,8 @@
     
     .custom-mat-list {
         border: 1px solid #ccc;
-        /* Adds a border around the list */
-        /* background-color: #f5f5f5; */
-        /* Sets the background color */
         border-radius: 4px;
-        /* Optional: rounds the corners */
         padding: 8px;
-        /* Optional: adds padding inside the list */
         margin-bottom: 20px;
     }
     /* Styles for each mat-list-item */
@@ -287,7 +401,5 @@
     
     .custom-button-card {
         margin-top: 4px;
-        /* Adds vertical space if necessary */
         min-width: 120px;
-        /* Ensures button has a decent width */
     }

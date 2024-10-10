@@ -126,9 +126,6 @@ export class DepartmentComponent implements OnInit{
     });
   }
 
-
-
-
   // Opens the department dialog
   openDepartmentDialog(): void {
     this.isAddMode = true;

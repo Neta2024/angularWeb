@@ -1,0 +1,10 @@
+::ng-deep .mat-tab-group .mat-tab-label,
+::ng-deep .mat-tab-group .mat-tab-label.mat-tab-label-active {
+    color: #22ae27 !important;
+    /* Change color for both active and inactive tabs */
+}
+
+::ng-deep .mat-tab-group .mat-ink-bar {
+    background-color: #22ae27 !important;
+    /* Change underline color */
+}

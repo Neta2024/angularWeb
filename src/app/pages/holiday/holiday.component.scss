@@ -1,136 +1,134 @@
-/* Container for year and month selectors */
+/* Variables */
+
+$primary-color: #159b03;
+$danger-color: #f44336;
+$hover-danger-color: #d32f2f;
+$table-border-color: #e0e0e0;
+$zebra-stripe-color: #f9f9f9;
+$hover-row-color: #d6f5d6;
+$header-bg-color: #e9ecef;
+$padding: 8px 16px;
+
+/* Selectors Container */
 
 .selectors-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .year-selector {
+        flex: 1;
+        &:not(:last-child) {
+            margin-right: 10px;
+        }
+        &:hover {
+            border-color: $primary-color;
+        }
+        select {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+    }
+    .add-holiday {
+        background-color: #d6f5d6;
+        font-weight: bold;
+        color: #1e7b1e;
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: none;
+        display: flex;
+        align-items: center;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+    .add-holiday:hover {
+        background-color: $hover-row-color;
+    }
 }
 
 
-/* Styling for month selector */
+/* No holidays message */
 
-.month-selector {
-    flex: 1;
-    margin-right: 10px;
-    /* Space between month and year selectors */
-}
-
-
-/* Hover effect for dropdowns */
-
-.month-selector :hover,
-.year-selector :hover {
-    border-color: #007bff;
-}
-
-
-/* Styling for year selector */
-
-.year-selector {
-    flex: 1;
-}
-
-
-/* Styling for month and year labels */
-
-.selectors-container label {
-    margin-right: 10px;
-    font-weight: bold;
-}
-
-
-/* Styling for the dropdowns */
-
-.month-dropdown,
-.year-dropdown {
-    padding: 8px 12px;
+.no-holidays {
+    color: #999;
+    font-style: italic;
     font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-}
-
-
-/* Style for no holidays message */
-
-.no-holiday {
-    font-size: 16px;
-    color: #ff0000;
     margin: 20px 0;
 }
 
 
-/* Style for each month's section */
+/* Table Styling */
 
-.month-section {
-    margin-bottom: 20px;
-    font-family: Arial, sans-serif;
-}
-
-
-/* Styling for month headers */
-
-.month-header {
-    font-weight: bold;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-}
-
-
-/* Style each month section */
-
-div {
-    margin-bottom: 40px;
-}
-
-
-/* Style section headers */
-
-h4 {
-    font-size: 20px;
-}
-
-
-/* Style the table */
-
-table {
+.holiday-table {
     width: 100%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: left;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    th,
+    td {
+        padding: $padding;
+        text-align: left;
+    }
+    th {
+        background-color: $header-bg-color;
+        color: #333;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    tbody {
+        background-color: #fff;
+        tr {
+            border-bottom: 1px solid $table-border-color;
+            &:nth-child(even) {
+                background-color: $zebra-stripe-color;
+            }
+            &:hover {
+                background-color: $hover-row-color;
+                color: #172c24;
+            }
+            td {
+                &.holiday-date {
+                    width: 30%;
+                }
+                &.holiday-name {
+                    width: 70%;
+                }
+                &.action-cell {
+                    text-align: center;
+                    border: none !important;
+                    background-color: none !important;
+                    margin-right: 8px !important;
+                    .delete-button {
+                        border: none;
+                        background: none;
+                        color: #f28b82;
+                        font-size: 16px;
+                        &:hover {
+                            color: #f55a4c;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 
-/* Style table body cells */
+/* Responsive Design */
 
-tbody {
-    background-color: #fff;
-}
-
-th,
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.holiday-date {
-    width: 30%;
-    text-align: left;
-}
-
-.holiday-name {
-    width: 70%;
-    text-align: left;
-    // border-radius: 0px, 10px, 10px, 0px;
-}
-
-
-/* Add a hover effect for rows */
-
-tbody tr:hover {
-    background-color: #d6f5d6; // background-color: #de8900aa;
-    // font-weight: bold;
-    color: #172c24;
+@media (max-width: 768px) {
+    .holiday-table th,
+    .holiday-table td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
 }

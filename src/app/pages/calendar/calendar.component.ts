@@ -28,6 +28,29 @@ export interface TableData {
   date: string;
 }
 
+interface Project {
+  value: string;
+  viewValue: string;
+}
+
+interface ProjectGroup {
+  disabled?: boolean;
+  name: string;
+  project: Project[];
+}
+
+interface Task {
+  value: string;
+  viewValue: string;
+}
+
+interface TaskGroup {
+  disabled?: boolean;
+  name: string;
+  task: Task[];
+}
+
+
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
@@ -37,6 +60,36 @@ export interface TableData {
 export class CalendarComponent implements OnInit {
 [x: string]: any;
   public eventCreated = new EventEmitter<any>();
+
+  // =================================================================================================
+  projectControl = new FormControl();
+  showProjects = false; // Flag to control Projects visibility
+  projectGroups: ProjectGroup[] = [
+    {
+      name: 'Suggestions',
+      project: []
+    },
+    {
+      name: 'Projects',
+      project: []
+    },
+  ];
+
+  taskControl = new FormControl();
+  showTasks = false; // Flag to control Tasks visibility
+  taskGroups: TaskGroup[] = [
+    {
+      name: 'Suggestions',
+      task: []
+    },
+    {
+      name: 'Tasks',
+      task: []
+    },
+  ];
+
+ 
+  // =================================================================================================
 
   tableData: any[] = []; // Declare tableData
   displayedColumns: string[] = [];
@@ -103,6 +156,7 @@ export class CalendarComponent implements OnInit {
   selectedProject: string;
   selectedTask: string;
   selectedPeriod: string;  // default
+  searchQuery: string = '';
 
   suggestedProjects: { name: string }[] = [];
 
@@ -118,8 +172,8 @@ export class CalendarComponent implements OnInit {
 
   private holidayDates: Set<string> = new Set();
 
-  selectedView: string = 'list';
-  // selectedView: string = 'calendar';
+  // selectedView: string = 'list';
+  selectedView: string = 'calendar';
   selectedTableView: string = 'individual';
   selectedCalendarView: string = 'individual';
 
@@ -294,6 +348,8 @@ export class CalendarComponent implements OnInit {
     
     this.fetchProjects();
     this.fetchTasks();
+    this.suggestProjects();
+    this.suggestTasks();
   }
 
 
@@ -1060,16 +1116,21 @@ export class CalendarComponent implements OnInit {
   }
 
   fetchProjects(): void {
-    const payload = {
-    
-    };
+    const payload = {};
 
     this.restApi.post('/master/projects', payload).subscribe((response: any) => {
       console.log('Projects', response);
       this.projects = response.map((project: any) => ({
         names: project.project_name
       }));
-      console.log('Projects', this.projects)
+
+      // Map projects to the Project format and update projectGroups
+      this.projectGroups[1].project = this.projects.map((project, index) => ({
+        value: project.names,      
+        viewValue: project.names        
+      }));
+
+      // console.log('Projects', this.projects)
     })
   }
 
@@ -1081,6 +1142,13 @@ export class CalendarComponent implements OnInit {
       this.suggestedProjects = response.map((project: any) => ({
         name: project.project_name
       }));
+
+      // Map suggestedProjects to the Project format and update projectGroups
+      this.projectGroups[0].project = this.suggestedProjects.map((project, index) => ({
+        value: project.name,      
+        viewValue: project.name        
+      }));
+
     });
   }
 
@@ -1090,7 +1158,12 @@ export class CalendarComponent implements OnInit {
       this.tasks = response.map((task: any) => ({
         names: task.t_name
       }));
-      
+
+      // Map tasks to the Task format and update taskGroups
+      this.taskGroups[1].task = this.tasks.map((task, index) => ({
+        value: task.names,      
+        viewValue: task.names      
+      }));
     })
 
   }
@@ -1102,9 +1175,24 @@ export class CalendarComponent implements OnInit {
 
       this.suggestedTasks = response.map((task: any) => ({
         name: task.t_name
-      }))
+      }));
+
+      // Map suggestedProjects to the Project format and update projectGroups
+      this.taskGroups[0].task = this.suggestedTasks.map((task, index) => ({
+        value: task.name,      
+        viewValue: task.name        
+      }));
+
     });
 
+  }
+
+  toggleProjects() {
+    this.showProjects = !this.showProjects; // Toggle visibility
+  }
+
+  toggleTasks() {
+    this.showTasks = !this.showTasks; // Toggle visibility
   }
 
   // Handle user selection change
@@ -1510,6 +1598,10 @@ export class CalendarComponent implements OnInit {
     this.updateListView();
     this.totalItems = this.totalItems;
     
+  }
+
+  clearSearch() {
+    this.searchQuery = ''; // Clear the input
   }
 
   // Method to filter users based on input value
