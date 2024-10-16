@@ -41,6 +41,12 @@ const routes: Routes = [
         data: { guardMethod: 'canActivateAdmin' },  // This tells the guard to use the canActivateAdmin method
       },
       {
+        path: 'project-management',
+        loadChildren: () => import('./project-management/project-management.module').then((m) => m.ProjectManagementModule),
+        canActivate: [AuthGuard],
+        data: { guardMethod: 'canActivateAdmin' },
+      },
+      {
         path: 'typography',
         loadComponent: () => import('./../demo/elements/typography/typography.component')
       },
