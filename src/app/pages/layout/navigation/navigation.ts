@@ -117,7 +117,7 @@ const NavigationItems = [
         type: 'item',
         icon: 'ti ti-briefcase',
         classes: 'nav-item',
-        url: '/timesheet/projects-management',
+        url: '/timesheet/project-management',
         breadcrumbs: false,
       }
     ]
