@@ -1,57 +1,15 @@
-<div class="container">
-  <!-- Search Box -->
-  <input type="text" [(ngModel)]="searchTerm" placeholder="Search Projects" (input)="filterProjects()" class="search-box">
+<mat-tab-group>
+  <mat-tab label="Overview">
+    <app-overview></app-overview>
+  </mat-tab>
 
-  <!-- Add Button -->
-  <button (click)="openAddPopup()" class="add-button">Add Project</button>
+  <mat-tab label="Type">
+    <app-type></app-type>
+  </mat-tab>
 
-  <!-- Projects Table -->
-  <table class="projects-table">
-    <thead>
-      <tr>
-        <th>Project Name</th>
-        <th>Project Type</th>
-        <th>Project Status</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Project Price</th>
-        <th>PS Cost</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let project of filteredProjects" (dblclick)="openEditPopup(project)">
-        <td>{{ project.name }}</td>
-        <td>{{ project.type }}</td>
-        <td>{{ project.status }}</td>
-        <td>{{ project.startDate }}</td>
-        <td>{{ project.endDate }}</td>
-        <td>{{ project.price }}</td>
-        <td>{{ project.psCost }}</td>
-        <td>
-          <button (click)="confirmDelete(project.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <mat-tab label="Status">
+  </mat-tab>
 
-  <!-- Add/Edit Project Popup -->
-  <div *ngIf="showPopup" class="popup-overlay">
-    <div class="popup-content">
-      <h3>{{ isEditing ? 'Edit Project' : 'Add Project' }}</h3>
-      <form (ngSubmit)="saveProject()">
-        <input [(ngModel)]="currentProject.name" placeholder="Project Name" required />
-        <input [(ngModel)]="currentProject.type" placeholder="Project Type" required />
-        <input [(ngModel)]="currentProject.status" placeholder="Project Status" required />
-        <input [(ngModel)]="currentProject.startDate" placeholder="Start Date" type="date" required />
-        <input [(ngModel)]="currentProject.endDate" placeholder="End Date" type="date" required />
-        <input [(ngModel)]="currentProject.price" placeholder="Project Price" required />
-        <input [(ngModel)]="currentProject.psCost" placeholder="PS Cost" required />
-        
-        <button type="submit">Save</button>
-        <button type="button" (click)="closePopup()">Cancel</button>
-        <button *ngIf="isEditing" type="button" (click)="deleteProject(currentProject.id)">Delete</button>
-      </form>
-    </div>
-  </div>
-</div>
+  <mat-tab label="Cost">
+  </mat-tab>
+</mat-tab-group>
