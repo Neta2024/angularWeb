@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   styleUrl: './project-management.component.scss'
 })
 
-export class ProjectManagementComponent {
-  
-}
+export class ProjectManagementComponent {}

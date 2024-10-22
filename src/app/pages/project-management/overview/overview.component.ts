@@ -3,18 +3,19 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Alert } from 'src/app/shared/components/alert/alert';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { Overview } from '../model/overview.model';
 import { OverviewService } from '../services/overview.service';
+
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss'],
+  styleUrl: './overview.component.scss',
 })
-export class OverviewComponent implements OnInit{
 
+export class OverviewComponent implements OnInit{
   displayedColumns: string[] = [
-    'no',
     'project',
     'type',
     'status',
@@ -22,6 +23,7 @@ export class OverviewComponent implements OnInit{
     'end',
     'price',
     'cost',
+    'action'
   ];
   
   dataSource = new MatTableDataSource<Overview>([]); 
@@ -51,13 +53,12 @@ export class OverviewComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.fetchOverview();
+    this.fetchProject();
   }
 
-  fetchOverview() {
+  fetchProject() {
     this.service.getOverview(this.request).subscribe(
       (response: any) => {
-
         if (Array.isArray(response)) {
           this.overviews = response.map((overview: any) => ({
             projectId: overview.project_id,
@@ -68,30 +69,53 @@ export class OverviewComponent implements OnInit{
             endDate: overview.end_date,
             projectPrice: overview.project_price,
             psCost: overview.ps_cost,
-          }));          
-
+          }));
           this.dataSource.data = this.overviews;
-          console.log('overview:', this.dataSource.data);
+          console.log('Overview:', this.dataSource.data);
         } else {
-          this.alert.error('Unexpected response format');
+          this.alert.error('Unexpected response format!');
         }
       },
       (error) => {
-        this.alert.error('Failed to fetch overview\'s data ');
+        this.alert.error('Failed to fetch overview\'s data!');
       }
     );
   }
 
-  // Delete project
+  // Add Project
 
+  // Update Project
 
-  // Opens dialog
-  
+  // Delete Project
+  deleteProject(projectId: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '315px',
+      data: {
+        title: 'Confirm Deletion',
+        message: 'Are you sure to delete this project?'
+      }
+    });
 
-  // Opens the Edit Project dialog
-  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.delOverview({ pjid: projectId }).subscribe(
+          (response) => {
+            this.alert.success('Deleted Project Successfully!');
+            this.fetchProject();
+          },
+          (error) => {
+            this.alert.error(error.message);
+          }
+        );
+      }
+    });
+  }
 
-  // Search query 
+  // Open Add Dialog
+
+  // Open Edit Dialog
+
+  // Search Query 
   applyFilter() {
     const filterValue = this.searchQuery.trim().toLowerCase();
     this.dataSource.filter = filterValue;
@@ -101,7 +125,6 @@ export class OverviewComponent implements OnInit{
     this.searchQuery = '';
     this.applyFilter();
   }
-
 }
 
 export { Overview };

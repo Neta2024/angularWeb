@@ -10,11 +10,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ProjectManagementComponent } from './project-management.component';
 import { OverviewModule } from './overview/overview.module';
 import { TypeModule } from "./type/type.module";
+import { CostModule } from "./cost/cost.module";
+
 
 @NgModule({
   declarations: [
@@ -37,20 +39,19 @@ import { TypeModule } from "./type/type.module";
     MatGridListModule,
     MaterialModule,
     RouterModule.forChild([
-        {
-            path: '',
-            component: ProjectManagementComponent,
-        },
-        {
-            path: ':id',
-            component: ProjectManagementComponent,
-        }
+      {
+        path: '',
+        component: ProjectManagementComponent,
+      },
+      {
+        path: ':id',
+        component: ProjectManagementComponent,
+      }
     ]),
     OverviewModule,
-    TypeModule
-],
-  exports: [
-    ProjectManagementComponent
-  ]
+    TypeModule,
+    CostModule
+  ],
 })
-export class ProjectManagementModule { }
+
+export class ProjectManagementModule {}

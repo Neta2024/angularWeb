@@ -1,0 +1,142 @@
+.cost {
+    margin: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(76, 76, 76, 0.1);
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        h4 {
+            font-size: 24px;
+            color: #333;
+        }
+        .action-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .search-input {
+                position: relative;
+                display: flex;
+                margin-right: 8px;
+                border: 1px solid #ccc;
+                border-radius: 20px;
+                width: 250px;
+                input[type="text"] {
+                    margin-left: 8px;
+                    padding: 8px;
+                    border: none;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                    background: none;
+                    width: 88%;
+                }
+                /* Clear button inside the input field */
+                .clear-search {
+                    width: 9%;
+                    position: absolute;
+                    right: 8px;
+                    top: 50%;
+                    transform: translateY(-35%);
+                    padding: 0;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                }
+                mat-icon {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #a1a1a1;
+                }
+            }
+            .add-pjCost {
+                background-color: #d6f5d6;
+                color: #1e7b1e;
+                padding: 8px 16px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                transition: box-shadow 0.3s ease;
+            }
+        }
+    }
+    // New container for mat-table
+    .table-wrapper {
+        max-width: 100%;
+        overflow-x: auto;
+        margin-top: 15px;
+        border-radius: 8px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        th {
+            background-color: #e9ecef;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            color: #495057;
+            // Styling for the search input in the Full Name column header
+            .search-input {
+                margin-left: 10px; // Space between header and search input
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 0.9rem;
+                width: 150px; // Adjust width as needed
+            }
+        }
+        td {
+            // padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            color: #212529;
+            .delete-button {
+                color: #f28b82;
+                font-size: 16px;
+                &:hover {
+                    color: #f55a4c;
+                }
+                mat-icon {
+                    font-size: 20px;
+                }
+            }
+        }
+        .mat-column-action {
+            width: 20%;
+        }
+        tr {
+            &:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            &:last-child td {
+                border-bottom: none; // Remove bottom border for the last row
+            }
+            &:hover {
+                background-color: #d6f5d6;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.mat-mdc-slide-toggle.mat-primary {
+    --mdc-switch-selected-focus-state-layer-color: #4CAF50;
+    --mdc-switch-selected-handle-color: #4CAF50;
+    --mdc-switch-selected-hover-state-layer-color: #4CAF50;
+    --mdc-switch-selected-pressed-state-layer-color: #4CAF50;
+    --mdc-switch-selected-focus-handle-color: #2E7D32;
+    --mdc-switch-selected-hover-handle-color: #2E7D32;
+    --mdc-switch-selected-pressed-handle-color: #2E7D32;
+    --mdc-switch-selected-focus-track-color: #4CAF50;
+    --mdc-switch-selected-hover-track-color: #4CAF50;
+    --mdc-switch-selected-pressed-track-color: #4CAF50;
+    --mdc-switch-selected-track-color: #4CAF50;
+}
+
+.small-slide-toggle {
+    transform: scale(0.7);
+    height: 20px;
+}

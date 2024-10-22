@@ -1,0 +1,42 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ mode === 'add' ? 'Add Project Type' : 'Edit Project Type' }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+
+<form [formGroup]="typeForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <div class="form-group">
+                    <h5>Project Type Code</h5>
+                    <input type="text" class="form-control" formControlName="pj_type_code" placeholder="Code" />
+                    <div *ngIf="typeForm.get('pj_type_code')?.invalid && typeForm.get('pj_type_code')?.touched" class="text-danger">
+                        Code is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-3">
+                <div class="form-group">
+                    <h5>Project Type Name</h5>
+                    <input type="text" class="form-control" formControlName="pj_type_name" placeholder="Name" />
+                    <div *ngIf="typeForm.get('pj_type_name')?.invalid && typeForm.get('pj_type_name')?.touched" class="text-danger">
+                        Name is required
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" mat-button (click)="onCancel()" style="background-color: #7a7a7ac3; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0,
+                        0, 0, 0.1); transition: box-shadow 0.3s ease;">
+        Cancel
+        </button>
+        <button type="submit" mat-button style=" background-color: #4caf4fe1; color: #ffffff; /* font-weight: bold; */ padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition:
+                        box-shadow 0.3s ease;">
+        {{ mode === 'add' ? 'Add' : 'Update' }}
+        </button>
+    </div>
+</form>

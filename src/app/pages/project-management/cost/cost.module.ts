@@ -7,13 +7,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { TypeComponent } from './type.component';
-import { TypeDialogComponent } from './type-dialog/type-dialog.component';
+import { CostComponent } from './cost.component';
+
 
 @NgModule({
   declarations: [
-    TypeComponent,
-    TypeDialogComponent
+    CostComponent,
   ],
   imports: [
     CommonModule,
@@ -27,8 +26,8 @@ import { TypeDialogComponent } from './type-dialog/type-dialog.component';
     FormsModule,
   ],
   exports: [
-    TypeComponent,
+    CostComponent,
   ],
 })
 
-export class TypeModule {}
+export class CostModule {}
