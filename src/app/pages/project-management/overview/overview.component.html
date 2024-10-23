@@ -19,7 +19,7 @@
 
         <!-- Material Table -->
         <div class="table-wrapper">
-            <table mat-table class="mat-elevation-z8" multiTemplateDataRows>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
 
                 <!-- Project Name Column -->
                 <ng-container matColumnDef="project">

@@ -100,7 +100,7 @@ export class OverviewComponent implements OnInit{
       if (result) {
         this.service.delOverview({ pjid: projectId }).subscribe(
           (response) => {
-            this.alert.success('Deleted Project Successfully!');
+            this.alert.success('Deleted project successfully!');
             this.fetchProject();
           },
           (error) => {

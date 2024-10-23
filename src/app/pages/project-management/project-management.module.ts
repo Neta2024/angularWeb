@@ -16,7 +16,7 @@ import { ProjectManagementComponent } from './project-management.component';
 import { OverviewModule } from './overview/overview.module';
 import { TypeModule } from "./type/type.module";
 import { CostModule } from "./cost/cost.module";
-
+import { StatusModule } from "./status/status.module";
 
 @NgModule({
   declarations: [
@@ -39,18 +39,19 @@ import { CostModule } from "./cost/cost.module";
     MatGridListModule,
     MaterialModule,
     RouterModule.forChild([
-      {
-        path: '',
-        component: ProjectManagementComponent,
-      },
-      {
-        path: ':id',
-        component: ProjectManagementComponent,
-      }
+        {
+            path: '',
+            component: ProjectManagementComponent,
+        },
+        {
+            path: ':id',
+            component: ProjectManagementComponent,
+        }
     ]),
     OverviewModule,
     TypeModule,
-    CostModule
+    CostModule,
+    StatusModule
   ],
 })
 

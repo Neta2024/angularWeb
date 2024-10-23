@@ -11,15 +11,12 @@
                         <mat-icon>close</mat-icon>
                     </button>
                 </div>
-                <button class="add-pjCost" >
-                    <mat-icon style="margin-right: 4px;">add_circle_outline</mat-icon>Add
-                </button>
             </div>
         </div>
 
         <!-- Material Table -->
         <div class="table-wrapper">
-            <table mat-table class="mat-elevation-z8" multiTemplateDataRows>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
 
                 <!-- Cost Column -->
                 <ng-container matColumnDef="name">

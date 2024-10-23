@@ -4,37 +4,39 @@ import { Alert } from 'src/app/shared/components/alert/alert';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { Type } from '../model/type.model';
-import { TypeService } from '../services/type.service';
-import { TypeDialogComponent } from './type-dialog/type-dialog.component';
+import { Status } from '../model/status.model';
+import { StatusService } from '../services/status.service';
+import { StatusDialogComponent } from './status-dialog/status-dialog.component';
 
 @Component({
-  selector: 'app-type',
-  templateUrl: './type.component.html',
-  styleUrl: './type.component.scss',
+  selector: 'app-status',
+  templateUrl: './status.component.html',
+  styleUrl: './status.component.scss'
 })
 
-export class TypeComponent implements OnInit{
+export class StatusComponent implements OnInit{
   displayedColumns: string[] = [
-    'code',
     'name',
+    'type',
+    'code',
     'action'
   ];
   
-  dataSource = new MatTableDataSource<Type>([]); 
+  dataSource = new MatTableDataSource<Status>([]); 
 
-  types: any[] = [];
+  statuses: any[] = [];
 
   request: any = {
-    pjTypeId: 0,
-    pjTypeCode: '',
-    pjTypeName: '',
+    pjStatusId: 0,
+    pjStatusName: '',
+    pjStatusType: '',
+    pjStatusCode: '',
   };
   searchQuery: string = '';
   isAddMode: boolean;
 
   constructor( 
-    private service: TypeService,
+    private service: StatusService,
     private alert: Alert,
     private modalService: NgbModal, 
     private dialog: MatDialog 
@@ -43,76 +45,77 @@ export class TypeComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.fetchType();
+    this.fetchStatus();
   }
 
-  fetchType() {
-    this.service.getPjType(this.request).subscribe(
+  fetchStatus() {
+    this.service.getPjStatus(this.request).subscribe(
       (response: any) => {
         if (Array.isArray(response)) {
-          this.types = response.map((type: any) => ({
-            pjTypeId: type.pj_type_id,
-            pjTypeCode: type.pj_type_code,
-            pjTypeName: type.pj_type_name,
+          this.statuses = response.map((status: any) => ({
+            pjStatusId: status.pj_s_id,
+            pjStatusName: status.status,
+            pjStatusType: status.type,
+            pjStatusCode: status.phase_code,
           }));
-          this.dataSource.data = this.types;
-          console.log('Type:', this.dataSource.data);
+          this.dataSource.data = this.statuses;
+          console.log('Status:', this.dataSource.data);
         } else {
           this.alert.error('Unexpected response format!');
         }
       },
       (error) => {
-        this.alert.error('Failed to fetch type\'s data!');
+        this.alert.error('Failed to fetch status data!');
       }
     );
   }
 
   // Add Project
-  addType(request: any){
-    this.service.addPjType(request).subscribe(
+  addStatus(request: any){
+    this.service.addPjStatus(request).subscribe(
       (response) => {
-        console.log('Added project type successfully:', response);
-        this.alert.success('Added project type successfully');
-        this.fetchType();
+        console.log('Added project status successfully:', response);
+        this.alert.success('Added project status successfully');
+        this.fetchStatus();
       },
       (error) => {
         this.alert.error(error.message);
-        console.error('Fail to add project type:', error);
+        console.error('Fail to add project status:', error);
       }
     );
   }
 
   // Update Project
-  updateType(request: any){
-    this.service.updPjType(request).subscribe(
+  updateStatus(request: any){
+    this.service.updPjStatus(request).subscribe(
       (response) => {
-        console.log('Updated project type successfully:', response);
-        this.alert.success('Updated project type successfully');
-        this.fetchType();
+        console.log('Updated project status successfully:', response);
+        this.alert.success('Updated project status successfully');
+        this.fetchStatus();
       },
       (error) => {
         this.alert.error(error.message);
-        console.error('Fail to update project type:', error);
+        console.error('Fail to update project status:', error);
       }
     );
   }
 
   // Delete Project
-  deleteType(pjTypeId: number) {
+  deleteStatus(pjStatusId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '315px',
       data: {
         title: 'Confirm Deletion',
-        message: 'Are you sure to delete this project type?'
+        message: 'Are you sure to delete this project status?'
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.service.delPjType({ pj_type_id: pjTypeId }).subscribe(
+        this.service.delPjStatus({ pj_s_id: pjStatusId }).subscribe(
           (response) => {
-            this.alert.success('Deleted project type successfully!');
-            this.fetchType();
+            this.alert.success('Deleted project status successfully!');
+            this.fetchStatus();
           },
           (error) => {
             this.alert.error(error.message);
@@ -123,9 +126,9 @@ export class TypeComponent implements OnInit{
   }
 
   // Open Add Dialog
-  openTypeDialog(): void {
+  openStatusDialog(): void {
     this.isAddMode = true;
-    const modalRef = this.modalService.open(TypeDialogComponent, {
+    const modalRef = this.modalService.open(StatusDialogComponent, {
       size: 'sm',
       centered: true
     });
@@ -135,7 +138,7 @@ export class TypeComponent implements OnInit{
 
     modalRef.result.then((result) => {
       if (result) {
-        this.addType(result);
+        this.addStatus(result);
         console.log('Result from dialog:', result);
       }
     }).catch((error) => {
@@ -144,22 +147,22 @@ export class TypeComponent implements OnInit{
   }
 
   // Open Edit Dialog
-  openEditTypeDialog(type : Type): void {
+  openEditStatusDialog(status : Status): void {
     this.isAddMode = false;
-    const modalRef = this.modalService.open(TypeDialogComponent, {
+    const modalRef = this.modalService.open(StatusDialogComponent, {
       size: 'sm',
       centered: true
     });
 
     modalRef.componentInstance.mode = 'edit';
     modalRef.componentInstance.isAddMode = this.isAddMode;
-    modalRef.componentInstance.type = type;
+    modalRef.componentInstance.status = status;
 
     modalRef.result.then((result) => {
       if (result) {
-        const index = this.types.findIndex(u => u.id === result.id);
+        const index = this.statuses.findIndex(u => u.id === result.id);
         if (index !== -1) {
-          this.updateType(result); 
+          this.updateStatus(result); 
         }
         console.log('Result from dialog:', result);
       }
@@ -180,4 +183,4 @@ export class TypeComponent implements OnInit{
   }
 }
 
-export { Type };
+export { Status };
