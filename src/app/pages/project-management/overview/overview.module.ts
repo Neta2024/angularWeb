@@ -8,11 +8,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { OverviewComponent } from './overview.component';
-
+import { OverviewDialogComponent } from './overview-dialog/overview-dialog.component';
 
 @NgModule({
   declarations: [
     OverviewComponent,
+    OverviewDialogComponent
   ],
   imports: [
     CommonModule,

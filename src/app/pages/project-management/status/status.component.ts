@@ -156,11 +156,16 @@ export class StatusComponent implements OnInit{
 
     modalRef.componentInstance.mode = 'edit';
     modalRef.componentInstance.isAddMode = this.isAddMode;
-    modalRef.componentInstance.status = status;
+    modalRef.componentInstance.status = {
+      pj_s_id: status.pjStatusId,
+      status: status.pjStatusName,
+      type: status.pjStatusType,
+      phase_code: status.pjStatusCode,
+    };
 
     modalRef.result.then((result) => {
       if (result) {
-        const index = this.statuses.findIndex(u => u.id === result.id);
+        const index = this.statuses.findIndex(u => u.pjStatusId === result.pj_s_id);
         if (index !== -1) {
           this.updateStatus(result); 
         }

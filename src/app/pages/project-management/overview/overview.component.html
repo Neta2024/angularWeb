@@ -11,7 +11,7 @@
                         <mat-icon>close</mat-icon>
                     </button>
                 </div>
-                <button class="add-project" >
+                <button class="add-project" mat-button (click)="openDialog()">
                     <mat-icon style="margin-right: 4px;">add_circle_outline</mat-icon>Add
                 </button>
             </div>
@@ -75,7 +75,7 @@
 
                 <!-- Table Header and Rows -->
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openEditDialog(row)"></tr>
 
             </table>
         </div>

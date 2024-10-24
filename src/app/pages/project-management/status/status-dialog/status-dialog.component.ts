@@ -25,30 +25,21 @@ export class StatusDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.mode === 'add' && this.status){
-      this.statusForm = this.fb.group({
-        pj_s_id: [this.status.pj_s_id == null],
-        status: ['', Validators.required],
-        type: ['', Validators.required],
-        phase_code: ['', Validators.required],
-      });
-    }
+    this.statusForm = this.fb.group({
+      pj_s_id: [this.status.pj_s_id || null],
+      status: ['', Validators.required],
+      type: ['', Validators.required],
+      phase_code: ['', Validators.required],
+    });
 
     if(this.mode === 'edit' && this.status){
-      this.statusForm = this.fb.group({
-        pj_s_id: [this.status.pj_s_id],
-        status: ['', Validators.required],
-        type: ['', Validators.required],
-        phase_code: ['', Validators.required],
-      });
+      this.statusForm.patchValue({
+        pj_s_id: this.status.pj_s_id,
+        status: this.status.status,
+        type: this.status.type,
+        phase_code: this.status.phase_code,
+      })
     }
-
-    this.statusForm.patchValue({
-      pj_s_id: this.status.pj_s_id,
-      status: this.status.status,
-      type: this.status.type,
-      phase_code: this.status.phase_code,
-    })
   }
 
   addStatus(){

@@ -153,11 +153,15 @@ export class TypeComponent implements OnInit{
 
     modalRef.componentInstance.mode = 'edit';
     modalRef.componentInstance.isAddMode = this.isAddMode;
-    modalRef.componentInstance.type = type;
+    modalRef.componentInstance.type = {
+      pj_type_id: type.pjTypeId,
+      pj_type_code: type.pjTypeCode,
+      pj_type_name: type.pjTypeName
+    };
 
     modalRef.result.then((result) => {
       if (result) {
-        const index = this.types.findIndex(u => u.id === result.id);
+        const index = this.types.findIndex(u => u.pjTypeId === result.pj_type_id);
         if (index !== -1) {
           this.updateType(result); 
         }

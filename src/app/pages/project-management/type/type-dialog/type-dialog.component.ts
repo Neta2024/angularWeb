@@ -25,27 +25,19 @@ export class TypeDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.mode === 'add' && this.type){
-      this.typeForm = this.fb.group({
-        pj_type_id: [this.type.pj_type_id == null],
-        pj_type_code: ['', Validators.required],
-        pj_type_name: ['', Validators.required],
+    this.typeForm = this.fb.group({
+      pj_type_id: [this.type.pj_type_id || null],
+      pj_type_code: ['', Validators.required],
+      pj_type_name: ['', Validators.required],
+    });
+  
+    if (this.mode === 'edit' && this.type) {
+      this.typeForm.patchValue({
+        pj_type_id: this.type.pj_type_id,
+        pj_type_code: this.type.pj_type_code,
+        pj_type_name: this.type.pj_type_name,
       });
     }
-
-    if(this.mode === 'edit' && this.type){
-      this.typeForm = this.fb.group({
-        pj_type_id: [this.type.pj_type_id],
-        pj_type_code: ['', Validators.required],
-        pj_type_name: ['', Validators.required],
-      });
-    }
-
-    this.typeForm.patchValue({
-      pj_type_id: this.type.pj_type_id,
-      pj_type_code: this.type.pj_type_code,
-      pj_type_name: this.type.pj_type_name,
-    })
   }
 
   addType(){
