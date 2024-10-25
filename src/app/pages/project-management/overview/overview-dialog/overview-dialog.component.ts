@@ -24,6 +24,8 @@ export class OverviewDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('Project passed to dialog:', this.project);
+
     this.projectForm = this.fb.group({
       project_id: [this.project.project_id || null],
       project_name: ['', Validators.required],
@@ -56,7 +58,7 @@ export class OverviewDialogComponent implements OnInit {
       return;
     }
 
-    const typeRequest = {
+    const projectRequest = {
       project_name: this.projectForm.get('project_name').value,
       project_type: this.projectForm.get('project_type').value,
       project_status: this.projectForm.get('project_status').value,
@@ -65,7 +67,7 @@ export class OverviewDialogComponent implements OnInit {
       project_price: this.projectForm.get('project_price').value,
       ps_cost: this.projectForm.get('ps_cost').value,
     }
-    this.activeModal.close(typeRequest);
+    this.activeModal.close(projectRequest);
   }
 
   editProject(){
@@ -75,7 +77,7 @@ export class OverviewDialogComponent implements OnInit {
       return;
     }
 
-    const typeRequest = {
+    const projectRequest = {
       project_id: this.projectForm.get('project_id').value,
       project_name: this.projectForm.get('project_name').value,
       project_type: this.projectForm.get('project_type').value,
@@ -85,7 +87,9 @@ export class OverviewDialogComponent implements OnInit {
       project_price: this.projectForm.get('project_price').value,
       ps_cost: this.projectForm.get('ps_cost').value,
     }
-    this.activeModal.close(typeRequest);
+    console.log('Request to update project type:', projectRequest);
+
+    this.activeModal.close(projectRequest);
   }
 
   onSubmit() {

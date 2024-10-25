@@ -49,12 +49,12 @@ export class StatusDialogComponent implements OnInit {
       return;
     }
 
-    const typeRequest = {
+    const statusRequest = {
       status: this.statusForm.get('status').value,
       type: this.statusForm.get('type').value,
       phase_code: this.statusForm.get('phase_code').value,
     }
-    this.activeModal.close(typeRequest);
+    this.activeModal.close(statusRequest);
   }
 
   editStatus(){
@@ -64,13 +64,13 @@ export class StatusDialogComponent implements OnInit {
       return;
     }
 
-    const typeRequest = {
+    const statusRequest = {
       pj_s_id: this.statusForm.get('pj_s_id').value,
       status: this.statusForm.get('status').value,
       type: this.statusForm.get('type').value,
       phase_code: this.statusForm.get('phase_code').value,
     }
-    this.activeModal.close(typeRequest);
+    this.activeModal.close(statusRequest);
   }
 
   onSubmit() {
