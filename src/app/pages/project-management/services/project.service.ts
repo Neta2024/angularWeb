@@ -17,6 +17,16 @@ export class ProjectService {
     return this.restApi.post(`${this.apiUrl}/projects`, request);
   }
 
+  // Get All Project Types
+  getPjType(request: any): Observable<Project[]> {
+    return this.restApi.post(`${this.apiUrl}/project-types`, request);
+  }
+
+  // Get All Project Statuses
+  getPjStatus(request: any): Observable<Project[]> {
+    return this.restApi.post(`${this.apiUrl}/get-projectStatus`, request);
+  }
+
   // Add Project
   addPj(request: any): Observable<Project[]> {
     return this.restApi.post(`${this.apiUrl}/add-project`, request);

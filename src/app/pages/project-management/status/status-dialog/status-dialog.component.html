@@ -29,10 +29,13 @@
 
             <div class="col-12 mb-3">
                 <div class="form-group">
-                    <h5>Phase Code</h5>
-                    <input type="text" class="form-control" formControlName="phase_code" placeholder="Code" />
+                    <h5>Phase</h5>
+                    <select class="form-control" formControlName="phase_code">
+                        <option value="" disabled>Select Phase</option>
+                        <option *ngFor="let phase of statusPhase" [value]="phase.phCode">{{ phase.phName }}</option>
+                    </select>
                     <div *ngIf="statusForm.get('phase_code')?.invalid && statusForm.get('phase_code')?.touched" class="text-danger">
-                        Phase xode is required
+                        Phase is required
                     </div>
                 </div>
             </div>

@@ -13,6 +13,7 @@ export class StatusDialogComponent implements OnInit {
   @Input() mode: 'add' | 'edit';
   @Input() isAddMode: boolean;
   @Input() status: any = {};
+  @Input() statusPhase: any = {};
 
   statusForm: FormGroup;
 

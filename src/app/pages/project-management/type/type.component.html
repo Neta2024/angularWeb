@@ -3,7 +3,7 @@
 
         <!-- Button Container for Save and Cancel -->
         <div class="table-header">
-            <h4>Project Type Management</h4>
+            <h4>Project Type</h4>
             <div class="action-container">
                 <div class="search-input">
                     <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"/>
@@ -37,7 +37,7 @@
                 <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef>Action</th>
                     <td mat-cell *matCellDef="let element">
-                        <button mat-icon-button class="delete-button" (click)="deleteType(element.pjTypeId)">
+                        <button mat-icon-button class="delete-button" (click)="deleteType(element.pjTypeId); $event.stopPropagation()">
                             <mat-icon>delete</mat-icon>
                         </button>
                     </td>

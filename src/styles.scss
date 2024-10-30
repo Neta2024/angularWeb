@@ -22,6 +22,10 @@ File: style.css
 @import 'node_modules/bootstrap/scss/utilities';
 @import 'node_modules/bootstrap/scss/utilities/api';
 
+// primeng
+@import "~primeng/resources/themes/saga-blue/theme.css";
+@import "~primeng/resources/primeng.min.css";
+
 // main framework
 @import 'scss/themes/generic.scss';
 @import 'scss/themes/general.scss';

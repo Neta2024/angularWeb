@@ -26,9 +26,13 @@ export class ProjectComponent implements OnInit{
     'action'
   ];
   
-  dataSource = new MatTableDataSource<Project>([]); 
+  dataSource = new MatTableDataSource<Project>([]);
 
   projects: any[] = [];
+
+  projectTypes: any[] = [];
+
+  projectStatuses: any[] = [];
 
   request: any = {
     projectId: 0,           
@@ -54,6 +58,8 @@ export class ProjectComponent implements OnInit{
 
   ngOnInit(): void {
     this.fetchProject();
+    this.fetchProjectTypes();
+    this.fetchProjectStatuses();
   }
 
   fetchProject() {
@@ -78,6 +84,50 @@ export class ProjectComponent implements OnInit{
       },
       (error) => {
         this.alert.error('Failed to fetch project\'s data!');
+      }
+    );
+  }
+
+  fetchProjectTypes() {
+    this.service.getPjType({}).subscribe(
+      (response: any) => {
+        if (Array.isArray(response)) {
+          this.projectTypes = response.map((type: any) => ({
+            pjTyId: type.pj_type_id,
+            pjTyCode: type.pj_type_code,
+            pjTyName: type.pj_type_name
+          }));
+          console.log('Project Types:', this.projectTypes);
+        } else {
+          this.alert.error('Unexpected response format for project types!');
+        }
+      },
+      (error) => {
+        this.alert.error('Failed to fetch project types!');
+      }
+    );
+  }
+
+  getProjectTypeName(pjTyCode: string): string {
+    const projectType = this.projectTypes.find(type => type.pjTyCode === pjTyCode);
+    return projectType ? projectType.pjTyName : pjTyCode;
+  }  
+
+  fetchProjectStatuses() {
+    this.service.getPjStatus({}).subscribe(
+      (response: any) => {
+        if (Array.isArray(response)) {
+          this.projectStatuses = response.map((status: any) => ({
+            pjStId: status.pj_s_id,
+            pjStName: status.status
+          }));
+          console.log('Project Statuses:', this.projectStatuses);
+        } else {
+          this.alert.error('Unexpected response format for project statuses!');
+        }
+      },
+      (error) => {
+        this.alert.error('Failed to fetch project statuses!');
       }
     );
   }
@@ -147,6 +197,8 @@ export class ProjectComponent implements OnInit{
 
     modalRef.componentInstance.mode = 'add';
     modalRef.componentInstance.isAddMode = this.isAddMode;
+    modalRef.componentInstance.projectTypes = this.projectTypes;
+    modalRef.componentInstance.projectStatuses = this.projectStatuses;
 
     modalRef.result.then((result) => {
       if (result) {
@@ -177,7 +229,9 @@ export class ProjectComponent implements OnInit{
       end_date: project.endDate,
       project_price: project.projectPrice,
       ps_cost: project.psCost,
-    };
+    };    
+    modalRef.componentInstance.projectTypes = this.projectTypes;
+    modalRef.componentInstance.projectStatuses = this.projectStatuses;
 
     modalRef.result.then((result) => {
       if (result) {

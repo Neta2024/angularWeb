@@ -26,6 +26,8 @@ export class StatusComponent implements OnInit{
 
   statuses: any[] = [];
 
+  statusPhase: any[] = [];
+
   request: any = {
     pjStatusId: 0,
     pjStatusName: '',
@@ -46,6 +48,7 @@ export class StatusComponent implements OnInit{
 
   ngOnInit(): void {
     this.fetchStatus();
+    this.fetchPhase();
   }
 
   fetchStatus() {
@@ -68,6 +71,31 @@ export class StatusComponent implements OnInit{
         this.alert.error('Failed to fetch status data!');
       }
     );
+  }
+
+  fetchPhase() {
+    this.service.getPhase({}).subscribe(
+      (response: any) => {
+        if (Array.isArray(response)) {
+          this.statusPhase = response.map((phase: any) => ({
+            phId: phase.phase_id,
+            phCode: phase.phase_code,
+            phName: phase.phase_name
+          }));
+          console.log('Phases:', this.statusPhase);
+        } else {
+          this.alert.error('Unexpected response format for phases!');
+        }
+      },
+      (error) => {
+        this.alert.error('Failed to fetch phases!');
+      }
+    );
+  }
+
+  getPhaseName(phCode: string): string {
+    const phase = this.statusPhase.find(phase => phase.phCode === phCode);
+    return phase ? phase.phName : phCode;
   }
 
   // Add Project
@@ -135,6 +163,7 @@ export class StatusComponent implements OnInit{
 
     modalRef.componentInstance.mode = 'add';
     modalRef.componentInstance.isAddMode = this.isAddMode;
+    modalRef.componentInstance.statusPhase = this.statusPhase;
 
     modalRef.result.then((result) => {
       if (result) {
@@ -162,6 +191,7 @@ export class StatusComponent implements OnInit{
       type: status.pjStatusType,
       phase_code: status.pjStatusCode,
     };
+    modalRef.componentInstance.statusPhase = this.statusPhase;
 
     modalRef.result.then((result) => {
       if (result) {

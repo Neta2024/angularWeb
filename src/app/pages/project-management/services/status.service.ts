@@ -17,6 +17,11 @@ export class StatusService {
     return this.restApi.post(`${this.apiUrl}/get-projectStatus`, request);
   }
 
+  // Get All Phases
+  getPhase(request: any): Observable<Status[]> {
+    return this.restApi.post(`${this.apiUrl}/get-phases`, request);
+  }
+
   // Add Project Status
   addPjStatus(request: any): Observable<Status[]> {
     return this.restApi.post(`${this.apiUrl}/add-projectStatus`, request);

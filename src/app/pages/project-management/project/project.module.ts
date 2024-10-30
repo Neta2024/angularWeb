@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { CalendarModule } from 'primeng/calendar';
 import { ProjectComponent } from './project.component';
 import { ProjectDialogComponent } from './project-dialog/project-dialog.component';
 
@@ -24,7 +25,8 @@ import { ProjectDialogComponent } from './project-dialog/project-dialog.componen
     MatDialogModule,
     MatFormFieldModule,
     MatButtonModule,
-    FormsModule, 
+    FormsModule,
+    CalendarModule,
   ],
   exports: [
     ProjectComponent,

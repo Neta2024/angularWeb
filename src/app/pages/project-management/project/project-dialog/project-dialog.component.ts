@@ -8,10 +8,13 @@ import { Alert } from 'src/app/shared/components/alert/alert';
   templateUrl: './project-dialog.component.html',
   styleUrl: './project-dialog.component.scss'
 })
+
 export class ProjectDialogComponent implements OnInit {
   @Input() mode: 'add' | 'edit';
   @Input() isAddMode: boolean;
   @Input() project: any = {};
+  @Input() projectTypes: any[] = [];
+  @Input() projectStatuses: any[] = [];
 
   projectForm: FormGroup;
 
@@ -48,7 +51,7 @@ export class ProjectDialogComponent implements OnInit {
         project_price: this.project.project_price,
         ps_cost: this.project.ps_cost,
       });
-    }
+    }    
   }
 
   addProject(){
