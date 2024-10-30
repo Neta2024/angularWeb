@@ -1,9 +1,9 @@
-<div class="overview">
+<div class="project">
     <div class="tab-content">
 
         <!-- Button Container for Save and Cancel -->
         <div class="table-header">
-            <h4>Overview</h4>
+            <h4>Project Management</h4>
             <div class="action-container">
                 <div class="search-input">
                     <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"/>
@@ -75,7 +75,7 @@
 
                 <!-- Table Header and Rows -->
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openEditDialog(row)"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openEditDialog(row)"></tr>
 
             </table>
         </div>

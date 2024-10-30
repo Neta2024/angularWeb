@@ -4,17 +4,17 @@ import { Alert } from 'src/app/shared/components/alert/alert';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { Overview } from '../model/overview.model';
-import { OverviewService } from '../services/overview.service';
-import { OverviewDialogComponent } from './overview-dialog/overview-dialog.component';
+import { Project } from '../model/project.model';
+import { ProjectService } from '../services/project.service';
+import { ProjectDialogComponent } from './project-dialog/project-dialog.component';
 
 @Component({
-  selector: 'app-overview',
-  templateUrl: './overview.component.html',
-  styleUrl: './overview.component.scss',
+  selector: 'app-project',
+  templateUrl: './project.component.html',
+  styleUrl: './project.component.scss',
 })
 
-export class OverviewComponent implements OnInit{
+export class ProjectComponent implements OnInit{
   displayedColumns: string[] = [
     'project',
     'type',
@@ -26,9 +26,9 @@ export class OverviewComponent implements OnInit{
     'action'
   ];
   
-  dataSource = new MatTableDataSource<Overview>([]); 
+  dataSource = new MatTableDataSource<Project>([]); 
 
-  overviews: any[] = [];
+  projects: any[] = [];
 
   request: any = {
     projectId: 0,           
@@ -44,7 +44,7 @@ export class OverviewComponent implements OnInit{
   isAddMode: boolean;
 
   constructor( 
-    private service: OverviewService,
+    private service: ProjectService,
     private alert: Alert,
     private modalService: NgbModal, 
     private dialog: MatDialog 
@@ -57,27 +57,27 @@ export class OverviewComponent implements OnInit{
   }
 
   fetchProject() {
-    this.service.getOverview(this.request).subscribe(
+    this.service.getPj(this.request).subscribe(
       (response: any) => {
         if (Array.isArray(response)) {
-          this.overviews = response.map((overview: any) => ({
-            projectId: overview.project_id,
-            projectName: overview.project_name,
-            projectType: overview.project_type,
-            projectStatus: overview.project_status,
-            startDate: overview.start_date,
-            endDate: overview.end_date,
-            projectPrice: overview.project_price,
-            psCost: overview.ps_cost,
+          this.projects = response.map((project: any) => ({
+            projectId: project.project_id,
+            projectName: project.project_name,
+            projectType: project.project_type,
+            projectStatus: project.project_status,
+            startDate: project.start_date,
+            endDate: project.end_date,
+            projectPrice: project.project_price,
+            psCost: project.ps_cost,
           }));
-          this.dataSource.data = this.overviews;
-          console.log('Overview:', this.dataSource.data);
+          this.dataSource.data = this.projects;
+          console.log('Project:', this.dataSource.data);
         } else {
           this.alert.error('Unexpected response format!');
         }
       },
       (error) => {
-        this.alert.error('Failed to fetch overview\'s data!');
+        this.alert.error('Failed to fetch project\'s data!');
       }
     );
   }
@@ -124,7 +124,7 @@ export class OverviewComponent implements OnInit{
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.service.delOverview({ pjid: projectId }).subscribe(
+        this.service.deletePj({ pjid: projectId }).subscribe(
           (response) => {
             this.alert.success('Deleted project successfully!');
             this.fetchProject();
@@ -140,7 +140,7 @@ export class OverviewComponent implements OnInit{
   // Open Add Dialog
   openDialog(): void {
     this.isAddMode = true;
-    const modalRef = this.modalService.open(OverviewDialogComponent, {
+    const modalRef = this.modalService.open(ProjectDialogComponent, {
       size: 'lg',
       centered: true
     });
@@ -159,29 +159,29 @@ export class OverviewComponent implements OnInit{
   }
 
   // Open Edit Dialog
-  openEditDialog(overview : Overview): void {
+  openEditDialog(project : Project): void {
     this.isAddMode = false;
-    const modalRef = this.modalService.open(OverviewDialogComponent, {
+    const modalRef = this.modalService.open(ProjectDialogComponent, {
       size: 'lg',
       centered: true
     });
 
     modalRef.componentInstance.mode = 'edit';
     modalRef.componentInstance.isAddMode = this.isAddMode;
-    modalRef.componentInstance.type = {
-      project_id: overview.projectId,
-      project_name: overview.projectName,
-      project_type: overview.projectType,
-      project_status: overview.projectStatus,
-      start_date: overview.startDate,
-      end_date: overview.endDate,
-      project_price: overview.projectPrice,
-      ps_cost: overview.psCost,
+    modalRef.componentInstance.project = {
+      project_id: project.projectId,
+      project_name: project.projectName,
+      project_type: project.projectType,
+      project_status: project.projectStatus,
+      start_date: project.startDate,
+      end_date: project.endDate,
+      project_price: project.projectPrice,
+      ps_cost: project.psCost,
     };
 
     modalRef.result.then((result) => {
       if (result) {
-        const index = this.overviews.findIndex(u => u.projectId === result.project_id);
+        const index = this.projects.findIndex(u => u.projectId === result.project_id);
         if (index !== -1) {
           this.updateProject(result); 
         }
@@ -204,4 +204,4 @@ export class OverviewComponent implements OnInit{
   }
 }
 
-export { Overview };
+export { Project };

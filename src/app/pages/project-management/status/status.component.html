@@ -3,7 +3,7 @@
 
         <!-- Button Container for Save and Cancel -->
         <div class="table-header">
-            <h4>Project Status</h4>
+            <h4>Project Status Management</h4>
             <div class="action-container">
                 <div class="search-input">
                     <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"/>
@@ -51,7 +51,7 @@
 
                 <!-- Table Header and Rows -->
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openEditStatusDialog(row)"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openEditStatusDialog(row)"></tr>
 
             </table>
         </div>

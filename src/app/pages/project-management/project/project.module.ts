@@ -7,12 +7,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { CostComponent } from './cost.component';
-
+import { ProjectComponent } from './project.component';
+import { ProjectDialogComponent } from './project-dialog/project-dialog.component';
 
 @NgModule({
   declarations: [
-    CostComponent,
+    ProjectComponent,
+    ProjectDialogComponent
   ],
   imports: [
     CommonModule,
@@ -23,11 +24,11 @@ import { CostComponent } from './cost.component';
     MatDialogModule,
     MatFormFieldModule,
     MatButtonModule,
-    FormsModule,
+    FormsModule, 
   ],
   exports: [
-    CostComponent,
+    ProjectComponent,
   ],
 })
 
-export class CostModule {}
+export class ProjectModule {}

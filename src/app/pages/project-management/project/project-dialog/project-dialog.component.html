@@ -6,29 +6,25 @@
 <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
     <div class="modal-body">
         <div class="row">
-
-            <div class="col-12 mb-3">
-                <div class="form-group">
+            <!-- Left Section -->
+            <div class="col-md-6">
+                <div class="form-group mb-3">
                     <h5>Project Name</h5>
                     <input type="text" class="form-control" formControlName="project_name" placeholder="Project Name" />
                     <div *ngIf="projectForm.get('project_name')?.invalid && projectForm.get('project_name')?.touched" class="text-danger">
                         Name is required
                     </div>
                 </div>
-            </div>
-
-            <div class="col-12 mb-3">
-                <div class="form-group">
+                
+                <div class="form-group mb-3">
                     <h5>Project Type</h5>
                     <input type="text" class="form-control" formControlName="project_type" placeholder="Project Type" />
                     <div *ngIf="projectForm.get('project_type')?.invalid && projectForm.get('project_type')?.touched" class="text-danger">
                         Type is required
                     </div>
                 </div>
-            </div>
-
-            <div class="col-12 mb-3">
-                <div class="form-group">
+                
+                <div class="form-group mb-3">
                     <h5>Project Status</h5>
                     <input type="text" class="form-control" formControlName="project_status" placeholder="Project Status" />
                     <div *ngIf="projectForm.get('project_status')?.invalid && projectForm.get('project_status')?.touched" class="text-danger">
@@ -37,46 +33,40 @@
                 </div>
             </div>
 
-            <div class="col-12 mb-3">
-                <div class="form-group">
+            <!-- Right Section -->
+            <div class="col-md-6">
+                <div class="form-group mb-3">
                     <h5>Start Date</h5>
-                    <input type="text" class="form-control" formControlName="start_date" placeholder="Start Date" />
+                    <input type="text" class="form-control right-align" formControlName="start_date" placeholder="Start Date" />
                     <div *ngIf="projectForm.get('start_date')?.invalid && projectForm.get('start_date')?.touched" class="text-danger">
                         Start date is required
                     </div>
                 </div>
-            </div>
 
-            <div class="col-12 mb-3">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <h5>End Date</h5>
-                    <input type="text" class="form-control" formControlName="end_date" placeholder="End Date" />
+                    <input type="text" class="form-control right-align" formControlName="end_date" placeholder="End Date" />
                     <div *ngIf="projectForm.get('end_date')?.invalid && projectForm.get('end_date')?.touched" class="text-danger">
                         End date is required
                     </div>
                 </div>
-            </div>
 
-            <div class="col-12 mb-3">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <h5>Project Price</h5>
-                    <input type="text" class="form-control" formControlName="project_price" placeholder="Project Price" />
+                    <input type="text" class="form-control right-align" formControlName="project_price" placeholder="Project Price" />
                     <div *ngIf="projectForm.get('project_price')?.invalid && projectForm.get('project_price')?.touched" class="text-danger">
                         Price is required
                     </div>
                 </div>
-            </div>
 
-            <div class="col-12 mb-3">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <h5>Project Cost</h5>
-                    <input type="text" class="form-control" formControlName="ps_cost" placeholder="Project Cost" />
+                    <input type="text" class="form-control right-align" formControlName="ps_cost" placeholder="Project Cost" />
                     <div *ngIf="projectForm.get('ps_cost')?.invalid && projectForm.get('ps_cost')?.touched" class="text-danger">
                         Cost is required
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 

@@ -13,9 +13,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ProjectManagementComponent } from './project-management.component';
-import { OverviewModule } from './overview/overview.module';
+import { ProjectModule } from "./project/project.module";
 import { TypeModule } from "./type/type.module";
-import { CostModule } from "./cost/cost.module";
 import { StatusModule } from "./status/status.module";
 
 @NgModule({
@@ -48,10 +47,9 @@ import { StatusModule } from "./status/status.module";
             component: ProjectManagementComponent,
         }
     ]),
-    OverviewModule,
+    ProjectModule,
     TypeModule,
-    CostModule,
-    StatusModule
+    StatusModule,
   ],
 })
 

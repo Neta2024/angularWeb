@@ -4,11 +4,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Alert } from 'src/app/shared/components/alert/alert';
 
 @Component({
-  selector: 'app-overview-dialog',
-  templateUrl: './overview-dialog.component.html',
-  styleUrl: './overview-dialog.component.scss'
+  selector: 'app-project-dialog',
+  templateUrl: './project-dialog.component.html',
+  styleUrl: './project-dialog.component.scss'
 })
-export class OverviewDialogComponent implements OnInit {
+export class ProjectDialogComponent implements OnInit {
   @Input() mode: 'add' | 'edit';
   @Input() isAddMode: boolean;
   @Input() project: any = {};
